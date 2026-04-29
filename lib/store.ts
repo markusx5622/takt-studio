@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { useState, useEffect } from "react"
 import type { Station, Scenario, AppState } from "@/types"
+import { createMonobathPreset } from "@/lib/presets"
 
 interface TaktStore extends AppState {
   // Escenarios
@@ -27,17 +28,21 @@ interface TaktStore extends AppState {
   getScenarioById: (id: string) => Scenario | undefined
 }
 
-const INITIAL_STATE: AppState = {
-  scenarios: [],
-  activeScenarioId: "",
-  compareScenarioAId: "",
-  compareScenarioBId: "",
+function createInitialState(): AppState {
+  const scenarioA = { ...createMonobathPreset(), name: "Escenario A — Monobath" }
+  const scenarioB = { ...createMonobathPreset(), name: "Escenario B — Monobath" }
+  return {
+    scenarios: [scenarioA, scenarioB],
+    activeScenarioId: scenarioA.id,
+    compareScenarioAId: scenarioA.id,
+    compareScenarioBId: scenarioB.id,
+  }
 }
 
 export const useTaktStore = create<TaktStore>()(
   persist(
     (set, get) => ({
-      ...INITIAL_STATE,
+      ...createInitialState(),
 
       addScenario: (name: string) => {
         const id = crypto.randomUUID()
@@ -154,7 +159,7 @@ export const useTaktStore = create<TaktStore>()(
         }))
       },
 
-      resetToPreset: () => set(INITIAL_STATE),
+      resetToPreset: () => set(createInitialState()),
 
       getActiveScenario: () => {
         const { scenarios, activeScenarioId } = get()
