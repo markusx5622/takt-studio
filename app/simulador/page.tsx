@@ -3,6 +3,7 @@ import StationEditor from "@/components/StationEditor"
 import KpiPanel from "@/components/KpiPanel"
 import TaktChart from "@/components/TaktChart"
 import LineDiagram from "@/components/LineDiagram"
+import InsightsPanel from "@/components/InsightsPanel"
 
 export default function SimuladorPage() {
   return (
@@ -21,8 +22,9 @@ export default function SimuladorPage() {
         </div>
       </div>
 
-      {/* Full-width row — line diagram benefits from horizontal space */}
+      {/* Full-width rows */}
       <LineDiagram />
+      <InsightsPanel />
     </div>
   )
 }
