@@ -1,6 +1,7 @@
 import ScenarioControls from "@/components/ScenarioControls"
 import StationEditor from "@/components/StationEditor"
 import KpiPanel from "@/components/KpiPanel"
+import TaktChart from "@/components/TaktChart"
 
 export default function SimuladorPage() {
   return (
@@ -12,11 +13,10 @@ export default function SimuladorPage() {
           <StationEditor />
         </div>
 
-        {/* Right column — 40%, sticky on desktop */}
-        <div className="lg:col-span-2">
-          <div className="lg:sticky lg:top-20">
-            <KpiPanel />
-          </div>
+        {/* Right column — 40% */}
+        <div className="space-y-6 lg:col-span-2">
+          <KpiPanel />
+          <TaktChart />
         </div>
       </div>
     </div>
