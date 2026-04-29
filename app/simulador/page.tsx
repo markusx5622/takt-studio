@@ -2,10 +2,11 @@ import ScenarioControls from "@/components/ScenarioControls"
 import StationEditor from "@/components/StationEditor"
 import KpiPanel from "@/components/KpiPanel"
 import TaktChart from "@/components/TaktChart"
+import LineDiagram from "@/components/LineDiagram"
 
 export default function SimuladorPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         {/* Left column — 60% */}
         <div className="space-y-6 lg:col-span-3">
@@ -19,6 +20,9 @@ export default function SimuladorPage() {
           <TaktChart />
         </div>
       </div>
+
+      {/* Full-width row — line diagram benefits from horizontal space */}
+      <LineDiagram />
     </div>
   )
 }
