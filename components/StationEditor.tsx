@@ -259,7 +259,9 @@ function StationCard({
 
 export default function StationEditor() {
   const hydrated = useHydrated()
-  const scenario = useTaktStore((state) => state.getActiveScenario())
+  const scenario = useTaktStore((state) =>
+    state.scenarios.find((sc) => sc.id === state.activeScenarioId)
+  )
   const updateStation = useTaktStore((state) => state.updateStation)
   const removeStation = useTaktStore((state) => state.removeStation)
   const moveStation = useTaktStore((state) => state.moveStation)

@@ -40,7 +40,9 @@ export default function ScenarioControls() {
   const hydrated = useHydrated()
   const scenarios = useTaktStore((s) => s.scenarios)
   const activeScenarioId = useTaktStore((s) => s.activeScenarioId)
-  const scenario = useTaktStore((s) => s.getActiveScenario())
+  const scenario = useTaktStore((s) =>
+    s.scenarios.find((sc) => sc.id === s.activeScenarioId)
+  )
   const updateScenario = useTaktStore((s) => s.updateScenario)
   const setActiveScenario = useTaktStore((s) => s.setActiveScenario)
   const duplicateScenario = useTaktStore((s) => s.duplicateScenario)
