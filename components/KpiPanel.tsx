@@ -97,8 +97,10 @@ export default function KpiPanel() {
                 Takt Time
               </div>
               <Tooltip>
-                <TooltipTrigger>
-                  <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">
+                    <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent side="left">
                   <p>
