@@ -81,7 +81,10 @@ export const useTaktStore = create<TaktStore>()(
             id: crypto.randomUUID(),
           })),
         }
-        set((state) => ({ scenarios: [...state.scenarios, newScenario] }))
+        set((state) => ({
+          scenarios: [...state.scenarios, newScenario],
+          activeScenarioId: newScenario.id,
+        }))
       },
 
       updateScenario: (id, updates) => {
