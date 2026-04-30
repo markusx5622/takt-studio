@@ -318,6 +318,7 @@ export default function Home() {
 
       {/* ── FEATURES ─────────────────────────────────────────────────────────── */}
       <section className="relative z-10 border-t border-border/50 bg-background/70 px-4 py-20 md:py-24">
+        <div className="pointer-events-none absolute inset-0 section-ambient-product" />
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -353,6 +354,7 @@ export default function Home() {
 
       {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────────── */}
       <section className="relative z-10 border-t border-border/50 bg-background/70 bg-grid-pattern-light px-4 py-20 md:py-24">
+        <div className="pointer-events-none absolute inset-0 section-ambient-product" />
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Flujo de uso</h2>
@@ -386,6 +388,7 @@ export default function Home() {
 
       {/* ── CAPABILITIES ─────────────────────────────────────────────────────── */}
       <section className="relative z-10 border-t border-border/50 bg-background/70 px-4 py-20 md:py-24">
+        <div className="pointer-events-none absolute inset-0 section-ambient-structure" />
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Capacidades</h2>
@@ -431,7 +434,7 @@ export default function Home() {
 
       {/* ── CREDIBILIDAD METODOLÓGICA ────────────────────────────────────────── */}
       <section className="relative z-10 border-t border-border/50 bg-background/70 bg-grid-pattern-light px-4 py-20 md:py-24">
-        <div className="pointer-events-none absolute inset-0 bg-hero-glow opacity-60" />
+        <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
             Validación antes de la inversión
@@ -452,6 +455,7 @@ export default function Home() {
 
       {/* ── SOBRE ESTE PROYECTO ──────────────────────────────────────────────── */}
       <section className="relative z-10 border-t border-border/50 bg-background/70 px-4 py-16 md:py-20">
+        <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
         <div className="mx-auto max-w-4xl">
           <div className="rounded-xl border bg-background p-8 shadow-sm md:p-12">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
