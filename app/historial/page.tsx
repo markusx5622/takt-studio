@@ -198,13 +198,18 @@ function SnapshotCard({
 
 function HistorialSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      <div className="h-8 w-64 animate-pulse rounded bg-muted" />
-      <div className="h-24 animate-pulse rounded-lg bg-muted" />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-64 animate-pulse rounded-xl bg-muted" />
-        ))}
+    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-app">
+      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 py-6">
+        <div className="page-header-rule pb-4 mb-2">
+          <div className="h-8 w-64 animate-pulse rounded bg-muted" />
+        </div>
+        <div className="h-24 animate-pulse rounded-lg bg-muted" />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-64 animate-pulse rounded-xl bg-muted" />
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -244,14 +249,15 @@ export default function HistorialPage() {
   if (!hydrated) return <HistorialSkeleton />
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      {/* Header */}
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight">Historial de escenarios</h1>
-        <p className="text-sm text-muted-foreground">
-          Guarda snapshots, establece referencias base y restaura versiones anteriores.
-        </p>
-      </div>
+    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-app">
+      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 py-6">
+        <div className="page-header-rule pb-4 mb-2">
+          <h1 className="text-2xl font-bold tracking-tight">Historial de escenarios</h1>
+          <p className="text-sm text-muted-foreground">
+            Guarda snapshots, establece referencias base y restaura versiones anteriores.
+          </p>
+        </div>
 
       {/* Active scenario + save */}
       <Card>
@@ -422,6 +428,7 @@ export default function HistorialPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }

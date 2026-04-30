@@ -10,7 +10,15 @@ import SensitivityLab from "@/components/SensitivityLab"
 
 export default function SimuladorPage() {
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
+    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-app">
+      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 py-6">
+        <div className="page-header-rule pb-4 mb-2">
+          <h1 className="text-2xl font-bold tracking-tight">Simulador</h1>
+          <p className="text-sm text-muted-foreground">
+            Configura la línea, ajusta parámetros y observa los KPIs en tiempo real.
+          </p>
+        </div>
       {/* ── 1. Configuración del escenario ──────────────────────────────────── */}
       <ScenarioControls />
 
@@ -37,6 +45,7 @@ export default function SimuladorPage() {
 
       {/* ── 7. Análisis interpretativo ──────────────────────────────────────── */}
       <InsightsPanel />
+      </div>
     </div>
   )
 }

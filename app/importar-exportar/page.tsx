@@ -43,13 +43,18 @@ function fmtDate(iso: string) {
 
 function ImportExportSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      <div className="h-8 w-64 animate-pulse rounded bg-muted" />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="h-48 animate-pulse rounded-lg bg-muted" />
-        <div className="h-48 animate-pulse rounded-lg bg-muted" />
+    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-app">
+      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 py-6">
+        <div className="page-header-rule pb-4 mb-2">
+          <div className="h-8 w-64 animate-pulse rounded bg-muted" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="h-48 animate-pulse rounded-lg bg-muted" />
+          <div className="h-48 animate-pulse rounded-lg bg-muted" />
+        </div>
+        <div className="h-64 animate-pulse rounded-lg bg-muted" />
       </div>
-      <div className="h-64 animate-pulse rounded-lg bg-muted" />
     </div>
   )
 }
@@ -194,14 +199,15 @@ export default function ImportExportPage() {
   if (!hydrated) return <ImportExportSkeleton />
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      {/* Header */}
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight">Importar y exportar</h1>
-        <p className="text-sm text-muted-foreground">
-          Mueve y reutiliza configuraciones del modelo entre sesiones, dispositivos o compañeros de equipo.
-        </p>
-      </div>
+    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-app">
+      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 py-6">
+        <div className="page-header-rule pb-4 mb-2">
+          <h1 className="text-2xl font-bold tracking-tight">Importar y exportar</h1>
+          <p className="text-sm text-muted-foreground">
+            Mueve y reutiliza configuraciones del modelo entre sesiones, dispositivos o compañeros de equipo.
+          </p>
+        </div>
 
       {/* Export cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -441,5 +447,6 @@ export default function ImportExportPage() {
         </div>
       </div>
     </div>
-  )
+  </div>
+)
 }

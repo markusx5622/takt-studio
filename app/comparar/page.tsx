@@ -310,12 +310,19 @@ export default function CompararPage() {
 
   if (!hydrated) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {[0, 1].map((i) => (
-            <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
-          ))}
+      <div className="relative min-h-[calc(100vh-4rem)] bg-surface-analytical bg-grid-pattern-light">
+        <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-6">
+          <div className="page-header-rule pb-4 mb-2">
+            <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
+            <p className="text-sm text-muted-foreground">Compara dos configuraciones lado a lado.</p>
+          </div>
+          <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {[0, 1].map((i) => (
+              <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -323,9 +330,14 @@ export default function CompararPage() {
 
   if (scenarios.length < 2) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        <h1 className="text-2xl font-bold">Comparar escenarios</h1>
-        <Card className="mt-6">
+      <div className="relative min-h-[calc(100vh-4rem)] bg-surface-analytical bg-grid-pattern-light">
+        <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-6">
+          <div className="page-header-rule pb-4 mb-2">
+            <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
+            <p className="text-sm text-muted-foreground">Compara dos configuraciones lado a lado.</p>
+          </div>
+          <Card className="mt-6">
           <CardContent className="flex flex-col items-center gap-4 py-12">
             <AlertCircle className="h-10 w-10 text-muted-foreground" />
             <p className="text-center text-sm text-muted-foreground">
@@ -336,6 +348,7 @@ export default function CompararPage() {
             </Button>
           </CardContent>
         </Card>
+        </div>
       </div>
     )
   }
@@ -357,11 +370,18 @@ export default function CompararPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
-      <h1 className="text-2xl font-bold">Comparar escenarios</h1>
+    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-analytical bg-grid-pattern-light">
+      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 py-6">
+        <div className="page-header-rule pb-4 mb-2">
+          <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
+          <p className="text-sm text-muted-foreground">
+            Compara métricas, gráficos y diagramas entre dos escenarios en paralelo.
+          </p>
+        </div>
 
-      {/* Selectors */}
-      <Card>
+        {/* Selectors */}
+        <Card>
         <CardContent className="pt-5 pb-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
             <div className="flex-1">
@@ -447,6 +467,7 @@ export default function CompararPage() {
         nameA={scenarioA.name}
         nameB={scenarioB.name}
       />
+      </div>
     </div>
   )
 }

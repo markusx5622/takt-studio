@@ -133,6 +133,29 @@
   background: radial-gradient(ellipse 70% 60% at 50% 40%, hsl(215 20% 88% / 0.55) 0%, transparent 65%);
 }
 
+/* ─── App surface system ───────────────────────────────────────────────────── */
+
+.bg-surface-app {
+  background-color: hsl(210 20% 98.5%);
+}
+
+.bg-surface-analytical {
+  background-color: hsl(210 18% 97%);
+}
+
+.bg-ambient-workspace {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, hsl(var(--primary) / 0.035) 0%, transparent 70%);
+}
+
+.bg-ambient-editorial {
+  background: radial-gradient(ellipse 60% 45% at 50% 0%, hsl(215 30% 55% / 0.04) 0%, transparent 70%);
+}
+
+.page-header-rule {
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  background: linear-gradient(to bottom, hsl(var(--background) / 0.6), transparent);
+}
+
 /* ─── Shimmer text for premium reactive typography ─────────────────────────── */
 
 @keyframes shimmer-text {
