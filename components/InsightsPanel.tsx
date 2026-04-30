@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import {
   AlertOctagon,
   AlertTriangle,
@@ -41,12 +41,30 @@ function InsightBlock({ insight }: { insight: Insight }) {
   const styles = STYLE_MAP[insight.type]
   return (
     <div className={cn("flex gap-3 rounded-lg border p-3", styles.wrap)}>
-      <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", styles.icon)} />
+      <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", styles.icon)} aria-hidden />
       <div>
         <p className="text-sm font-semibold leading-tight">{insight.title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">{insight.message}</p>
       </div>
     </div>
+  )
+}
+
+// ─── Skeleton ────────────────────────────────────────────────────────────────
+
+function InsightsSkeleton() {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
+        <div className="h-5 w-5 animate-pulse rounded bg-muted" />
+        <div className="h-5 w-36 animate-pulse rounded bg-muted" />
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
+        ))}
+      </CardContent>
+    </Card>
   )
 }
 
@@ -61,31 +79,40 @@ export default function InsightsPanel() {
   )
   const [expanded, setExpanded] = useState(false)
 
-  if (!hydrated || !scenario || scenario.stations.length === 0) {
+  const insights = useMemo(() => {
+    if (!scenario || scenario.stations.length === 0) return []
+    const kpis = calculateAllKPIs(scenario)
+    return generateInsights(scenario, kpis)
+  }, [scenario])
+
+  if (!hydrated) return <InsightsSkeleton />
+
+  if (!scenario || scenario.stations.length === 0) {
     return (
       <Card>
-        <CardHeader className="flex flex-row items-center gap-2 pb-4 space-y-0">
+        <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
           <Lightbulb className="h-5 w-5 text-primary" />
           <CardTitle className="text-lg">Análisis automático</CardTitle>
         </CardHeader>
-        <CardContent className="flex min-h-[120px] items-center justify-center">
+        <CardContent className="flex min-h-[120px] flex-col items-center justify-center gap-2 text-center">
           <p className="text-sm text-muted-foreground">
-            Añade estaciones para obtener análisis.
+            Los insights aparecerán cuando definas la línea.
+          </p>
+          <p className="text-xs text-muted-foreground/60">
+            Detectamos cuellos de botella, desbalances y oportunidades de mejora automáticamente.
           </p>
         </CardContent>
       </Card>
     )
   }
 
-  const kpis = calculateAllKPIs(scenario)
-  const insights = generateInsights(scenario, kpis)
   const visible = expanded ? insights : insights.slice(0, MAX_VISIBLE)
   const hiddenCount = insights.length - MAX_VISIBLE
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
-        <Lightbulb className="h-5 w-5 text-primary" />
+        <Lightbulb className="h-5 w-5 text-primary" aria-hidden />
         <CardTitle className="text-lg">Análisis automático</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -99,6 +126,7 @@ export default function InsightsPanel() {
             size="sm"
             className="w-full text-xs text-muted-foreground"
             onClick={() => setExpanded(!expanded)}
+            aria-expanded={expanded}
           >
             {expanded ? (
               <>

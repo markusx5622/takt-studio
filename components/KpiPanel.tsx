@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs } from "@/lib/calculations"
 import { Card, CardContent } from "@/components/ui/card"
@@ -50,12 +51,18 @@ export default function KpiPanel() {
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
   )
 
+  const kpis = useMemo(
+    () => (scenario && scenario.stations.length > 0 ? calculateAllKPIs(scenario) : null),
+    [scenario]
+  )
+
   if (!hydrated) return <KpiPanelSkeleton />
 
-  if (!scenario || scenario.stations.length === 0) {
+  if (!kpis || !scenario) {
     return (
       <Card>
-        <CardContent className="flex min-h-[200px] items-center justify-center p-6">
+        <CardContent className="flex min-h-[200px] flex-col items-center justify-center gap-3 p-6">
+          <BarChart3 className="h-10 w-10 text-muted-foreground/30" />
           <p className="text-center text-sm text-muted-foreground">
             Añade estaciones para ver los KPIs
           </p>
@@ -63,8 +70,6 @@ export default function KpiPanel() {
       </Card>
     )
   }
-
-  const kpis = calculateAllKPIs(scenario)
 
   const bottleneckExceedsTakt = kpis.bottleneckCycleMin > kpis.taktTimeMin
 
@@ -98,7 +103,7 @@ export default function KpiPanel() {
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="cursor-help">
+                  <span className="cursor-help" aria-label="Cómo se calcula el takt time">
                     <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
                   </span>
                 </TooltipTrigger>

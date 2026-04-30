@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment } from "react"
+import { useMemo, Fragment } from "react"
 import {
   ArrowRight,
   Users,
@@ -9,6 +9,7 @@ import {
   Clock,
   Package,
   PackageCheck,
+  GitBranch,
 } from "lucide-react"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { getStationsWithEffective, calculateTaktTime } from "@/lib/calculations"
@@ -47,7 +48,6 @@ function SalidaIndicator() {
 function ArrowConnector() {
   return (
     <div className="flex shrink-0 items-center justify-center p-1.5 text-muted-foreground/40">
-      {/* rotate-90 = pointing down on mobile; rotate-0 = pointing right on desktop */}
       <ArrowRight className="h-5 w-5 rotate-90 md:rotate-0" />
     </div>
   )
@@ -65,7 +65,6 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
         !station.isBottleneck && !station.exceedsTakt && "border-green-300 bg-white"
       )}
     >
-      {/* Bottleneck banner */}
       {station.isBottleneck && (
         <div className="bg-red-500 px-1 py-0.5 text-center">
           <span className="text-[9px] font-bold uppercase tracking-wide text-white">
@@ -75,7 +74,6 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
       )}
 
       <div className="p-3">
-        {/* Header */}
         <div className="mb-2 flex items-start gap-1">
           <span className="shrink-0 text-[10px] font-bold text-muted-foreground">
             #{index + 1}
@@ -88,19 +86,16 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
           </span>
         </div>
 
-        {/* Effective cycle time */}
         <div className="flex items-center gap-1 text-xs">
           <Clock className="h-3 w-3 shrink-0 text-muted-foreground" />
           <span className="font-medium">{station.effectiveCycleMin.toFixed(1)} min</span>
         </div>
 
-        {/* Operators */}
         <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
           <Users className="h-3 w-3 shrink-0" />
           <span>×{station.operators}</span>
         </div>
 
-        {/* Failure rate */}
         {station.failureRate > 0 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-amber-600">
             <AlertTriangle className="h-3 w-3 shrink-0" />
@@ -108,16 +103,34 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
           </div>
         )}
 
-        {/* Status icon */}
         <div className="mt-2 flex justify-end">
           {station.exceedsTakt ? (
-            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-label="Excede takt time" />
           ) : (
-            <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+            <CheckCircle className="h-3.5 w-3.5 text-green-500" aria-label="Dentro de takt time" />
           )}
         </div>
       </div>
     </div>
+  )
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+function LineDiagramSkeleton() {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="h-5 w-36 animate-pulse rounded bg-muted" />
+      </CardHeader>
+      <CardContent>
+        <div className="flex gap-3 overflow-hidden">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-32 w-40 shrink-0 animate-pulse rounded-lg bg-muted" />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -133,13 +146,26 @@ export default function LineDiagram({ scenarioId }: LineDiagramProps = {}) {
     state.scenarios.find((sc) => sc.id === (scenarioId ?? state.activeScenarioId))
   )
 
-  if (!hydrated || !scenario || scenario.stations.length === 0) {
+  const taktTimeMin = useMemo(
+    () => (scenario ? calculateTaktTime(scenario) : 0),
+    [scenario]
+  )
+
+  const stations = useMemo(
+    () => (scenario ? getStationsWithEffective(scenario.stations, taktTimeMin) : []),
+    [scenario, taktTimeMin]
+  )
+
+  if (!hydrated) return <LineDiagramSkeleton />
+
+  if (!scenario || scenario.stations.length === 0) {
     return (
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Diagrama de línea</CardTitle>
         </CardHeader>
-        <CardContent className="flex h-48 items-center justify-center">
+        <CardContent className="flex h-48 flex-col items-center justify-center gap-3 text-center">
+          <GitBranch className="h-10 w-10 text-muted-foreground/25" />
           <p className="text-sm text-muted-foreground">
             Añade estaciones para visualizar la línea
           </p>
@@ -148,18 +174,14 @@ export default function LineDiagram({ scenarioId }: LineDiagramProps = {}) {
     )
   }
 
-  const taktTimeMin = calculateTaktTime(scenario)
-  const stations = getStationsWithEffective(scenario.stations, taktTimeMin)
-
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Diagrama de línea</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* overflow-x-auto enables horizontal scroll on desktop when stations don't fit */}
         <div className="overflow-x-auto pb-3 pt-1">
-          <div className="flex flex-col items-center md:flex-row md:min-w-max md:items-center">
+          <div className="flex flex-col items-center md:min-w-max md:flex-row md:items-center">
             <EntradaIndicator />
             <ArrowConnector />
 

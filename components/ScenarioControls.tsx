@@ -80,8 +80,9 @@ export default function ScenarioControls() {
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Nombre */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Nombre del escenario</label>
+            <label htmlFor="sc-name" className="text-sm font-medium">Nombre del escenario</label>
             <Input
+              id="sc-name"
               value={scenario.name}
               placeholder="Nombre del escenario"
               onChange={(e) => updateScenario(scenario.id, { name: e.target.value })}
@@ -90,8 +91,9 @@ export default function ScenarioControls() {
 
           {/* Demanda */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Demanda diaria (uds/día)</label>
+            <label htmlFor="sc-demand" className="text-sm font-medium">Demanda diaria (uds/día)</label>
             <Input
+              id="sc-demand"
               type="number"
               min={1}
               step={1}
@@ -102,8 +104,9 @@ export default function ScenarioControls() {
 
           {/* Horas por turno */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Horas por turno</label>
+            <label htmlFor="sc-hours" className="text-sm font-medium">Horas por turno</label>
             <Input
+              id="sc-hours"
               type="number"
               min={1}
               max={12}
@@ -115,8 +118,8 @@ export default function ScenarioControls() {
 
           {/* Turnos por día — segmented control */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Turnos por día</label>
-            <div className="flex gap-2">
+            <label className="text-sm font-medium" id="sc-shifts-label">Turnos por día</label>
+            <div className="flex gap-2" role="group" aria-labelledby="sc-shifts-label">
               {([1, 2, 3] as const).map((n) => (
                 <Button
                   key={n}
@@ -124,6 +127,7 @@ export default function ScenarioControls() {
                   size="sm"
                   className="flex-1"
                   onClick={() => updateScenario(scenario.id, { shiftsPerDay: n })}
+                  aria-pressed={scenario.shiftsPerDay === n}
                 >
                   {n}
                 </Button>

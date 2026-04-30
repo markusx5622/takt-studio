@@ -322,11 +322,17 @@ export default function StationEditor() {
 
       <CardContent className="p-0">
         {stations.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 py-12 text-center">
-            <p className="text-sm text-muted-foreground">
-              No hay estaciones definidas. Añade la primera para comenzar.
-            </p>
-            <Button variant="outline" size="sm" onClick={handleAddStation}>
+          <div className="flex flex-col items-center gap-3 py-14 text-center">
+            <div className="rounded-full border-2 border-dashed border-muted-foreground/20 p-4">
+              <Plus className="h-6 w-6 text-muted-foreground/40" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Define tu primera estación</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Cada estación representa una operación de la línea: nombre, tiempo de ciclo, operarios y tasa de fallo.
+              </p>
+            </div>
+            <Button size="sm" onClick={handleAddStation}>
               <Plus className="mr-2 h-4 w-4" />
               Añadir estación
             </Button>

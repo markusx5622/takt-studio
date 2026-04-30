@@ -1,8 +1,10 @@
 "use client"
 
+import { useMemo } from "react"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { getStationsWithEffective, calculateTaktTime } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BarChart3 } from "lucide-react"
 import {
   BarChart,
   Bar,
@@ -69,6 +71,21 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   )
 }
 
+// ─── Skeleton ──────────────────────────────────────────────────────────────────
+
+function TaktChartSkeleton({ height }: { height: number }) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="h-5 w-52 animate-pulse rounded bg-muted" />
+      </CardHeader>
+      <CardContent>
+        <div className="animate-pulse rounded bg-muted" style={{ height }} />
+      </CardContent>
+    </Card>
+  )
+}
+
 // ─── Main component ────────────────────────────────────────────────────────────
 
 interface TaktChartProps {
@@ -82,13 +99,29 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
     state.scenarios.find((sc) => sc.id === (scenarioId ?? state.activeScenarioId))
   )
 
-  if (!hydrated || !scenario || scenario.stations.length === 0) {
+  const taktTimeMin = useMemo(
+    () => (scenario ? calculateTaktTime(scenario) : 0),
+    [scenario]
+  )
+
+  const chartData = useMemo(
+    () => (scenario ? getStationsWithEffective(scenario.stations, taktTimeMin) : []),
+    [scenario, taktTimeMin]
+  )
+
+  if (!hydrated) return <TaktChartSkeleton height={height} />
+
+  if (!scenario || scenario.stations.length === 0) {
     return (
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Tiempos de ciclo vs Takt Time</CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center" style={{ height }}>
+        <CardContent
+          className="flex flex-col items-center justify-center gap-3 text-center"
+          style={{ height }}
+        >
+          <BarChart3 className="h-10 w-10 text-muted-foreground/25" />
           <p className="text-sm text-muted-foreground">
             Añade estaciones para ver el gráfico
           </p>
@@ -96,9 +129,6 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
       </Card>
     )
   }
-
-  const taktTimeMin = calculateTaktTime(scenario)
-  const chartData = getStationsWithEffective(scenario.stations, taktTimeMin)
 
   return (
     <Card>
