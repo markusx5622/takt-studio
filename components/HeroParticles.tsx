@@ -28,8 +28,8 @@ function createParticles(width: number, height: number): Particle[] {
       y: Math.random() * height,
       vx: (Math.random() - 0.5) * 0.8,
       vy: (Math.random() - 0.5) * 0.8,
-      radius: Math.random() * 1.5 + 0.6,
-      opacity: Math.random() * 0.25 + 0.15,
+      radius: Math.random() * 1.7 + 0.8,
+      opacity: Math.random() * 0.30 + 0.30,
       kind: "dust",
       pulsePhase: Math.random() * Math.PI * 2,
       pulseSpeed: Math.random() * 0.02 + 0.01,
@@ -43,8 +43,8 @@ function createParticles(width: number, height: number): Particle[] {
       y: Math.random() * height,
       vx: (Math.random() - 0.5) * 1.4,
       vy: (Math.random() - 0.5) * 1.4,
-      radius: Math.random() * 2.8 + 1.2,
-      opacity: Math.random() * 0.35 + 0.35,
+      radius: Math.random() * 3.0 + 1.5,
+      opacity: Math.random() * 0.35 + 0.55,
       kind: "mote",
       pulsePhase: Math.random() * Math.PI * 2,
       pulseSpeed: Math.random() * 0.03 + 0.015,
@@ -118,7 +118,7 @@ export default function HeroParticles() {
           const dist = Math.sqrt(dx * dx + dy * dy)
 
           if (dist < connectDistance) {
-            const alpha = (1 - dist / connectDistance) * 0.15 * Math.min(p1.opacity, p2.opacity)
+            const alpha = (1 - dist / connectDistance) * 0.25 * Math.min(p1.opacity, p2.opacity)
             ctx.beginPath()
             ctx.moveTo(p1.x, p1.y)
             ctx.lineTo(p2.x, p2.y)
@@ -162,12 +162,12 @@ export default function HeroParticles() {
         if (p.kind === "dust") {
           ctx.beginPath()
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(175, 195, 220, ${currentOpacity})`
+          ctx.fillStyle = `rgba(195, 215, 240, ${currentOpacity})`
           ctx.fill()
         } else {
           // Motes: a mix of circles and subtle crosses for variety
           const isCircle = Math.random() > 0.12 // 88% circles, 12% crosses
-          const color = `rgba(180, 205, 235, ${currentOpacity})`
+          const color = `rgba(200, 225, 255, ${currentOpacity})`
 
           if (isCircle) {
             ctx.beginPath()
@@ -179,17 +179,17 @@ export default function HeroParticles() {
           }
 
           // Glow on motes — more intense and applied to more particles
-          if (p.opacity > 0.25) {
-            const glowRadius = p.radius * 3
-            const glowAlpha = currentOpacity * 0.2
+          if (p.opacity > 0.20) {
+            const glowRadius = p.radius * 3.5
+            const glowAlpha = currentOpacity * 0.35
             ctx.beginPath()
             ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2)
-            ctx.fillStyle = `rgba(170, 195, 230, ${glowAlpha})`
+            ctx.fillStyle = `rgba(190, 215, 245, ${glowAlpha})`
             ctx.fill()
           }
 
           // Extra bright core for the brightest motes
-          if (p.opacity > 0.55) {
+          if (p.opacity > 0.45) {
             ctx.beginPath()
             ctx.arc(p.x, p.y, p.radius * 0.5, 0, Math.PI * 2)
             ctx.fillStyle = `rgba(220, 235, 255, ${currentOpacity * 0.6})`
