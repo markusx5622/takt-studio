@@ -4,6 +4,7 @@ import KpiPanel from "@/components/KpiPanel"
 import TaktChart from "@/components/TaktChart"
 import LineDiagram from "@/components/LineDiagram"
 import InsightsPanel from "@/components/InsightsPanel"
+import ImprovementPlan from "@/components/ImprovementPlan"
 
 export default function SimuladorPage() {
   return (
@@ -19,6 +20,7 @@ export default function SimuladorPage() {
         <div className="space-y-6 lg:col-span-2">
           <KpiPanel />
           <TaktChart />
+          <ImprovementPlan />
         </div>
       </div>
 

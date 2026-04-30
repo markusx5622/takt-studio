@@ -9,6 +9,12 @@ interface TaktStore extends AppState {
   addScenario: (name: string) => void
   removeScenario: (id: string) => void
   duplicateScenario: (id: string, newName: string) => void
+  createScenarioVariant: (
+    sourceId: string,
+    newName: string,
+    stationChanges?: { originalStationId: string; updates: Partial<Omit<Station, "id">> }[],
+    scenarioChanges?: Partial<Pick<Scenario, "shiftsPerDay">>
+  ) => void
   updateScenario: (
     id: string,
     updates: Partial<Pick<Scenario, "name" | "demandPerDay" | "shiftHours" | "shiftsPerDay">>
@@ -84,6 +90,49 @@ export const useTaktStore = create<TaktStore>()(
         set((state) => ({
           scenarios: [...state.scenarios, newScenario],
           activeScenarioId: newScenario.id,
+        }))
+      },
+
+      createScenarioVariant: (
+        sourceId: string,
+        newName: string,
+        stationChanges?: { originalStationId: string; updates: Partial<Omit<Station, "id">> }[],
+        scenarioChanges?: Partial<Pick<Scenario, "shiftsPerDay">>
+      ) => {
+        const original = get().scenarios.find((s) => s.id === sourceId)
+        if (!original) return
+
+        const newStations = original.stations.map((station) => ({
+          ...station,
+          id: crypto.randomUUID(),
+        }))
+
+        // Map original station IDs to new stations for applying changes
+        const idMap = new Map<string, typeof newStations[number]>()
+        original.stations.forEach((orig, i) => {
+          idMap.set(orig.id, newStations[i])
+        })
+
+        stationChanges?.forEach(({ originalStationId, updates }) => {
+          const target = idMap.get(originalStationId)
+          if (target) {
+            Object.assign(target, updates)
+          }
+        })
+
+        const newScenario: Scenario = {
+          ...original,
+          id: crypto.randomUUID(),
+          name: newName,
+          stations: newStations,
+          ...scenarioChanges,
+        }
+
+        set((state) => ({
+          scenarios: [...state.scenarios, newScenario],
+          activeScenarioId: newScenario.id,
+          compareScenarioAId: sourceId,
+          compareScenarioBId: newScenario.id,
         }))
       },
 

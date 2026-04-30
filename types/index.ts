@@ -82,3 +82,28 @@ export type AppState = {
   compareScenarioAId: string
   compareScenarioBId: string
 }
+
+// ─── Plan de mejora ────────────────────────────────────────────────────────────
+
+export type ImprovementType = 'operators' | 'failure-rate' | 'cycle-time' | 'shifts'
+export type ImprovementPriority = 'high' | 'medium' | 'low'
+
+export type ImprovementRecommendation = {
+  id: string
+  title: string
+  description: string
+  type: ImprovementType
+  priority: ImprovementPriority
+  baseKpis: KPIs
+  projectedKpis: KPIs
+  throughputDelta: number
+  balancingDelta: number
+  leadTimeDelta: number
+  meetsDemandAfter: boolean
+  stationId?: string
+  stationName?: string
+  badge?: string
+  applyLabel: string
+  stationChanges?: { originalStationId: string; updates: Partial<Omit<Station, 'id'>> }[]
+  scenarioChanges?: Partial<Pick<Scenario, 'shiftsPerDay'>>
+}
