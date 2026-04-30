@@ -38,7 +38,7 @@ function InterfaceMockup() {
   ]
 
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-background shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
+    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-background shadow-[0_25px_60px_-12px_rgba(0,0,0,0.12)] transition-transform duration-500 hover:scale-[1.01] hover:shadow-[0_30px_70px_-12px_rgba(0,0,0,0.15)]">
       {/* Window chrome */}
       <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
@@ -233,15 +233,13 @@ function StepCard({
 
 export default function Home() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col">
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section
-        className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32"
-        style={{
-          backgroundImage: "radial-gradient(circle, #00000008 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
-      >
+      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-grid-pattern px-4 pb-20 pt-24 text-center md:pt-32">
+        {/* Ambient glow behind content */}
+        <div className="pointer-events-none absolute inset-0 bg-hero-ambient" />
+        {/* Focus glow around title area */}
+        <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 bg-hero-glow" />
         {/* Eyebrow */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
@@ -302,13 +300,15 @@ export default function Home() {
         </div>
 
         {/* UI Mockup */}
-        <div className="mt-16 w-full px-0 sm:px-4">
+        <div className="relative mt-16 w-full px-0 sm:px-4">
+          {/* Subtle glow behind mockup */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.04] blur-3xl" />
           <InterfaceMockup />
         </div>
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────────────────────────── */}
-      <section className="border-t bg-muted/20 px-4 py-20 md:py-24">
+      <section className="border-t border-border/50 bg-surface-technical px-4 py-20 md:py-24">
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -343,7 +343,7 @@ export default function Home() {
       </section>
 
       {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────────── */}
-      <section className="border-t px-4 py-20 md:py-24">
+      <section className="border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Flujo de uso</h2>
@@ -376,7 +376,7 @@ export default function Home() {
       </section>
 
       {/* ── CAPABILITIES ─────────────────────────────────────────────────────── */}
-      <section className="border-t bg-muted/20 px-4 py-20 md:py-24">
+      <section className="border-t border-border/50 bg-surface-technical px-4 py-20 md:py-24">
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Capacidades</h2>
@@ -421,7 +421,8 @@ export default function Home() {
       </section>
 
       {/* ── CREDIBILIDAD METODOLÓGICA ────────────────────────────────────────── */}
-      <section className="border-t px-4 py-20 md:py-24">
+      <section className="relative border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
+        <div className="pointer-events-none absolute inset-0 bg-hero-glow opacity-60" />
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
             Validación antes de la inversión
@@ -441,7 +442,7 @@ export default function Home() {
       </section>
 
       {/* ── SOBRE ESTE PROYECTO ──────────────────────────────────────────────── */}
-      <section className="border-t bg-muted/20 px-4 py-16 md:py-20">
+      <section className="border-t border-border/50 bg-surface-technical px-4 py-16 md:py-20">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-xl border bg-background p-8 shadow-sm md:p-12">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
@@ -507,7 +508,7 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
-      <footer className="border-t px-4 py-8">
+      <footer className="bg-surface-technical px-4 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-foreground/50 sm:flex-row">
           <span className="font-medium">Takt Studio · 2026</span>
           <span>Hecho con Next.js y desplegado en Vercel</span>

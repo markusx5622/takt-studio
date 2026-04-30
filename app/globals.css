@@ -91,3 +91,27 @@
 .card-interactive:hover {
   @apply shadow-lg;
 }
+
+/* ─── Technical surface patterns ───────────────────────────────────────────── */
+
+.bg-grid-pattern {
+  background-image: radial-gradient(circle, hsl(var(--foreground) / 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.bg-grid-pattern-light {
+  background-image: radial-gradient(circle, hsl(var(--foreground) / 0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.bg-surface-technical {
+  background-color: hsl(210 20% 98%);
+}
+
+.bg-hero-glow {
+  background: radial-gradient(ellipse 60% 50% at 50% 45%, hsl(var(--primary) / 0.06) 0%, transparent 70%);
+}
+
+.bg-hero-ambient {
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, hsl(215 20% 88% / 0.35) 0%, transparent 65%);
+}
