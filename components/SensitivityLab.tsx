@@ -372,6 +372,40 @@ function ShiftSelector({
   )
 }
 
+// ─── Station selector ──────────────────────────────────────────────────────────
+
+function StationSelector({
+  stations,
+  value,
+  onChange,
+  baseBottleneckId,
+}: {
+  stations: Station[]
+  value: string
+  onChange: (id: string) => void
+  baseBottleneckId?: string
+}) {
+  return (
+    <div className="rounded-lg border bg-muted/10 p-3">
+      <label className="text-xs font-medium text-foreground/80">Estación objetivo</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-2 w-full rounded-md border bg-background px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-ring"
+      >
+        {stations.map((s) => (
+          <option key={s.id} value={s.id}>
+            {s.name}{s.id === baseBottleneckId ? " (cuello de botella)" : ""}
+          </option>
+        ))}
+      </select>
+      <p className="mt-1 text-[10px] text-muted-foreground/60">
+        Por defecto se toma la estación crítica actual. Puedes cambiarla manualmente.
+      </p>
+    </div>
+  )
+}
+
 // ─── Skeleton ──────────────────────────────────────────────────────────────────
 
 function SensitivityLabSkeleton() {
@@ -575,6 +609,15 @@ export default function SensitivityLab() {
                 setLabScenario((prev) => (prev ? { ...prev, shiftsPerDay: v } : prev))
               }
             />
+
+            {activeScenario && targetStationId && (
+              <StationSelector
+                stations={activeScenario.stations}
+                value={targetStationId}
+                onChange={(id) => setTargetStationId(id)}
+                baseBottleneckId={baseKpis?.bottleneckStationId}
+              />
+            )}
 
             {targetStation && (
               <LabControl
