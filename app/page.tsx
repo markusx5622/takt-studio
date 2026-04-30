@@ -1,29 +1,44 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Gauge, AlertTriangle, GitCompare, ArrowRight, Code2, Briefcase } from "lucide-react"
+import {
+  Gauge,
+  AlertTriangle,
+  GitCompare,
+  ArrowRight,
+  Code2,
+  Briefcase,
+  Layers,
+  BarChart3,
+  FileDown,
+  Zap,
+  Settings2,
+  ScanSearch,
+  CheckCircle2,
+} from "lucide-react"
 
 // ─── Interface mockup ──────────────────────────────────────────────────────────
 
 function InterfaceMockup() {
   const kpis = [
-    { label: "Takt Time",  value: "7.5",        unit: "min/ud",   bar: "bg-blue-500",  barW: "w-full" },
-    { label: "Throughput", value: "64",          unit: "uds/día",  bar: "bg-green-500", barW: "w-4/5"  },
-    { label: "Cuello bot.",value: "Alicatado",   unit: "9.2 min",  bar: "bg-red-500",   barW: "w-full" },
-    { label: "Balanceo",   value: "81%",         unit: "efic.",    bar: "bg-amber-400", barW: "w-4/5"  },
+    { label: "Takt Time", value: "7.5", unit: "min/ud", bar: "bg-blue-500", barW: "w-full" },
+    { label: "Throughput", value: "64", unit: "uds/día", bar: "bg-emerald-500", barW: "w-4/5" },
+    { label: "Cuello bot.", value: "Alicatado", unit: "9.2 min", bar: "bg-red-500", barW: "w-full" },
+    { label: "Balanceo", value: "81%", unit: "efic.", bar: "bg-amber-400", barW: "w-4/5" },
   ]
 
   const stations = [
-    { name: "Replanteo",      h: 55,  bottleneck: false },
-    { name: "Tabiquería",     h: 68,  bottleneck: false },
-    { name: "Alicatado",      h: 100, bottleneck: true  },
-    { name: "Electricidad",   h: 72,  bottleneck: false },
-    { name: "Sanitarios",     h: 60,  bottleneck: false },
-    { name: "Pintura",        h: 48,  bottleneck: false },
-    { name: "Control final",  h: 40,  bottleneck: false },
+    { name: "Preparación", h: 42, bottleneck: false },
+    { name: "Montaje", h: 62, bottleneck: false },
+    { name: "Alicatado", h: 100, bottleneck: true },
+    { name: "Electricidad", h: 58, bottleneck: false },
+    { name: "Fontanería", h: 55, bottleneck: false },
+    { name: "Pintura", h: 48, bottleneck: false },
+    { name: "Control QC", h: 38, bottleneck: false },
+    { name: "Embalaje", h: 32, bottleneck: false },
   ]
 
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-background shadow-2xl">
+    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-background shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
       {/* Window chrome */}
       <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
@@ -35,18 +50,20 @@ function InterfaceMockup() {
       </div>
 
       <div className="p-4 space-y-3">
-
         {/* KPI cards row */}
         <div className="grid grid-cols-4 gap-2">
           {kpis.map(({ label, value, unit, bar, barW }) => (
-            <div key={label} className="rounded-lg border bg-muted/20 p-2.5">
-              <p className="mb-1 text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+            <div
+              key={label}
+              className="rounded-lg border bg-muted/20 p-2.5 transition-colors hover:bg-muted/40"
+            >
+              <p className="mb-1 text-[9px] font-medium uppercase tracking-wider text-muted-foreground/80">
                 {label}
               </p>
               <p className="text-sm font-bold leading-none">{value}</p>
-              <p className="mb-1.5 text-[9px] text-muted-foreground/60">{unit}</p>
+              <p className="mb-1.5 text-[9px] text-muted-foreground/70">{unit}</p>
               <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
-                <div className={`h-full rounded-full ${bar} ${barW} opacity-70`} />
+                <div className={`h-full rounded-full ${bar} ${barW} opacity-80`} />
               </div>
             </div>
           ))}
@@ -55,7 +72,7 @@ function InterfaceMockup() {
         <div className="grid grid-cols-5 gap-2">
           {/* Bar chart */}
           <div className="col-span-2 rounded-lg border bg-muted/20 p-3">
-            <p className="mb-2 text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+            <p className="mb-2 text-[9px] font-medium uppercase tracking-wider text-muted-foreground/80">
               Ciclo efectivo vs Takt
             </p>
             <div className="relative flex items-end gap-1" style={{ height: 64 }}>
@@ -63,9 +80,10 @@ function InterfaceMockup() {
                 <div
                   key={name}
                   className={`flex-1 rounded-t transition-all ${
-                    bottleneck ? "bg-red-500/75" : "bg-blue-500/55"
+                    bottleneck ? "bg-red-500/80" : "bg-blue-500/60"
                   }`}
                   style={{ height: `${h}%` }}
+                  title={name}
                 />
               ))}
               {/* Takt reference line at ~76% */}
@@ -73,28 +91,36 @@ function InterfaceMockup() {
                 className="pointer-events-none absolute inset-x-0 border-t-2 border-dashed border-foreground/30"
                 style={{ bottom: "76%" }}
               />
+              {/* Bottleneck label */}
+              <div
+                className="pointer-events-none absolute right-1 flex items-center gap-0.5 text-[7px] font-bold uppercase tracking-wide text-red-500"
+                style={{ bottom: "88%" }}
+              >
+                <AlertTriangle className="h-2.5 w-2.5" />
+                Excede Takt
+              </div>
             </div>
           </div>
 
           {/* Line diagram */}
           <div className="col-span-3 rounded-lg border bg-muted/20 p-3">
-            <p className="mb-2 text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+            <p className="mb-2 text-[9px] font-medium uppercase tracking-wider text-muted-foreground/80">
               Diagrama de línea
             </p>
             <div className="flex items-center gap-1 overflow-hidden">
               {/* ENTRADA */}
               <div className="flex shrink-0 flex-col items-center gap-0.5 rounded border border-dashed border-muted-foreground/30 px-1.5 py-1">
                 <div className="h-1.5 w-1.5 rounded-sm bg-muted-foreground/30" />
-                <span className="text-[7px] font-bold uppercase tracking-widest text-muted-foreground/40">In</span>
+                <span className="text-[7px] font-bold uppercase tracking-widest text-muted-foreground/50">In</span>
               </div>
 
-              {stations.map(({ name, bottleneck }, i) => (
+              {stations.map(({ name, bottleneck }) => (
                 <div key={name} className="flex shrink-0 items-center gap-1">
                   <div className="text-[8px] text-muted-foreground/30">›</div>
                   <div
-                    className={`rounded border px-1.5 py-1 ${
+                    className={`rounded border px-1.5 py-1 transition-colors ${
                       bottleneck
-                        ? "border-red-400/70 bg-red-50 dark:bg-red-950/30"
+                        ? "border-red-400/80 bg-red-50 dark:bg-red-950/30"
                         : "border-border bg-muted/30"
                     }`}
                   >
@@ -120,7 +146,6 @@ function InterfaceMockup() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   )
@@ -141,14 +166,65 @@ function FeatureCard({
 }) {
   return (
     <div
-      className="animate-fade-up rounded-xl border bg-background p-6 transition-shadow hover:shadow-md"
+      className="animate-fade-up group rounded-xl border bg-background p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/20"
       style={{ animationDelay: delay }}
     >
-      <div className="mb-4 inline-flex rounded-lg border bg-muted/50 p-2.5">
-        <Icon className="h-5 w-5 text-primary" />
+      <div className="mb-4 inline-flex rounded-lg border bg-muted/50 p-2.5 transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+        <Icon className="h-5 w-5 text-primary transition-colors" />
       </div>
       <h3 className="mb-2 text-base font-semibold tracking-tight">{title}</h3>
       <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+    </div>
+  )
+}
+
+// ─── Capability pill ───────────────────────────────────────────────────────────
+
+function CapabilityItem({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  description: string
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-lg border bg-background p-4 transition-all duration-200 hover:shadow-md hover:border-primary/15">
+      <div className="mt-0.5 shrink-0 rounded-md border bg-muted/50 p-2">
+        <Icon className="h-4 w-4 text-primary" />
+      </div>
+      <div>
+        <p className="text-sm font-semibold">{title}</p>
+        <p className="text-xs leading-relaxed text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  )
+}
+
+// ─── Step card ─────────────────────────────────────────────────────────────────
+
+function StepCard({
+  step,
+  icon: Icon,
+  title,
+  description,
+}: {
+  step: string
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  description: string
+}) {
+  return (
+    <div className="relative flex flex-col items-center text-center">
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border bg-background font-bold text-sm text-primary shadow-sm">
+        {step}
+      </div>
+      <div className="mb-3 inline-flex rounded-lg border bg-muted/50 p-2.5">
+        <Icon className="h-5 w-5 text-primary" />
+      </div>
+      <h3 className="mb-1 text-sm font-semibold">{title}</h3>
+      <p className="max-w-[16rem] text-xs leading-relaxed text-muted-foreground">{description}</p>
     </div>
   )
 }
@@ -158,55 +234,71 @@ function FeatureCard({
 export default function Home() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col">
-
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section
-        className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-20 text-center"
+        className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32"
         style={{
           backgroundImage: "radial-gradient(circle, #00000008 1px, transparent 1px)",
           backgroundSize: "24px 24px",
         }}
       >
         {/* Eyebrow */}
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm">
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
           Ingeniería de Organización Industrial
         </div>
 
         {/* Title */}
-        <h1 className="max-w-3xl text-5xl font-bold tracking-tight md:text-7xl">
-          Diseña, simula y optimiza
-          <br />
-          <span className="text-muted-foreground/40">tu línea de producción</span>
+        <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+          Diseña, simula y optimiza{" "}
+          <span className="text-muted-foreground/50">tu línea de producción</span>
         </h1>
 
         {/* Subtitle */}
-        <p className="mx-auto mt-6 max-w-2xl text-xl text-muted-foreground">
+        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
           Takt Studio te permite modelar estaciones, detectar cuellos de botella
-          y comparar escenarios <em>what-if</em> en minutos.{" "}
-          <span className="text-foreground/70">Sin tocar la línea real.</span>
+          y comparar escenarios <em className="not-italic font-medium text-foreground/80">what-if</em> en minutos.{" "}
+          <span className="text-foreground/80">Sin tocar la línea real.</span>
         </p>
 
         {/* CTAs */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Button asChild size="lg" className="gap-2 px-6 shadow-md">
+          <Button
+            asChild
+            size="lg"
+            className="gap-2 px-6 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+          >
             <Link href="/simulador">
               Probar con plantilla Monobath
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="gap-2 px-6 bg-background/80 backdrop-blur-sm">
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="gap-2 px-6 bg-background/80 backdrop-blur-sm transition-all duration-200 hover:bg-background hover:shadow-md"
+          >
             <Link href="/comparar">Ver comparador</Link>
           </Button>
         </div>
 
         {/* Metadata strip */}
-        <div className="mt-8 flex items-center gap-4 text-xs text-muted-foreground/50">
-          <span>Cálculo en tiempo real</span>
-          <span className="h-px w-4 bg-border" />
-          <span>Sin cuenta</span>
-          <span className="h-px w-4 bg-border" />
-          <span>Sin instalación</span>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/60">
+          <span className="inline-flex items-center gap-1.5">
+            <CheckCircle2 className="h-3 w-3" />
+            Cálculo en tiempo real
+          </span>
+          <span className="hidden h-px w-4 bg-border sm:block" />
+          <span className="inline-flex items-center gap-1.5">
+            <CheckCircle2 className="h-3 w-3" />
+            Sin cuenta
+          </span>
+          <span className="hidden h-px w-4 bg-border sm:block" />
+          <span className="inline-flex items-center gap-1.5">
+            <CheckCircle2 className="h-3 w-3" />
+            Sin instalación
+          </span>
         </div>
 
         {/* UI Mockup */}
@@ -216,86 +308,155 @@ export default function Home() {
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────────────────────────── */}
-      <section className="border-t bg-muted/20 px-4 py-20">
+      <section className="border-t bg-muted/20 px-4 py-20 md:py-24">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
+          <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-              Todo lo que necesitas para optimizar tu línea
+              Análisis operativo en tiempo real
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Basado en los fundamentos de la Ingeniería de Organización Industrial
+              Fundamentos de Ingeniería de Organización Industrial aplicados a la toma de decisiones
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <FeatureCard
               icon={Gauge}
-              title="Cálculo instantáneo"
-              description="Takt time, throughput, eficiencia de balanceo y lead time se recalculan al instante mientras ajustas la línea."
+              title="Métricas operativas continuas"
+              description="Takt time, throughput, eficiencia de balanceo y lead time se recalculan automáticamente a cada cambio. Sin esperas, sin exportar a Excel."
               delay="0ms"
             />
             <FeatureCard
               icon={AlertTriangle}
-              title="Detección de cuellos de botella"
-              description="Identifica automáticamente la estación que limita tu producción y recibe sugerencias concretas de mejora."
+              title="Identificación del constraint"
+              description="Localiza con precisión la estación que limita el ritmo de producción y evalúa el impacto de aliviarla antes de invertir en planta."
               delay="100ms"
             />
             <FeatureCard
               icon={GitCompare}
-              title="Comparación what-if"
-              description="Duplica un escenario, cambia parámetros y compara lado a lado el impacto en KPIs antes de implementar."
+              title="Análisis de escenarios A/B"
+              description="Duplica una configuración, modifica parámetros y compara métricas diferenciadas para justificar decisiones de mejora con datos."
               delay="200ms"
             />
           </div>
         </div>
       </section>
 
-      {/* ── PARA QUIÉN ───────────────────────────────────────────────────────── */}
-      <section className="border-t px-4 py-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-base leading-relaxed text-muted-foreground">
-            Pensado para{" "}
-            <span className="font-semibold text-foreground">ingenieros de producción</span>,{" "}
-            <span className="font-semibold text-foreground">responsables de planta</span> y{" "}
-            <span className="font-semibold text-foreground">
-              estudiantes de Ingeniería de Organización Industrial
-            </span>{" "}
-            que quieren tomar decisiones con datos antes de intervenir en la línea real.
-          </p>
+      {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────────── */}
+      <section className="border-t px-4 py-20 md:py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-14 text-center">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Flujo de uso</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              De la definición a la decisión en tres pasos
+            </p>
+          </div>
 
-          {/* Metrics strip */}
-          <div className="mt-12 grid grid-cols-3 divide-x rounded-xl border bg-muted/20">
-            {[
-              { value: "< 1 s", label: "Tiempo de cálculo" },
-              { value: "∞",     label: "Escenarios comparables" },
-              { value: "0 €",   label: "Sin licencias" },
-            ].map(({ value, label }) => (
-              <div key={label} className="px-6 py-5 text-center">
-                <p className="text-2xl font-bold tracking-tight">{value}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
+            <StepCard
+              step="1"
+              icon={Settings2}
+              title="Define la línea"
+              description="Configura estaciones, tiempos de ciclo, operarios, demanda y turnos. Parte de la plantilla Monobath o construye desde cero."
+            />
+            <StepCard
+              step="2"
+              icon={ScanSearch}
+              title="Detecta el cuello de botella"
+              description="El simulador identifica automáticamente el constraint y muestra su impacto sobre el throughput y el balanceo global."
+            />
+            <StepCard
+              step="3"
+              icon={GitCompare}
+              title="Compara antes de intervenir"
+              description="Evalúa escenarios what-if en el comparador y exporta el análisis para respaldar la propuesta de mejora."
+            />
           </div>
         </div>
       </section>
 
+      {/* ── CAPABILITIES ─────────────────────────────────────────────────────── */}
+      <section className="border-t bg-muted/20 px-4 py-20 md:py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-14 text-center">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Capacidades</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Todo lo que incluye Takt Studio desde el primer acceso
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <CapabilityItem
+              icon={Layers}
+              title="Plantilla Monobath"
+              description="Línea de baños prefabricados preconfigurada como caso de estudio operativo."
+            />
+            <CapabilityItem
+              icon={GitCompare}
+              title="Comparación A/B"
+              description="Contrasta dos escenarios lado a lado con delta automático en cada métrica."
+            />
+            <CapabilityItem
+              icon={BarChart3}
+              title="KPIs clave"
+              description="Takt time, throughput, lead time, eficiencia de balanceo y análisis de constraint."
+            />
+            <CapabilityItem
+              icon={FileDown}
+              title="Exportación PDF"
+              description="Genera informes del escenario activo para documentación o presentaciones."
+            />
+            <CapabilityItem
+              icon={Zap}
+              title="Simulación instantánea"
+              description="Cálculo en tiempo real sin latencia perceptible al ajustar cualquier parámetro."
+            />
+            <CapabilityItem
+              icon={Gauge}
+              title="Sin instalación"
+              description="Funciona en el navegador. Sin cuentas, sin licencias, sin dependencias externas."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── CREDIBILIDAD METODOLÓGICA ────────────────────────────────────────── */}
+      <section className="border-t px-4 py-20 md:py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+            Validación antes de la inversión
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            Takt Studio parte de una{" "}
+            <span className="font-medium text-foreground">plantilla Monobath calibrada</span>{" "}
+            como demostración del método. Puedes ajustar cada parámetro con datos reales de tu
+            propia línea y validar decisiones antes de cualquier intervención física.{" "}
+            <span className="font-medium text-foreground">
+              La herramienta está pensada para reducir el riesgo operativo de las mejoras de
+              producción
+            </span>{" "}
+            mediante simulación analítica, no para sustituir el juicio del ingeniero.
+          </p>
+        </div>
+      </section>
+
       {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
-      <footer className="border-t px-4 py-6">
+      <footer className="border-t px-4 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-xs text-muted-foreground sm:flex-row">
           <span className="font-medium">Takt Studio · 2026</span>
 
-          <div className="flex flex-col items-center gap-2 text-center sm:gap-0 sm:flex-row">
-            <span className="sm:flex-1">
+          <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-0">
+            <span className="sm:flex-1 leading-relaxed">
               Desarrollado por Marc Cubero · Ingeniería de Organización Industrial ·{" "}
               Universidad Europea de Valencia
             </span>
-            <div className="flex gap-3 border-t border-muted-foreground/20 pt-2 sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0">
+            <div className="flex gap-3 border-t border-muted-foreground/20 pt-2 sm:border-t-0 sm:border-l sm:border-muted-foreground/20 sm:pl-3 sm:pt-0">
               <a
                 href="https://github.com/markusx5622/takt-studio"
                 target="_blank"
                 rel="noreferrer noopener"
                 className="transition-colors hover:text-foreground"
-                aria-label="GitHub repository"
+                aria-label="Repositorio en GitHub"
               >
                 <Code2 className="h-4 w-4" />
               </a>
@@ -304,7 +465,7 @@ export default function Home() {
                 target="_blank"
                 rel="noreferrer noopener"
                 className="transition-colors hover:text-foreground"
-                aria-label="LinkedIn profile"
+                aria-label="Perfil de LinkedIn"
               >
                 <Briefcase className="h-4 w-4" />
               </a>
@@ -314,7 +475,6 @@ export default function Home() {
           <span>Hecho con Next.js y desplegado en Vercel</span>
         </div>
       </footer>
-
     </div>
   )
 }

@@ -51,12 +51,14 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="ml-auto">
-            <Button variant="ghost" size="sm" onClick={handleReset}>
-              <RotateCcw className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Resetear datos</span>
-            </Button>
-          </div>
+          {pathname !== "/" && (
+            <div className="ml-auto">
+              <Button variant="ghost" size="sm" onClick={handleReset}>
+                <RotateCcw className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Resetear datos</span>
+              </Button>
+            </div>
+          )}
         </div>
       </header>
 

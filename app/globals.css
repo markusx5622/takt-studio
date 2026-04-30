@@ -51,8 +51,21 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  button,
+  [role="button"] {
+    @apply transition-colors duration-200;
+  }
+  a {
+    @apply transition-colors duration-150;
   }
 }
 
@@ -69,4 +82,12 @@
 
 .animate-fade-up {
   animation: fade-up 0.5s ease both;
+}
+
+/* Premium micro-interactions */
+.card-interactive {
+  @apply transition-all duration-300;
+}
+.card-interactive:hover {
+  @apply shadow-lg;
 }
