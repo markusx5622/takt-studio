@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import HeroParticles from "@/components/HeroParticles"
 import {
   Gauge,
   AlertTriangle,
@@ -236,16 +237,12 @@ export default function Home() {
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32">
-        {/* Ambient atmosphere layers */}
-        <div className="pointer-events-none absolute -inset-[25%] animate-ambient-1 opacity-60 blur-3xl"
-          style={{ background: "radial-gradient(circle at 30% 40%, hsl(215 20% 90% / 0.55) 0%, transparent 60%)" }}
-        />
-        <div className="pointer-events-none absolute -inset-[25%] animate-ambient-2 opacity-50 blur-3xl"
-          style={{ background: "radial-gradient(circle at 70% 60%, hsl(210 25% 92% / 0.45) 0%, transparent 55%)" }}
-        />
-        <div className="pointer-events-none absolute -inset-[20%] animate-ambient-3 opacity-40 blur-2xl"
-          style={{ background: "radial-gradient(circle at 50% 50%, hsl(220 15% 88% / 0.4) 0%, transparent 50%)" }}
-        />
+        {/* Ambient glow behind content */}
+        <div className="pointer-events-none absolute inset-0 bg-hero-ambient" />
+        {/* Focus glow around title area */}
+        <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 bg-hero-glow" />
+        {/* Particle layer */}
+        <HeroParticles />
         {/* Eyebrow */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
           <span className="relative flex h-2 w-2">
