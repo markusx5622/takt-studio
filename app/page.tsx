@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import HeroParticles from "@/components/HeroParticles"
 import {
   Gauge,
   AlertTriangle,
@@ -236,6 +237,7 @@ export default function Home() {
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-grid-pattern px-4 pb-20 pt-24 text-center md:pt-32">
+        <HeroParticles />
         {/* Ambient glow behind content */}
         <div className="pointer-events-none absolute inset-0 bg-hero-ambient" />
         {/* Focus glow around title area */}
