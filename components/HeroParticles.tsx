@@ -10,37 +10,44 @@ interface Particle {
   radius: number
   opacity: number
   kind: "dust" | "mote"
+  pulsePhase: number
+  pulseSpeed: number
 }
 
 function createParticles(width: number, height: number): Particle[] {
   const isMobile = width < 768
-  const dustCount = isMobile ? 35 : 60
-  const moteCount = isMobile ? 25 : 50
+  // Much more particles for intense effect
+  const dustCount = isMobile ? 80 : 160
+  const moteCount = isMobile ? 50 : 100
   const particles: Particle[] = []
 
-  // Background dust layer — very subtle, slow, small
+  // Background dust layer — faster, larger, more visible
   for (let i = 0; i < dustCount; i++) {
     particles.push({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.15,
-      vy: (Math.random() - 0.5) * 0.15,
-      radius: Math.random() * 0.6 + 0.3,
-      opacity: Math.random() * 0.1 + 0.06,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      radius: Math.random() * 1.5 + 0.6,
+      opacity: Math.random() * 0.25 + 0.15,
       kind: "dust",
+      pulsePhase: Math.random() * Math.PI * 2,
+      pulseSpeed: Math.random() * 0.02 + 0.01,
     })
   }
 
-  // Foreground mote layer — more visible, varied, organic
+  // Foreground mote layer — bright, large, dynamic
   for (let i = 0; i < moteCount; i++) {
     particles.push({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      radius: Math.random() * 1.8 + 0.9,
-      opacity: Math.random() * 0.25 + 0.2,
+      vx: (Math.random() - 0.5) * 1.4,
+      vy: (Math.random() - 0.5) * 1.4,
+      radius: Math.random() * 2.8 + 1.2,
+      opacity: Math.random() * 0.35 + 0.35,
       kind: "mote",
+      pulsePhase: Math.random() * Math.PI * 2,
+      pulseSpeed: Math.random() * 0.03 + 0.015,
     })
   }
 
@@ -56,7 +63,7 @@ function drawCross(
 ) {
   const half = size / 2
   ctx.strokeStyle = color
-  ctx.lineWidth = 1
+  ctx.lineWidth = 1.2
   ctx.beginPath()
   ctx.moveTo(x - half, y)
   ctx.lineTo(x + half, y)
@@ -75,6 +82,7 @@ export default function HeroParticles() {
 
     let animFrameId: number
     let particles: Particle[] = []
+    let time = 0
 
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -97,34 +105,69 @@ export default function HeroParticles() {
       particles = createParticles(w, h)
     }
 
+    const drawConnections = (w: number, h: number) => {
+      const connectDistance = 120
+      const moteParticles = particles.filter((p) => p.kind === "mote")
+
+      for (let i = 0; i < moteParticles.length; i++) {
+        for (let j = i + 1; j < moteParticles.length; j++) {
+          const p1 = moteParticles[i]
+          const p2 = moteParticles[j]
+          const dx = p1.x - p2.x
+          const dy = p1.y - p2.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+
+          if (dist < connectDistance) {
+            const alpha = (1 - dist / connectDistance) * 0.15 * Math.min(p1.opacity, p2.opacity)
+            ctx.beginPath()
+            ctx.moveTo(p1.x, p1.y)
+            ctx.lineTo(p2.x, p2.y)
+            ctx.strokeStyle = `rgba(170, 195, 230, ${alpha})`
+            ctx.lineWidth = 0.6
+            ctx.stroke()
+          }
+        }
+      }
+    }
+
     const draw = () => {
       const parent = canvas.parentElement
       if (!parent) return
       const w = parent.clientWidth
       const h = parent.clientHeight
 
+      time += 1
       ctx.clearRect(0, 0, w, h)
+
+      // Draw connections first (behind particles)
+      if (!prefersReducedMotion) {
+        drawConnections(w, h)
+      }
 
       for (const p of particles) {
         if (!prefersReducedMotion) {
           p.x += p.vx
           p.y += p.vy
 
-          if (p.x < -4) p.x = w + 4
-          if (p.x > w + 4) p.x = -4
-          if (p.y < -4) p.y = h + 4
-          if (p.y > h + 4) p.y = -4
+          if (p.x < -10) p.x = w + 10
+          if (p.x > w + 10) p.x = -10
+          if (p.y < -10) p.y = h + 10
+          if (p.y > h + 10) p.y = -10
         }
+
+        // Pulsing opacity for organic feel
+        const pulse = Math.sin(time * p.pulseSpeed + p.pulsePhase)
+        const currentOpacity = p.opacity * (0.85 + pulse * 0.15)
 
         if (p.kind === "dust") {
           ctx.beginPath()
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(160, 175, 195, ${p.opacity})`
+          ctx.fillStyle = `rgba(175, 195, 220, ${currentOpacity})`
           ctx.fill()
         } else {
           // Motes: a mix of circles and subtle crosses for variety
-          const isCircle = Math.random() > 0.15 // 85% circles, 15% crosses
-          const color = `rgba(170, 190, 215, ${p.opacity})`
+          const isCircle = Math.random() > 0.12 // 88% circles, 12% crosses
+          const color = `rgba(180, 205, 235, ${currentOpacity})`
 
           if (isCircle) {
             ctx.beginPath()
@@ -132,14 +175,24 @@ export default function HeroParticles() {
             ctx.fillStyle = color
             ctx.fill()
           } else {
-            drawCross(ctx, p.x, p.y, p.radius * 2.2, color)
+            drawCross(ctx, p.x, p.y, p.radius * 2.4, color)
           }
 
-          // Soft glow on brighter motes
-          if (p.opacity > 0.32) {
+          // Glow on motes — more intense and applied to more particles
+          if (p.opacity > 0.25) {
+            const glowRadius = p.radius * 3
+            const glowAlpha = currentOpacity * 0.2
             ctx.beginPath()
-            ctx.arc(p.x, p.y, p.radius * 2.5, 0, Math.PI * 2)
-            ctx.fillStyle = `rgba(170, 190, 215, ${p.opacity * 0.12})`
+            ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(170, 195, 230, ${glowAlpha})`
+            ctx.fill()
+          }
+
+          // Extra bright core for the brightest motes
+          if (p.opacity > 0.55) {
+            ctx.beginPath()
+            ctx.arc(p.x, p.y, p.radius * 0.5, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(220, 235, 255, ${currentOpacity * 0.6})`
             ctx.fill()
           }
         }

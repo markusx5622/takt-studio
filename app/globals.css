@@ -126,11 +126,11 @@
 }
 
 .bg-hero-glow {
-  background: radial-gradient(ellipse 60% 50% at 50% 45%, hsl(var(--primary) / 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 50% at 50% 45%, hsl(var(--primary) / 0.14) 0%, transparent 70%);
 }
 
 .bg-hero-ambient {
-  background: radial-gradient(ellipse 70% 60% at 50% 40%, hsl(215 20% 88% / 0.35) 0%, transparent 65%);
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, hsl(215 20% 88% / 0.55) 0%, transparent 65%);
 }
 
 /* ─── Shimmer text for premium reactive typography ─────────────────────────── */

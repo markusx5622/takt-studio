@@ -308,7 +308,7 @@ export default function Home() {
         {/* UI Mockup */}
         <div className="relative mt-16 w-full px-0 sm:px-4">
           {/* Subtle glow behind mockup */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.04] blur-3xl" />
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[350px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.12] blur-3xl" />
           <InterfaceMockup />
         </div>
       </section>
