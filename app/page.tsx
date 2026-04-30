@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Gauge, AlertTriangle, GitCompare, ArrowRight } from "lucide-react"
+import { Gauge, AlertTriangle, GitCompare, ArrowRight, Code2, Briefcase } from "lucide-react"
 
 // ─── Interface mockup ──────────────────────────────────────────────────────────
 
@@ -281,12 +281,36 @@ export default function Home() {
 
       {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
       <footer className="border-t px-4 py-6">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-row">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-xs text-muted-foreground sm:flex-row">
           <span className="font-medium">Takt Studio · 2026</span>
-          <span className="text-center">
-            Desarrollado por Markus · Ingeniería de Organización Industrial ·{" "}
-            Universidad Europea de Valencia
-          </span>
+
+          <div className="flex flex-col items-center gap-2 text-center sm:gap-0 sm:flex-row">
+            <span className="sm:flex-1">
+              Desarrollado por Marc Cubero · Ingeniería de Organización Industrial ·{" "}
+              Universidad Europea de Valencia
+            </span>
+            <div className="flex gap-3 border-t border-muted-foreground/20 pt-2 sm:border-t-0 sm:border-l sm:pl-3 sm:pt-0">
+              <a
+                href="https://github.com/markusx5622/takt-studio"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="transition-colors hover:text-foreground"
+                aria-label="GitHub repository"
+              >
+                <Code2 className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/marc-cubero-cantavella-bb04542a7"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="transition-colors hover:text-foreground"
+                aria-label="LinkedIn profile"
+              >
+                <Briefcase className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+
           <span>Hecho con Next.js y desplegado en Vercel</span>
         </div>
       </footer>
