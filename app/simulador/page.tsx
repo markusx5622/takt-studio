@@ -9,38 +9,26 @@ import ImprovementPlan from "@/components/ImprovementPlan"
 export default function SimuladorPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
-      {/* ── Top bar ─────────────────────────────────────────────────────────── */}
+      {/* ── 1. Configuración del escenario ──────────────────────────────────── */}
       <ScenarioControls />
 
-      {/* ── Row 1: Station editor + KPIs ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <StationEditor />
-        </div>
-        <div className="lg:col-span-2">
-          <KpiPanel />
-        </div>
+      {/* ── 2. Definición de estaciones ─────────────────────────────────────── */}
+      <StationEditor />
+
+      {/* ── 3. Visión cuantitativa: gráfico + KPIs ──────────────────────────── */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <TaktChart />
+        <KpiPanel />
       </div>
 
-      {/* ── Row 2: Chart + Improvement plan ─────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <TaktChart />
-        </div>
-        <div className="lg:col-span-2">
-          <ImprovementPlan />
-        </div>
-      </div>
+      {/* ── 4. Propuestas de mejora ─────────────────────────────────────────── */}
+      <ImprovementPlan />
 
-      {/* ── Row 3: Line diagram + Insights ──────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <LineDiagram />
-        </div>
-        <div className="lg:col-span-2">
-          <InsightsPanel />
-        </div>
-      </div>
+      {/* ── 5. Diagrama de flujo ────────────────────────────────────────────── */}
+      <LineDiagram />
+
+      {/* ── 6. Análisis interpretativo ──────────────────────────────────────── */}
+      <InsightsPanel />
     </div>
   )
 }

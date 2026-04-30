@@ -28,10 +28,10 @@ const ICON_MAP: Record<InsightType, React.ComponentType<{ className?: string }>>
 }
 
 const STYLE_MAP: Record<InsightType, { wrap: string; icon: string }> = {
-  critical: { wrap: "border-red-200 bg-red-50",    icon: "text-red-600" },
+  critical: { wrap: "border-red-200 bg-red-50", icon: "text-red-600" },
   warning:  { wrap: "border-amber-200 bg-amber-50", icon: "text-amber-600" },
   success:  { wrap: "border-green-200 bg-green-50", icon: "text-green-600" },
-  info:     { wrap: "border-blue-200 bg-blue-50",   icon: "text-blue-600" },
+  info:     { wrap: "border-blue-200 bg-blue-50", icon: "text-blue-600" },
 }
 
 // ─── Single insight block ─────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ function InsightBlock({ insight }: { insight: Insight }) {
   return (
     <div className={cn("flex gap-3 rounded-lg border p-3", styles.wrap)}>
       <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", styles.icon)} aria-hidden />
-      <div>
+      <div className="min-w-0">
         <p className="text-sm font-semibold leading-tight">{insight.title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">{insight.message}</p>
       </div>
@@ -59,10 +59,12 @@ function InsightsSkeleton() {
         <div className="h-5 w-5 animate-pulse rounded bg-muted" />
         <div className="h-5 w-36 animate-pulse rounded bg-muted" />
       </CardHeader>
-      <CardContent className="space-y-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
-        ))}
+      <CardContent>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />
+          ))}
+        </div>
       </CardContent>
     </Card>
   )
@@ -70,7 +72,7 @@ function InsightsSkeleton() {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-const MAX_VISIBLE = 5
+const MAX_VISIBLE = 6
 
 export default function InsightsPanel() {
   const hydrated = useHydrated()
@@ -115,16 +117,18 @@ export default function InsightsPanel() {
         <Lightbulb className="h-5 w-5 text-primary" aria-hidden />
         <CardTitle className="text-lg">Análisis automático</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {visible.map((insight, i) => (
-          <InsightBlock key={i} insight={insight} />
-        ))}
+      <CardContent>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {visible.map((insight, i) => (
+            <InsightBlock key={i} insight={insight} />
+          ))}
+        </div>
 
         {hiddenCount > 0 && (
           <Button
             variant="ghost"
             size="sm"
-            className="w-full text-xs text-muted-foreground"
+            className="mt-3 w-full text-xs text-muted-foreground"
             onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
           >
