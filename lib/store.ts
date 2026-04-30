@@ -1,8 +1,9 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { useState, useEffect } from "react"
-import type { Station, Scenario, AppState, EconomicInputs, ScenarioSnapshot } from "@/types"
+import type { Station, Scenario, AppState, EconomicInputs, ScenarioSnapshot, ExportPayload } from "@/types"
 import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS } from "@/lib/presets"
+import { buildScenarioExportPayload, buildSnapshotExportPayload, regenerateScenarioIds } from "@/lib/import-export"
 
 interface TaktStore extends AppState {
   // Escenarios
@@ -39,6 +40,11 @@ interface TaktStore extends AppState {
   restoreSnapshotAsScenario: (snapshotId: string, newName?: string) => void
   setCompareFromSnapshots: (snapshotAId: string, snapshotBId: string) => void
   getSnapshotsByScenarioId: (scenarioId: string) => ScenarioSnapshot[]
+  // Import / Export
+  exportScenarioById: (id: string) => ExportPayload | null
+  exportSnapshotById: (id: string) => ExportPayload | null
+  importScenarioFromPayload: (payload: ExportPayload, importedName?: string) => void
+  importSnapshotAsScenario: (payload: ExportPayload, importedName?: string) => void
 }
 
 function createInitialState(): AppState {
@@ -309,6 +315,39 @@ export const useTaktStore = create<TaktStore>()(
         return get()
           .snapshots.filter((s) => s.scenarioId === scenarioId)
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      },
+
+      exportScenarioById: (id: string) => {
+        const scenario = get().scenarios.find((s) => s.id === id)
+        if (!scenario) return null
+        return buildScenarioExportPayload(scenario)
+      },
+
+      exportSnapshotById: (id: string) => {
+        const snapshot = get().snapshots.find((s) => s.id === id)
+        if (!snapshot) return null
+        return buildSnapshotExportPayload(snapshot)
+      },
+
+      importScenarioFromPayload: (payload: ExportPayload, importedName?: string) => {
+        if (payload.exportType !== "scenario") return
+        const scenario = regenerateScenarioIds(payload.scenario)
+        scenario.name = importedName?.trim() || scenario.name
+        set((state) => ({
+          scenarios: [...state.scenarios, scenario],
+          activeScenarioId: scenario.id,
+        }))
+      },
+
+      importSnapshotAsScenario: (payload: ExportPayload, importedName?: string) => {
+        const snapshot = payload.exportType === "snapshot" ? payload.snapshot : null
+        if (!snapshot) return
+        const scenario = regenerateScenarioIds(snapshot.scenarioData)
+        scenario.name = importedName?.trim() || `${snapshot.name} — importado`
+        set((state) => ({
+          scenarios: [...state.scenarios, scenario],
+          activeScenarioId: scenario.id,
+        }))
       },
     }),
     {

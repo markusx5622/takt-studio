@@ -166,3 +166,21 @@ export type ImprovementRecommendation = {
   stationChanges?: { originalStationId: string; updates: Partial<Omit<Station, 'id'>> }[]
   scenarioChanges?: Partial<Pick<Scenario, 'shiftsPerDay'>>
 }
+
+// ─── Import / Export ───────────────────────────────────────────────────────────
+
+export type ScenarioExportPayload = {
+  exportType: "scenario"
+  exportedAt: string
+  appVersion: string
+  scenario: Scenario
+}
+
+export type SnapshotExportPayload = {
+  exportType: "snapshot"
+  exportedAt: string
+  appVersion: string
+  snapshot: ScenarioSnapshot
+}
+
+export type ExportPayload = ScenarioExportPayload | SnapshotExportPayload
