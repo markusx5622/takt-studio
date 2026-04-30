@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Copy, Plus, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import ExportPdfButton from "@/components/ExportPdfButton"
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -178,6 +179,10 @@ export default function ScenarioControls() {
               Eliminar
             </Button>
           )}
+
+          <div className="ml-auto">
+            <ExportPdfButton />
+          </div>
         </div>
       </CardContent>
     </Card>
