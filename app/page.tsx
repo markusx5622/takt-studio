@@ -237,11 +237,12 @@ export default function Home() {
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-grid-pattern px-4 pb-20 pt-24 text-center md:pt-32">
-        <HeroParticles />
         {/* Ambient glow behind content */}
         <div className="pointer-events-none absolute inset-0 bg-hero-ambient" />
         {/* Focus glow around title area */}
         <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 bg-hero-glow" />
+        {/* Particle layer */}
+        <HeroParticles />
         {/* Eyebrow */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
           <span className="relative flex h-2 w-2">

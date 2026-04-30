@@ -13,17 +13,17 @@ interface Particle {
 
 function createParticles(width: number, height: number): Particle[] {
   const isMobile = width < 768
-  const count = isMobile ? 25 : 50
+  const count = isMobile ? 45 : 100
   const particles: Particle[] = []
 
   for (let i = 0; i < count; i++) {
     particles.push({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: (Math.random() - 0.5) * 0.25,
-      radius: Math.random() * 1 + 0.5,
-      opacity: Math.random() * 0.12 + 0.08,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      radius: Math.random() * 1.2 + 0.8,
+      opacity: Math.random() * 0.2 + 0.15,
     })
   }
 
@@ -75,16 +75,26 @@ export default function HeroParticles() {
           p.x += p.vx
           p.y += p.vy
 
-          if (p.x < 0) p.x = w
-          if (p.x > w) p.x = 0
-          if (p.y < 0) p.y = h
-          if (p.y > h) p.y = 0
+          if (p.x < -2) p.x = w + 2
+          if (p.x > w + 2) p.x = -2
+          if (p.y < -2) p.y = h + 2
+          if (p.y > h + 2) p.y = -2
         }
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(148, 163, 184, ${p.opacity})`
+
+        const baseColor = "120, 140, 165"
+        if (p.opacity > 0.28) {
+          ctx.shadowBlur = 3
+          ctx.shadowColor = `rgba(${baseColor}, 0.25)`
+        } else {
+          ctx.shadowBlur = 0
+        }
+
+        ctx.fillStyle = `rgba(${baseColor}, ${p.opacity})`
         ctx.fill()
+        ctx.shadowBlur = 0
       }
 
       animFrameId = requestAnimationFrame(draw)
@@ -104,7 +114,7 @@ export default function HeroParticles() {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none absolute inset-0 z-0"
+      className="pointer-events-none absolute inset-0"
       aria-hidden="true"
     />
   )
