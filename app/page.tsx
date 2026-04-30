@@ -236,7 +236,7 @@ export default function Home() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-grid-pattern px-4 pb-20 pt-24 text-center md:pt-32">
+      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32">
         {/* Ambient glow behind content */}
         <div className="pointer-events-none absolute inset-0 bg-hero-ambient" />
         {/* Focus glow around title area */}

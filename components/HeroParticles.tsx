@@ -9,25 +9,60 @@ interface Particle {
   vy: number
   radius: number
   opacity: number
+  kind: "dust" | "mote"
 }
 
 function createParticles(width: number, height: number): Particle[] {
   const isMobile = width < 768
-  const count = isMobile ? 45 : 100
+  const dustCount = isMobile ? 35 : 60
+  const moteCount = isMobile ? 25 : 50
   const particles: Particle[] = []
 
-  for (let i = 0; i < count; i++) {
+  // Background dust layer — very subtle, slow, small
+  for (let i = 0; i < dustCount; i++) {
     particles.push({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      radius: Math.random() * 1.2 + 0.8,
-      opacity: Math.random() * 0.2 + 0.15,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      radius: Math.random() * 0.6 + 0.3,
+      opacity: Math.random() * 0.1 + 0.06,
+      kind: "dust",
+    })
+  }
+
+  // Foreground mote layer — more visible, varied, organic
+  for (let i = 0; i < moteCount; i++) {
+    particles.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      radius: Math.random() * 1.8 + 0.9,
+      opacity: Math.random() * 0.25 + 0.2,
+      kind: "mote",
     })
   }
 
   return particles
+}
+
+function drawCross(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  color: string
+) {
+  const half = size / 2
+  ctx.strokeStyle = color
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(x - half, y)
+  ctx.lineTo(x + half, y)
+  ctx.moveTo(x, y - half)
+  ctx.lineTo(x, y + half)
+  ctx.stroke()
 }
 
 export default function HeroParticles() {
@@ -75,26 +110,39 @@ export default function HeroParticles() {
           p.x += p.vx
           p.y += p.vy
 
-          if (p.x < -2) p.x = w + 2
-          if (p.x > w + 2) p.x = -2
-          if (p.y < -2) p.y = h + 2
-          if (p.y > h + 2) p.y = -2
+          if (p.x < -4) p.x = w + 4
+          if (p.x > w + 4) p.x = -4
+          if (p.y < -4) p.y = h + 4
+          if (p.y > h + 4) p.y = -4
         }
 
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-
-        const baseColor = "120, 140, 165"
-        if (p.opacity > 0.28) {
-          ctx.shadowBlur = 3
-          ctx.shadowColor = `rgba(${baseColor}, 0.25)`
+        if (p.kind === "dust") {
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(160, 175, 195, ${p.opacity})`
+          ctx.fill()
         } else {
-          ctx.shadowBlur = 0
-        }
+          // Motes: a mix of circles and subtle crosses for variety
+          const isCircle = Math.random() > 0.15 // 85% circles, 15% crosses
+          const color = `rgba(170, 190, 215, ${p.opacity})`
 
-        ctx.fillStyle = `rgba(${baseColor}, ${p.opacity})`
-        ctx.fill()
-        ctx.shadowBlur = 0
+          if (isCircle) {
+            ctx.beginPath()
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
+            ctx.fillStyle = color
+            ctx.fill()
+          } else {
+            drawCross(ctx, p.x, p.y, p.radius * 2.2, color)
+          }
+
+          // Soft glow on brighter motes
+          if (p.opacity > 0.32) {
+            ctx.beginPath()
+            ctx.arc(p.x, p.y, p.radius * 2.5, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(170, 190, 215, ${p.opacity * 0.12})`
+            ctx.fill()
+          }
+        }
       }
 
       animFrameId = requestAnimationFrame(draw)
