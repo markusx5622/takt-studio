@@ -5,6 +5,7 @@ import TaktChart from "@/components/TaktChart"
 import LineDiagram from "@/components/LineDiagram"
 import InsightsPanel from "@/components/InsightsPanel"
 import ImprovementPlan from "@/components/ImprovementPlan"
+import SensitivityLab from "@/components/SensitivityLab"
 
 export default function SimuladorPage() {
   return (
@@ -24,10 +25,13 @@ export default function SimuladorPage() {
       {/* ── 4. Propuestas de mejora ─────────────────────────────────────────── */}
       <ImprovementPlan />
 
-      {/* ── 5. Diagrama de flujo ────────────────────────────────────────────── */}
+      {/* ── 5. Laboratorio de sensibilidad ──────────────────────────────────── */}
+      <SensitivityLab />
+
+      {/* ── 6. Diagrama de flujo ────────────────────────────────────────────── */}
       <LineDiagram />
 
-      {/* ── 6. Análisis interpretativo ──────────────────────────────────────── */}
+      {/* ── 7. Análisis interpretativo ──────────────────────────────────────── */}
       <InsightsPanel />
     </div>
   )
