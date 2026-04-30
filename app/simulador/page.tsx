@@ -9,24 +9,38 @@ import ImprovementPlan from "@/components/ImprovementPlan"
 export default function SimuladorPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
+      {/* ── Top bar ─────────────────────────────────────────────────────────── */}
+      <ScenarioControls />
+
+      {/* ── Row 1: Station editor + KPIs ────────────────────────────────────── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        {/* Left column — 60% */}
-        <div className="space-y-6 lg:col-span-3">
-          <ScenarioControls />
+        <div className="lg:col-span-3">
           <StationEditor />
         </div>
-
-        {/* Right column — 40% */}
-        <div className="space-y-6 lg:col-span-2">
+        <div className="lg:col-span-2">
           <KpiPanel />
+        </div>
+      </div>
+
+      {/* ── Row 2: Chart + Improvement plan ─────────────────────────────────── */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        <div className="lg:col-span-3">
           <TaktChart />
+        </div>
+        <div className="lg:col-span-2">
           <ImprovementPlan />
         </div>
       </div>
 
-      {/* Full-width rows */}
-      <LineDiagram />
-      <InsightsPanel />
+      {/* ── Row 3: Line diagram + Insights ──────────────────────────────────── */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        <div className="lg:col-span-3">
+          <LineDiagram />
+        </div>
+        <div className="lg:col-span-2">
+          <InsightsPanel />
+        </div>
+      </div>
     </div>
   )
 }
