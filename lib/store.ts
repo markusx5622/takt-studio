@@ -2,7 +2,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { useState, useEffect } from "react"
 import type { Station, Scenario, AppState } from "@/types"
-import { createMonobathPreset } from "@/lib/presets"
+import { createMonobathPreset, createEmptyScenario } from "@/lib/presets"
 
 interface TaktStore extends AppState {
   // Escenarios
@@ -17,7 +17,7 @@ interface TaktStore extends AppState {
   ) => void
   updateScenario: (
     id: string,
-    updates: Partial<Pick<Scenario, "name" | "demandPerDay" | "shiftHours" | "shiftsPerDay">>
+    updates: Partial<Pick<Scenario, "name" | "demandPerDay" | "shiftHours" | "shiftsPerDay" | "economics">>
   ) => void
   setActiveScenario: (id: string) => void
   setCompareA: (id: string) => void
@@ -51,18 +51,10 @@ export const useTaktStore = create<TaktStore>()(
       ...createInitialState(),
 
       addScenario: (name: string) => {
-        const id = crypto.randomUUID()
-        const scenario: Scenario = {
-          id,
-          name,
-          stations: [],
-          demandPerDay: 8,
-          shiftHours: 8,
-          shiftsPerDay: 1,
-        }
+        const scenario = createEmptyScenario(name)
         set((state) => ({
           scenarios: [...state.scenarios, scenario],
-          activeScenarioId: state.activeScenarioId || id,
+          activeScenarioId: state.activeScenarioId || scenario.id,
         }))
       },
 

@@ -6,6 +6,8 @@ import {
   calculateBalancingEfficiency,
   calculateThroughput,
   calculateAllKPIs,
+  calculateEconomicKPIs,
+  calculateRecommendationEconomicImpact,
 } from "./calculations"
 import type { Scenario, Station } from "@/types"
 
@@ -20,13 +22,31 @@ function makeStation(
   return { id: id ?? `s${++_id}`, name, cycleTimeMin, operators, failureRate }
 }
 
+const DEFAULT_TEST_ECONOMICS = {
+  laborCostPerHour: 22,
+  contributionMarginPerUnit: 650,
+  reworkCostPerUnit: 120,
+  shiftFixedCostPerDay: 300,
+  methodImprovementOneOffCost: 2500,
+  qualityImprovementOneOffCost: 1800,
+  workingDaysPerMonth: 22,
+}
+
 function makeScenario(
   stations: Station[],
   demandPerDay: number,
   shiftHours: number,
   shiftsPerDay: number
 ): Scenario {
-  return { id: `sc${++_id}`, name: "Test", stations, demandPerDay, shiftHours, shiftsPerDay }
+  return {
+    id: `sc${++_id}`,
+    name: "Test",
+    stations,
+    demandPerDay,
+    shiftHours,
+    shiftsPerDay,
+    economics: { ...DEFAULT_TEST_ECONOMICS },
+  }
 }
 
 describe("calculateTaktTime", () => {
@@ -128,5 +148,85 @@ describe("calculateAllKPIs", () => {
     // Throughput < demand: effectiveCycle=60, available=480 → throughput=8 < demand=20
     const lowCap = makeScenario([makeStation(60, 1)], 20, 8, 1)
     expect(calculateAllKPIs(lowCap).meetsDemand).toBe(false)
+  })
+})
+
+describe("calculateEconomicKPIs", () => {
+  it("labor cost diario con 2 operarios, 8h, 1 turno", () => {
+    // 2 operarios * 8h * 1 turno = 16h → 16 * 22 = 352
+    const scenario = makeScenario([makeStation(60, 2)], 5, 8, 1)
+    const econ = calculateEconomicKPIs(scenario)
+    expect(econ.totalOperators).toBe(2)
+    expect(econ.laborHoursPerDay).toBe(16)
+    expect(econ.laborCostPerDay).toBe(352)
+  })
+
+  it("fulfilledUnits = min(throughput, demand)", () => {
+    // throughput=8, demand=5 → fulfilled=5
+    const lowCap = makeScenario([makeStation(60, 1)], 5, 8, 1)
+    const econ = calculateEconomicKPIs(lowCap)
+    expect(econ.fulfilledUnitsPerDay).toBe(5)
+    expect(econ.demandShortfallUnitsPerDay).toBe(0)
+  })
+
+  it("demandShortfall correcto cuando throughput < demand", () => {
+    // throughput=8, demand=20 → shortfall=12
+    const lowCap = makeScenario([makeStation(60, 1)], 20, 8, 1)
+    const econ = calculateEconomicKPIs(lowCap)
+    expect(econ.fulfilledUnitsPerDay).toBe(8)
+    expect(econ.demandShortfallUnitsPerDay).toBe(12)
+  })
+
+  it("profitProxy coherente (contribución − costes)", () => {
+    // 1 estación: 60min, 1 op, 0 failure → throughput=8, demand=5
+    // fulfilled=5 * 650 = 3250 contribution
+    // labor: 1*8*1=8h * 22 = 176
+    // shift: 1*300 = 300
+    // rework: 0 (no failure)
+    // total cost = 476
+    // profit proxy = 3250 - 476 = 2774
+    const scenario = makeScenario([makeStation(60, 1)], 5, 8, 1)
+    const econ = calculateEconomicKPIs(scenario)
+    expect(econ.fulfilledContributionPerDay).toBe(3250)
+    expect(econ.totalOperatingCostPerDay).toBe(476)
+    expect(econ.profitProxyPerDay).toBe(2774)
+  })
+})
+
+describe("calculateRecommendationEconomicImpact", () => {
+  it("net impact positivo de añadir un operario", () => {
+    // Base: 1 op, 60min → throughput 8, demand 10
+    // Projected: 2 ops, 60min → throughput 16, demand 10
+    const base = makeScenario([makeStation(60, 1)], 10, 8, 1)
+    const projected = makeScenario([makeStation(60, 2)], 10, 8, 1)
+    const impact = calculateRecommendationEconomicImpact(base, projected, "operators")
+    // Contribution delta: 10 * 650 - 10 * 650 = 0 (both fulfill all demand)
+    // Wait: base throughput = 8 < 10, projected = 16 ≥ 10
+    // Base fulfilled = 8 * 650 = 5200
+    // Projected fulfilled = 10 * 650 = 6500
+    // Labor delta: (2*8*1*22) - (1*8*1*22) = 352 - 176 = 176
+    // Net = 1300 - 176 = 1124
+    expect(impact.additionalContributionPerDay).toBe(1300)
+    expect(impact.additionalLaborCostPerDay).toBe(176)
+    expect(impact.netImpactPerDay).toBe(1124)
+    expect(impact.oneOffCost).toBe(0)
+    expect(impact.paybackDays).toBe(null)
+  })
+
+  it("paybackDays correcto para mejora de método", () => {
+    const base = makeScenario([makeStation(60, 1)], 10, 8, 1)
+    const projected = makeScenario([makeStation(60, 2)], 10, 8, 1)
+    const impact = calculateRecommendationEconomicImpact(base, projected, "cycle-time")
+    // oneOffCost = 2500, netImpact = 1124
+    expect(impact.oneOffCost).toBe(2500)
+    expect(impact.paybackDays).toBeCloseTo(2500 / 1124, 1)
+  })
+
+  it("paybackDays = null cuando netImpact <= 0", () => {
+    const base = makeScenario([makeStation(60, 1)], 5, 8, 1)
+    const projected = makeScenario([makeStation(60, 1)], 5, 8, 1)
+    const impact = calculateRecommendationEconomicImpact(base, projected, "cycle-time")
+    expect(impact.netImpactPerDay).toBe(0)
+    expect(impact.paybackDays).toBe(null)
   })
 })

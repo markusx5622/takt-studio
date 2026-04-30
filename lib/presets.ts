@@ -1,4 +1,14 @@
-import type { Scenario, Station } from "@/types"
+import type { Scenario, Station, EconomicInputs } from "@/types"
+
+const DEFAULT_ECONOMICS: EconomicInputs = {
+  laborCostPerHour: 22,
+  contributionMarginPerUnit: 650,
+  reworkCostPerUnit: 120,
+  shiftFixedCostPerDay: 300,
+  methodImprovementOneOffCost: 2500,
+  qualityImprovementOneOffCost: 1800,
+  workingDaysPerMonth: 22,
+}
 
 const MONOBATH_STATIONS: Omit<Station, "id">[] = [
   { name: "Estructura metálica y solera",          cycleTimeMin: 45, operators: 2, failureRate: 0.02 },
@@ -18,6 +28,7 @@ export function createMonobathPreset(): Scenario {
     demandPerDay: 8,
     shiftHours: 8,
     shiftsPerDay: 1,
+    economics: { ...DEFAULT_ECONOMICS },
   }
 }
 
@@ -29,5 +40,6 @@ export function createEmptyScenario(name: string): Scenario {
     demandPerDay: 8,
     shiftHours: 8,
     shiftsPerDay: 1,
+    economics: { ...DEFAULT_ECONOMICS },
   }
 }

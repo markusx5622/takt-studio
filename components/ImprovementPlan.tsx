@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { useTaktStore, useHydrated } from "@/lib/store"
-import { calculateAllKPIs, generateRecommendations } from "@/lib/calculations"
+import { calculateAllKPIs, generateRecommendations, simulateScenario, calculateRecommendationEconomicImpact } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import {
   Lightbulb,
   AlertTriangle,
   CheckCircle2,
+  Euro,
 } from "lucide-react"
 import type { ImprovementRecommendation, ImprovementPriority } from "@/types"
 
@@ -43,12 +44,29 @@ const PRIORITY_STYLES: Record<
 
 function RecommendationCard({
   rec,
+  scenario,
   onApply,
 }: {
   rec: ImprovementRecommendation
+  scenario: import("@/types").Scenario
   onApply: (rec: ImprovementRecommendation) => void
 }) {
   const styles = PRIORITY_STYLES[rec.priority]
+
+  // Mini ROI
+  const projectedScenario = useMemo(() => {
+    const stationChanges = rec.stationChanges?.map((c) => ({
+      stationId: c.originalStationId,
+      updates: c.updates,
+    }))
+    const { scenario: proj } = simulateScenario(scenario, stationChanges, rec.scenarioChanges)
+    return proj
+  }, [rec, scenario])
+
+  const economicImpact = useMemo(() => {
+    return calculateRecommendationEconomicImpact(scenario, projectedScenario, rec.type)
+  }, [scenario, projectedScenario, rec.type])
+
   const throughputPositive = rec.throughputDelta > 0
   const balancingPositive = rec.balancingDelta > 0
   const leadTimePositive = rec.leadTimeDelta < 0
@@ -152,6 +170,44 @@ function RecommendationCard({
           >
             {leadTimeDeltaText}
           </span>
+        </div>
+      </div>
+
+      {/* Mini ROI */}
+      <div className="mt-2 flex items-center justify-between rounded-md border bg-muted/20 px-2.5 py-1.5">
+        <div className="flex items-center gap-1.5">
+          <Euro className="h-3 w-3 text-primary" />
+          <span className="text-[10px] font-medium text-muted-foreground">Impacto neto</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "text-[11px] font-bold",
+              economicImpact.netImpactPerDay > 0
+                ? "text-green-600"
+                : economicImpact.netImpactPerDay < 0
+                  ? "text-red-600"
+                  : "text-muted-foreground"
+            )}
+          >
+            {economicImpact.netImpactPerDay > 0 ? "+" : ""}
+            {new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(economicImpact.netImpactPerDay)} €/día
+          </span>
+          {economicImpact.oneOffCost > 0 && economicImpact.paybackDays !== null && (
+            <Badge variant="outline" className="text-[9px]">
+              Payback {economicImpact.paybackDays.toFixed(1)} d
+            </Badge>
+          )}
+          {economicImpact.oneOffCost > 0 && economicImpact.paybackDays === null && (
+            <Badge variant="outline" className="text-[9px] text-muted-foreground">
+              Payback no aplicable
+            </Badge>
+          )}
+          {economicImpact.oneOffCost === 0 && (
+            <Badge variant="outline" className="text-[9px] text-muted-foreground">
+              Sin inversión inicial
+            </Badge>
+          )}
         </div>
       </div>
 
@@ -281,7 +337,7 @@ export default function ImprovementPlan() {
       <CardContent className="pb-5">
         <div className="flex gap-3 overflow-x-auto pb-2">
           {recommendations.map((rec) => (
-            <RecommendationCard key={rec.id} rec={rec} onApply={handleApply} />
+            <RecommendationCard key={rec.id} rec={rec} scenario={scenario} onApply={handleApply} />
           ))}
         </div>
       </CardContent>

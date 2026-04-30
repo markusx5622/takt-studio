@@ -1,4 +1,4 @@
-import { type Station, type Scenario, type KPIs, type StationWithEffective, type ImprovementRecommendation, type ImprovementType, type ImprovementPriority } from "@/types"
+import { type Station, type Scenario, type KPIs, type StationWithEffective, type ImprovementRecommendation, type ImprovementType, type ImprovementPriority, type EconomicInputs, type EconomicKPIs, type RecommendationEconomicImpact } from "@/types"
 
 /** Tiempo de ciclo efectivo considerando operarios y tasa de fallo */
 export function getEffectiveCycleTime(station: Station): number {
@@ -115,7 +115,7 @@ export function calculateAllKPIs(scenario: Scenario): KPIs {
 
 // ─── Plan de mejora ────────────────────────────────────────────────────────────
 
-function simulateScenario(
+export function simulateScenario(
   scenario: Scenario,
   stationChanges?: { stationId: string; updates: Partial<Omit<Station, "id">> }[],
   scenarioChanges?: Partial<Pick<Scenario, "shiftsPerDay">>
@@ -294,4 +294,124 @@ export function generateRecommendations(
       return b.throughputDelta - a.throughputDelta
     })
     .slice(0, 4)
+}
+
+// ─── Economic calculations ─────────────────────────────────────────────────────
+
+const DEFAULT_ECONOMICS: EconomicInputs = {
+  laborCostPerHour: 22,
+  contributionMarginPerUnit: 650,
+  reworkCostPerUnit: 120,
+  shiftFixedCostPerDay: 300,
+  methodImprovementOneOffCost: 2500,
+  qualityImprovementOneOffCost: 1800,
+  workingDaysPerMonth: 22,
+}
+
+function getEconomics(scenario: Scenario): EconomicInputs {
+  return scenario.economics ?? { ...DEFAULT_ECONOMICS }
+}
+
+/**
+ * Calcula KPIs económicos estimados a partir de un escenario.
+ *
+ * Fórmulas:
+ * - totalOperators = sum(operators)
+ * - laborHoursPerDay = totalOperators * shiftHours * shiftsPerDay
+ * - laborCostPerDay = laborHoursPerDay * laborCostPerHour
+ * - expectedReworkRate = weighted avg of failureRate by cycleTimeMin / totalCycleMin
+ * - fulfilledUnitsPerDay = min(throughputPerDay, demandPerDay)
+ * - demandShortfallUnitsPerDay = max(demandPerDay - throughputPerDay, 0)
+ * - reworkCostPerDay = fulfilledUnitsPerDay * expectedReworkRate * reworkCostPerUnit
+ * - fulfilledContributionPerDay = fulfilledUnitsPerDay * contributionMarginPerUnit
+ * - opportunityGapValuePerDay = demandShortfallUnitsPerDay * contributionMarginPerUnit
+ * - shiftCostPerDay = shiftsPerDay * shiftFixedCostPerDay
+ * - totalOperatingCostPerDay = laborCostPerDay + shiftCostPerDay + reworkCostPerDay
+ * - profitProxyPerDay = fulfilledContributionPerDay - totalOperatingCostPerDay
+ */
+export function calculateEconomicKPIs(scenario: Scenario, baseKpis?: KPIs): EconomicKPIs {
+  const kpis = baseKpis ?? calculateAllKPIs(scenario)
+  const economics = getEconomics(scenario)
+
+  const totalOperators = scenario.stations.reduce((sum, s) => sum + s.operators, 0)
+  const laborHoursPerDay = totalOperators * scenario.shiftHours * scenario.shiftsPerDay
+  const laborCostPerDay = laborHoursPerDay * economics.laborCostPerHour
+
+  const totalCycleMin = scenario.stations.reduce((sum, s) => sum + s.cycleTimeMin, 0)
+  const expectedReworkRate =
+    totalCycleMin > 0
+      ? scenario.stations.reduce((sum, s) => sum + s.cycleTimeMin * s.failureRate, 0) /
+        totalCycleMin
+      : 0
+
+  const fulfilledUnitsPerDay = Math.min(kpis.throughputPerDay, scenario.demandPerDay)
+  const demandShortfallUnitsPerDay = Math.max(scenario.demandPerDay - kpis.throughputPerDay, 0)
+
+  const reworkCostPerDay = fulfilledUnitsPerDay * expectedReworkRate * economics.reworkCostPerUnit
+  const fulfilledContributionPerDay = fulfilledUnitsPerDay * economics.contributionMarginPerUnit
+  const opportunityGapValuePerDay = demandShortfallUnitsPerDay * economics.contributionMarginPerUnit
+  const shiftCostPerDay = scenario.shiftsPerDay * economics.shiftFixedCostPerDay
+  const totalOperatingCostPerDay = laborCostPerDay + shiftCostPerDay + reworkCostPerDay
+  const profitProxyPerDay = fulfilledContributionPerDay - totalOperatingCostPerDay
+
+  return {
+    totalOperators,
+    laborHoursPerDay,
+    laborCostPerDay,
+    expectedReworkRate,
+    reworkCostPerDay,
+    fulfilledUnitsPerDay,
+    demandShortfallUnitsPerDay,
+    fulfilledContributionPerDay,
+    opportunityGapValuePerDay,
+    shiftCostPerDay,
+    totalOperatingCostPerDay,
+    profitProxyPerDay,
+  }
+}
+
+/**
+ * Calcula el impacto económico estimado de una recomendación comparando
+ * el escenario base con el escenario proyectado.
+ */
+export function calculateRecommendationEconomicImpact(
+  baseScenario: Scenario,
+  projectedScenario: Scenario,
+  recommendationType?: ImprovementType
+): RecommendationEconomicImpact {
+  const baseEcon = calculateEconomicKPIs(baseScenario)
+  const projEcon = calculateEconomicKPIs(projectedScenario)
+
+  const additionalContributionPerDay =
+    projEcon.fulfilledContributionPerDay - baseEcon.fulfilledContributionPerDay
+  const additionalLaborCostPerDay = projEcon.laborCostPerDay - baseEcon.laborCostPerDay
+  const additionalShiftCostPerDay = projEcon.shiftCostPerDay - baseEcon.shiftCostPerDay
+  const additionalReworkCostPerDay = projEcon.reworkCostPerDay - baseEcon.reworkCostPerDay
+
+  const netImpactPerDay =
+    additionalContributionPerDay -
+    additionalLaborCostPerDay -
+    additionalShiftCostPerDay -
+    additionalReworkCostPerDay
+
+  const economics = getEconomics(baseScenario)
+  let oneOffCost = 0
+  if (recommendationType === "cycle-time") {
+    oneOffCost = economics.methodImprovementOneOffCost
+  } else if (recommendationType === "failure-rate") {
+    oneOffCost = economics.qualityImprovementOneOffCost
+  }
+
+  const paybackDays =
+    oneOffCost > 0 && netImpactPerDay > 0 ? oneOffCost / netImpactPerDay : null
+
+  return {
+    additionalContributionPerDay,
+    additionalLaborCostPerDay,
+    additionalShiftCostPerDay,
+    additionalReworkCostPerDay,
+    netImpactPerDay,
+    oneOffCost,
+    paybackDays,
+  }
 }

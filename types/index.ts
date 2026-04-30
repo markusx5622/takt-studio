@@ -29,6 +29,53 @@ export type Scenario = {
   shiftHours: number
   /** Número de turnos por día (1, 2 o 3) */
   shiftsPerDay: number
+  /** Supuestos económicos del escenario */
+  economics: EconomicInputs
+}
+
+/** Supuestos económicos configurables por escenario */
+export type EconomicInputs = {
+  /** Coste laboral por hora (€) */
+  laborCostPerHour: number
+  /** Margen de contribución por unidad producida (€) */
+  contributionMarginPerUnit: number
+  /** Coste de reproceso por unidad defectuosa (€) */
+  reworkCostPerUnit: number
+  /** Coste fijo adicional por turno y día (€) */
+  shiftFixedCostPerDay: number
+  /** Coste one-off estimado para una mejora de método (€) */
+  methodImprovementOneOffCost: number
+  /** Coste one-off estimado para una mejora de calidad (€) */
+  qualityImprovementOneOffCost: number
+  /** Días laborables por mes para estimaciones mensuales */
+  workingDaysPerMonth: number
+}
+
+/** KPIs económicos calculados a partir de un escenario */
+export type EconomicKPIs = {
+  totalOperators: number
+  laborHoursPerDay: number
+  laborCostPerDay: number
+  expectedReworkRate: number
+  reworkCostPerDay: number
+  fulfilledUnitsPerDay: number
+  demandShortfallUnitsPerDay: number
+  fulfilledContributionPerDay: number
+  opportunityGapValuePerDay: number
+  shiftCostPerDay: number
+  totalOperatingCostPerDay: number
+  profitProxyPerDay: number
+}
+
+/** Impacto económico estimado de una recomendación de mejora */
+export type RecommendationEconomicImpact = {
+  additionalContributionPerDay: number
+  additionalLaborCostPerDay: number
+  additionalShiftCostPerDay: number
+  additionalReworkCostPerDay: number
+  netImpactPerDay: number
+  oneOffCost: number
+  paybackDays: number | null
 }
 
 /**
