@@ -379,15 +379,36 @@ function StationSelector({
   value,
   onChange,
   baseBottleneckId,
+  onSelectBaseBottleneck,
+  isBaseBottleneckSelected,
 }: {
   stations: Station[]
   value: string
   onChange: (id: string) => void
   baseBottleneckId?: string
+  onSelectBaseBottleneck?: () => void
+  isBaseBottleneckSelected?: boolean
 }) {
   return (
     <div className="rounded-lg border bg-muted/10 p-3">
-      <label className="text-xs font-medium text-foreground/80">Estación objetivo</label>
+      <div className="flex items-center justify-between gap-2">
+        <label className="text-xs font-medium text-foreground/80">Estación objetivo</label>
+        {onSelectBaseBottleneck && (
+          <button
+            type="button"
+            onClick={onSelectBaseBottleneck}
+            disabled={isBaseBottleneckSelected}
+            className={cn(
+              "text-[10px] font-medium transition-colors",
+              isBaseBottleneckSelected
+                ? "cursor-default text-muted-foreground/30"
+                : "text-primary hover:text-primary/80 hover:underline"
+            )}
+          >
+            Usar cuello de botella
+          </button>
+        )}
+      </div>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -400,7 +421,9 @@ function StationSelector({
         ))}
       </select>
       <p className="mt-1 text-[10px] text-muted-foreground/60">
-        Por defecto se toma la estación crítica actual. Puedes cambiarla manualmente.
+        {isBaseBottleneckSelected
+          ? "Estás trabajando sobre la estación crítica recomendada."
+          : "Puedes cambiar la estación manualmente o volver a la recomendada."}
       </p>
     </div>
   )
@@ -610,12 +633,16 @@ export default function SensitivityLab() {
               }
             />
 
-            {activeScenario && targetStationId && (
+            {activeScenario && targetStationId && baseKpis && (
               <StationSelector
                 stations={activeScenario.stations}
                 value={targetStationId}
                 onChange={(id) => setTargetStationId(id)}
-                baseBottleneckId={baseKpis?.bottleneckStationId}
+                baseBottleneckId={baseKpis.bottleneckStationId}
+                onSelectBaseBottleneck={() => {
+                  setTargetStationId(baseKpis.bottleneckStationId)
+                }}
+                isBaseBottleneckSelected={targetStationId === baseKpis.bottleneckStationId}
               />
             )}
 
