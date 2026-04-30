@@ -235,14 +235,17 @@ function StepCard({
 export default function Home() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
+      {/* Particle layer — covers entire landing page */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <HeroParticles />
+      </div>
+
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32">
+      <section className="relative z-10 flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32">
         {/* Ambient glow behind content */}
         <div className="pointer-events-none absolute inset-0 bg-hero-ambient" />
         {/* Focus glow around title area */}
         <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 bg-hero-glow" />
-        {/* Particle layer */}
-        <HeroParticles />
         {/* Eyebrow */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
           <span className="relative flex h-2 w-2">
@@ -314,7 +317,7 @@ export default function Home() {
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────────────────────────── */}
-      <section className="border-t border-border/50 bg-surface-technical px-4 py-20 md:py-24">
+      <section className="relative z-10 border-t border-border/50 bg-background/90 px-4 py-20 md:py-24">
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -349,7 +352,7 @@ export default function Home() {
       </section>
 
       {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────────── */}
-      <section className="border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
+      <section className="relative z-10 border-t border-border/50 bg-background/90 bg-grid-pattern-light px-4 py-20 md:py-24">
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Flujo de uso</h2>
@@ -382,7 +385,7 @@ export default function Home() {
       </section>
 
       {/* ── CAPABILITIES ─────────────────────────────────────────────────────── */}
-      <section className="border-t border-border/50 bg-surface-technical px-4 py-20 md:py-24">
+      <section className="relative z-10 border-t border-border/50 bg-background/90 px-4 py-20 md:py-24">
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Capacidades</h2>
@@ -427,7 +430,7 @@ export default function Home() {
       </section>
 
       {/* ── CREDIBILIDAD METODOLÓGICA ────────────────────────────────────────── */}
-      <section className="relative border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
+      <section className="relative z-10 border-t border-border/50 bg-background/90 bg-grid-pattern-light px-4 py-20 md:py-24">
         <div className="pointer-events-none absolute inset-0 bg-hero-glow opacity-60" />
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -448,7 +451,7 @@ export default function Home() {
       </section>
 
       {/* ── SOBRE ESTE PROYECTO ──────────────────────────────────────────────── */}
-      <section className="border-t border-border/50 bg-surface-technical px-4 py-16 md:py-20">
+      <section className="relative z-10 border-t border-border/50 bg-background/90 px-4 py-16 md:py-20">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-xl border bg-background p-8 shadow-sm md:p-12">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
@@ -514,7 +517,7 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
-      <footer className="bg-surface-technical px-4 py-8">
+      <footer className="relative z-10 bg-background/90 px-4 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-foreground/50 sm:flex-row">
           <span className="font-medium">Takt Studio · 2026</span>
           <span>Hecho con Next.js y desplegado en Vercel</span>
