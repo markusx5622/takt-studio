@@ -92,6 +92,23 @@
   @apply shadow-lg;
 }
 
+/* ─── Soft pulse for live indicator ────────────────────────────────────────── */
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.15);
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2.5s ease-in-out infinite;
+}
+
 /* ─── Technical surface patterns ───────────────────────────────────────────── */
 
 .bg-grid-pattern {

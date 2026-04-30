@@ -34,22 +34,24 @@ export default function Header() {
             <span className="text-lg font-bold">Takt Studio</span>
           </Link>
 
-          <nav className="hidden flex-1 justify-center gap-6 md:flex">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
-                  pathname === href
-                    ? "text-primary underline underline-offset-4"
-                    : "text-muted-foreground"
-                )}
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
+          {pathname !== "/" && (
+            <nav className="hidden flex-1 justify-center gap-6 md:flex">
+              {navLinks.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary",
+                    pathname === href
+                      ? "text-primary underline underline-offset-4"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          )}
 
           {pathname !== "/" && (
             <div className="ml-auto">
@@ -62,21 +64,23 @@ export default function Header() {
         </div>
       </header>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-background md:hidden">
-        {navLinks.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={cn(
-              "flex flex-1 flex-col items-center gap-1 py-3 text-xs font-medium transition-colors",
-              pathname === href ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            <Icon className="h-5 w-5" />
-            {label}
-          </Link>
-        ))}
-      </nav>
+      {pathname !== "/" && (
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-background md:hidden">
+          {navLinks.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                "flex flex-1 flex-col items-center gap-1 py-3 text-xs font-medium transition-colors",
+                pathname === href ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              <Icon className="h-5 w-5" />
+              {label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </>
   )
 }

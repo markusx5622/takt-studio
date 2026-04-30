@@ -242,7 +242,10 @@ export default function Home() {
         <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 bg-hero-glow" />
         {/* Eyebrow */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-40" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse-soft" />
+          </span>
           Ingeniería de Organización Industrial
         </div>
 
