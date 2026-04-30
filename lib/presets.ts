@@ -1,6 +1,6 @@
 import type { Scenario, Station, EconomicInputs } from "@/types"
 
-const DEFAULT_ECONOMICS: EconomicInputs = {
+export const DEFAULT_ECONOMICS: EconomicInputs = {
   laborCostPerHour: 22,
   contributionMarginPerUnit: 650,
   reworkCostPerUnit: 120,

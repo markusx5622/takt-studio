@@ -8,6 +8,7 @@ import {
   calculateAllKPIs,
   calculateEconomicKPIs,
   calculateRecommendationEconomicImpact,
+  normalizeEconomics,
 } from "./calculations"
 import type { Scenario, Station } from "@/types"
 
@@ -228,5 +229,28 @@ describe("calculateRecommendationEconomicImpact", () => {
     const impact = calculateRecommendationEconomicImpact(base, projected, "cycle-time")
     expect(impact.netImpactPerDay).toBe(0)
     expect(impact.paybackDays).toBe(null)
+  })
+})
+
+describe("normalizeEconomics", () => {
+  it("devuelve defaults cuando economics es undefined", () => {
+    const result = normalizeEconomics(undefined)
+    expect(result.laborCostPerHour).toBe(22)
+    expect(result.contributionMarginPerUnit).toBe(650)
+    expect(result.workingDaysPerMonth).toBe(22)
+  })
+
+  it("completa valores parciales manteniendo los proporcionados", () => {
+    const result = normalizeEconomics({ laborCostPerHour: 30 })
+    expect(result.laborCostPerHour).toBe(30)
+    expect(result.contributionMarginPerUnit).toBe(650)
+    expect(result.shiftFixedCostPerDay).toBe(300)
+  })
+
+  it("no muta el objeto original", () => {
+    const partial = { laborCostPerHour: 30 }
+    const result = normalizeEconomics(partial)
+    expect(result).not.toBe(partial)
+    expect(partial).toEqual({ laborCostPerHour: 30 })
   })
 })

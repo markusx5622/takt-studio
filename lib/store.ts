@@ -1,8 +1,8 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { useState, useEffect } from "react"
-import type { Station, Scenario, AppState } from "@/types"
-import { createMonobathPreset, createEmptyScenario } from "@/lib/presets"
+import type { Station, Scenario, AppState, EconomicInputs } from "@/types"
+import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS } from "@/lib/presets"
 
 interface TaktStore extends AppState {
   // Escenarios
@@ -212,7 +212,25 @@ export const useTaktStore = create<TaktStore>()(
 
       getScenarioById: (id: string) => get().scenarios.find((s) => s.id === id),
     }),
-    { name: "takt-studio-storage" }
+    {
+      name: "takt-studio-storage",
+      version: 1,
+      migrate: (persistedState: unknown, version: number) => {
+        if (version < 1) {
+          const state = persistedState as { scenarios?: Scenario[] }
+          if (state.scenarios) {
+            state.scenarios = state.scenarios.map((s) => ({
+              ...s,
+              economics: {
+                ...DEFAULT_ECONOMICS,
+                ...(s.economics ?? {}),
+              } as EconomicInputs,
+            }))
+          }
+        }
+        return persistedState as { scenarios: Scenario[]; activeScenarioId: string; compareScenarioAId: string; compareScenarioBId: string }
+      },
+    }
   )
 )
 

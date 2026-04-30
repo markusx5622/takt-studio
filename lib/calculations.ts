@@ -1,4 +1,5 @@
 import { type Station, type Scenario, type KPIs, type StationWithEffective, type ImprovementRecommendation, type ImprovementType, type ImprovementPriority, type EconomicInputs, type EconomicKPIs, type RecommendationEconomicImpact } from "@/types"
+import { DEFAULT_ECONOMICS } from "@/lib/presets"
 
 /** Tiempo de ciclo efectivo considerando operarios y tasa de fallo */
 export function getEffectiveCycleTime(station: Station): number {
@@ -298,18 +299,18 @@ export function generateRecommendations(
 
 // ─── Economic calculations ─────────────────────────────────────────────────────
 
-const DEFAULT_ECONOMICS: EconomicInputs = {
-  laborCostPerHour: 22,
-  contributionMarginPerUnit: 650,
-  reworkCostPerUnit: 120,
-  shiftFixedCostPerDay: 300,
-  methodImprovementOneOffCost: 2500,
-  qualityImprovementOneOffCost: 1800,
-  workingDaysPerMonth: 22,
+/** Normaliza un objeto economics parcial o undefined a un EconomicInputs completo. */
+export function normalizeEconomics(
+  economics?: Partial<EconomicInputs> | null
+): EconomicInputs {
+  return {
+    ...DEFAULT_ECONOMICS,
+    ...(economics ?? {}),
+  }
 }
 
 function getEconomics(scenario: Scenario): EconomicInputs {
-  return scenario.economics ?? { ...DEFAULT_ECONOMICS }
+  return normalizeEconomics(scenario.economics)
 }
 
 /**

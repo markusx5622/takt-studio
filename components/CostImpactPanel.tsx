@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { useTaktStore, useHydrated } from "@/lib/store"
-import { calculateAllKPIs, calculateEconomicKPIs } from "@/lib/calculations"
+import { calculateAllKPIs, calculateEconomicKPIs, normalizeEconomics } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -180,7 +180,7 @@ export default function CostImpactPanel() {
     )
   }
 
-  const economics = scenario.economics
+  const economics = normalizeEconomics(scenario.economics)
   const scenarioId = scenario.id
 
   function updateEcon(partial: Partial<EconomicInputs>) {
