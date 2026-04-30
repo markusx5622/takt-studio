@@ -250,16 +250,16 @@ export default function Home() {
         </div>
 
         {/* Title */}
-        <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-          Diseña, simula y optimiza{" "}
-          <span className="text-muted-foreground/50">tu línea de producción</span>
+        <h1 className="max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+          Optimiza tu línea
+          <span className="block text-muted-foreground/55">antes de tocarla</span>
         </h1>
 
         {/* Subtitle */}
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-foreground/70 sm:text-xl">
-          Takt Studio te permite modelar estaciones, detectar cuellos de botella
-          y comparar escenarios <em className="not-italic font-medium text-foreground/80">what-if</em> en minutos.{" "}
-          <span className="text-foreground/80">Sin tocar la línea real.</span>
+        <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-foreground/70 sm:text-xl">
+          Simula estaciones, detecta cuellos de botella y compara escenarios{" "}
+          <em className="not-italic font-medium text-foreground/80">what-if</em>.{" "}
+          Decisiones con datos, sin tocar la planta.
         </p>
 
         {/* CTAs */}
