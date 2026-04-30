@@ -13,9 +13,14 @@ import {
   Save,
   AlertTriangle,
   CheckCircle2,
+  TrendingUp,
+  TrendingDown,
   Minus,
   ArrowUpRight,
   ArrowDownRight,
+  Gauge,
+  Clock,
+  BarChart3,
 } from "lucide-react"
 import type { Scenario, Station, KPIs } from "@/types"
 
@@ -28,9 +33,126 @@ function cloneScenario(scenario: Scenario): Scenario {
   }
 }
 
-// ─── Delta badge ───────────────────────────────────────────────────────────────
+// ─── Impact summary ────────────────────────────────────────────────────────────
 
-function DeltaRow({
+function ImpactSummary({ baseKpis, labKpis }: { baseKpis: KPIs; labKpis: KPIs }) {
+  const throughputDelta = labKpis.throughputPerDay - baseKpis.throughputPerDay
+  const passedToMeet = !baseKpis.meetsDemand && labKpis.meetsDemand
+  const lostMeeting = baseKpis.meetsDemand && !labKpis.meetsDemand
+
+  let tone: "positive" | "negative" | "neutral" = "neutral"
+  if (passedToMeet || throughputDelta >= 5) tone = "positive"
+  else if (lostMeeting || throughputDelta <= -5) tone = "negative"
+
+  const bgClass =
+    tone === "positive"
+      ? "border-green-200/60 bg-green-50/50"
+      : tone === "negative"
+        ? "border-red-200/60 bg-red-50/50"
+        : "border-border bg-muted/20"
+
+  const iconColor =
+    tone === "positive" ? "text-green-600" : tone === "negative" ? "text-red-600" : "text-muted-foreground"
+
+  const textColor =
+    tone === "positive"
+      ? "text-green-800"
+      : tone === "negative"
+        ? "text-red-800"
+        : "text-foreground/80"
+
+  return (
+    <div className={cn("mb-3 rounded-lg border px-3 py-2.5", bgClass)}>
+      <div className="flex items-center gap-2">
+        {tone === "positive" ? (
+          <TrendingUp className={cn("h-4 w-4 shrink-0", iconColor)} />
+        ) : tone === "negative" ? (
+          <TrendingDown className={cn("h-4 w-4 shrink-0", iconColor)} />
+        ) : (
+          <Minus className={cn("h-4 w-4 shrink-0", iconColor)} />
+        )}
+        <p className={cn("text-xs font-medium leading-snug", textColor)}>
+          {passedToMeet
+            ? `La simulación proyecta +${throughputDelta} uds/día. La línea pasa a cumplir la demanda.`
+            : lostMeeting
+              ? `La simulación proyecta ${throughputDelta} uds/día. La línea deja de cumplir la demanda.`
+              : throughputDelta > 0
+                ? `La simulación proyecta +${throughputDelta} uds/día de throughput.`
+                : throughputDelta < 0
+                  ? `La simulación proyecta ${throughputDelta} uds/día de throughput.`
+                  : "La simulación no altera significativamente el throughput."}
+          {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId &&
+            " El cuello de botella cambia de estación."}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ─── Primary KPI card ──────────────────────────────────────────────────────────
+
+function PrimaryKpi({
+  icon: Icon,
+  label,
+  current,
+  projected,
+  unit,
+  format,
+  better,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  current: number
+  projected: number
+  unit?: string
+  format: (v: number) => string
+  better: "higher" | "lower" | "none"
+}) {
+  const delta = projected - current
+  const hasChange = Math.abs(delta) >= 0.01
+  const isBetter =
+    better === "higher" ? delta > 0 : better === "lower" ? delta < 0 : false
+  const isWorse =
+    better === "higher" ? delta < 0 : better === "lower" ? delta > 0 : false
+
+  return (
+    <div className="flex flex-col rounded-lg border bg-background p-3">
+      <div className="mb-1.5 flex items-center gap-1.5">
+        <Icon className="h-3.5 w-3.5 text-primary" />
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {label}
+        </span>
+      </div>
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-lg font-bold tabular-nums">{format(projected)}</span>
+        {unit && <span className="text-[10px] text-muted-foreground">{unit}</span>}
+      </div>
+      <div className="mt-0.5 flex items-center gap-1.5">
+        <span className="text-[10px] text-muted-foreground">{format(current)} actual</span>
+        {hasChange && (
+          <span
+            className={cn(
+              "inline-flex items-center gap-0.5 text-[10px] font-bold",
+              isBetter ? "text-green-600" : isWorse ? "text-red-600" : "text-muted-foreground"
+            )}
+          >
+            {isBetter ? (
+              <ArrowUpRight className="h-2.5 w-2.5" />
+            ) : isWorse ? (
+              <ArrowDownRight className="h-2.5 w-2.5" />
+            ) : null}
+            {delta > 0 ? "+" : ""}
+            {format(delta)}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Secondary delta row ───────────────────────────────────────────────────────
+
+function SecondaryDelta({
   label,
   current,
   projected,
@@ -54,27 +176,20 @@ function DeltaRow({
     decimals === 0 ? String(Math.round(v)) : v.toFixed(decimals)
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md border bg-muted/20 px-3 py-2">
-      <span className="text-xs font-medium text-muted-foreground">{label}</span>
-      <div className="flex items-center gap-2 text-right">
-        <span className="text-xs text-muted-foreground">{fmt(current)}</span>
-        <span className="text-xs text-muted-foreground/50">→</span>
-        <span className="text-sm font-semibold">{fmt(projected)}</span>
+    <div className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-1.5">
+      <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-[11px] text-muted-foreground/70">{fmt(current)}</span>
+        <span className="text-[10px] text-muted-foreground/40">→</span>
+        <span className="text-xs font-semibold">{fmt(projected)}</span>
         {unit && <span className="text-[10px] text-muted-foreground">{unit}</span>}
         {hasChange && (
           <span
             className={cn(
-              "inline-flex items-center gap-0.5 text-[10px] font-bold",
+              "text-[10px] font-semibold",
               isBetter ? "text-green-600" : isWorse ? "text-red-600" : "text-muted-foreground"
             )}
           >
-            {isBetter ? (
-              <ArrowUpRight className="h-3 w-3" />
-            ) : isWorse ? (
-              <ArrowDownRight className="h-3 w-3" />
-            ) : (
-              <Minus className="h-3 w-3" />
-            )}
             {delta > 0 ? "+" : ""}
             {fmt(delta)}
           </span>
@@ -84,7 +199,7 @@ function DeltaRow({
   )
 }
 
-// ─── Control slider ────────────────────────────────────────────────────────────
+// ─── LabControl (refined) ──────────────────────────────────────────────────────
 
 function LabControl({
   label,
@@ -108,10 +223,15 @@ function LabControl({
   const pct = max > min ? ((value - min) / (max - min)) * 100 : 0
 
   return (
-    <div className={cn("space-y-1.5", disabled && "opacity-50 pointer-events-none")}>
-      <div className="flex items-center justify-between">
+    <div
+      className={cn(
+        "rounded-lg border bg-muted/10 p-3 transition-opacity",
+        disabled && "opacity-50 pointer-events-none"
+      )}
+    >
+      <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-medium text-foreground/80">{label}</span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <input
             type="number"
             value={value}
@@ -122,12 +242,12 @@ function LabControl({
               const v = parseFloat(e.target.value)
               if (!isNaN(v)) onChange(Math.min(max, Math.max(min, v)))
             }}
-            className="h-7 w-16 rounded-md border bg-background px-1.5 text-right text-xs font-semibold tabular-nums focus:outline-none focus:ring-1 focus:ring-ring"
+            className="h-7 w-14 rounded-md border bg-background px-1.5 text-right text-xs font-bold tabular-nums focus:outline-none focus:ring-1 focus:ring-ring"
           />
           {unit && <span className="text-[10px] text-muted-foreground">{unit}</span>}
         </div>
       </div>
-      <div className="relative h-5">
+      <div className="relative mt-2 h-4">
         <input
           type="range"
           min={min}
@@ -135,12 +255,12 @@ function LabControl({
           step={step}
           value={value}
           onChange={(e) => onChange(parseFloat(e.target.value))}
-          className="absolute inset-0 h-full w-full cursor-pointer appearance-none bg-transparent focus:outline-none"
+          className="absolute inset-0 h-full w-full cursor-pointer appearance-none bg-transparent focus:outline-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:bg-background [&::-webkit-slider-thumb]:shadow-sm [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary [&::-moz-range-thumb]:bg-background [&::-moz-range-thumb]:shadow-sm"
           style={{
             background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${pct}%, hsl(var(--muted)) ${pct}%, hsl(var(--muted)) 100%)`,
             borderRadius: "9999px",
-            height: "6px",
-            marginTop: "7px",
+            height: "5px",
+            marginTop: "5px",
           }}
         />
       </div>
@@ -148,7 +268,7 @@ function LabControl({
   )
 }
 
-// ─── Shift selector ────────────────────────────────────────────────────────────
+// ─── Shift selector (refined) ──────────────────────────────────────────────────
 
 function ShiftSelector({
   value,
@@ -158,21 +278,21 @@ function ShiftSelector({
   onChange: (v: number) => void
 }) {
   return (
-    <div className="space-y-1.5">
+    <div className="rounded-lg border bg-muted/10 p-3">
       <span className="text-xs font-medium text-foreground/80">Turnos por día</span>
-      <div className="flex gap-2">
+      <div className="mt-2 flex gap-1.5">
         {[1, 2, 3].map((n) => (
           <button
             key={n}
             onClick={() => onChange(n)}
             className={cn(
-              "flex-1 rounded-md border px-3 py-1.5 text-xs font-semibold transition-all",
+              "flex-1 rounded-md border px-2 py-1.5 text-[11px] font-semibold transition-all",
               value === n
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border bg-background text-muted-foreground hover:bg-muted"
             )}
           >
-            {n} turno{n > 1 ? "s" : ""}
+            {n}
           </button>
         ))}
       </div>
@@ -190,15 +310,15 @@ function SensitivityLabSkeleton() {
         <div className="h-5 w-48 animate-pulse rounded bg-muted" />
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
-          <div className="space-y-4 md:col-span-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-5">
+          <div className="space-y-3 md:col-span-2">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-12 animate-pulse rounded bg-muted" />
+              <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
             ))}
           </div>
-          <div className="space-y-3 md:col-span-3">
+          <div className="space-y-2 md:col-span-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-10 animate-pulse rounded bg-muted" />
+              <div key={i} className="h-8 animate-pulse rounded bg-muted" />
             ))}
           </div>
         </div>
@@ -218,7 +338,6 @@ export default function SensitivityLab() {
 
   const [labScenario, setLabScenario] = useState<Scenario | null>(null)
 
-  // Sync labScenario when active scenario changes
   useEffect(() => {
     if (activeScenario) {
       setLabScenario(cloneScenario(activeScenario))
@@ -279,7 +398,6 @@ export default function SensitivityLab() {
     if (labScenario.shiftsPerDay !== activeScenario.shiftsPerDay)
       scenarioChanges.shiftsPerDay = labScenario.shiftsPerDay
 
-    // Use a more specific name if only one thing changed
     const diffs: string[] = []
     if (scenarioChanges.demandPerDay !== undefined) diffs.push(`demanda ${labScenario.demandPerDay}`)
     if (scenarioChanges.shiftHours !== undefined) diffs.push(`horas ${labScenario.shiftHours}h`)
@@ -342,9 +460,9 @@ export default function SensitivityLab() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
-          {/* ── Controls column ───────────────────────────────────────────── */}
-          <div className="space-y-5 md:col-span-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-5">
+          {/* ── Controls ────────────────────────────────────────────────────── */}
+          <div className="space-y-3 md:col-span-2">
             <LabControl
               label="Demanda diaria"
               value={labScenario.demandPerDay}
@@ -422,20 +540,19 @@ export default function SensitivityLab() {
             )}
 
             {/* Actions */}
-            <div className="flex gap-2 pt-2">
+            <div className="flex items-center gap-2 pt-1">
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-1.5 text-xs"
+                className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
                 onClick={handleReset}
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 Restablecer
               </Button>
               <Button
-                variant="outline"
                 size="sm"
-                className="ml-auto gap-1.5 text-xs transition-all hover:bg-muted hover:border-foreground/20"
+                className="ml-auto gap-1.5 text-xs shadow-sm transition-all hover:shadow-md"
                 onClick={handleSave}
               >
                 <Save className="h-3.5 w-3.5" />
@@ -444,112 +561,110 @@ export default function SensitivityLab() {
             </div>
           </div>
 
-          {/* ── KPI comparison column ─────────────────────────────────────── */}
-          <div className="space-y-2.5 md:col-span-3">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Comparación de KPIs
-              </span>
-              <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-green-500" />
-                  Mejora
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-red-500" />
-                  Empeora
-                </span>
-              </div>
-            </div>
+          {/* ── Impact ──────────────────────────────────────────────────────── */}
+          <div className="space-y-2 md:col-span-3">
+            <ImpactSummary baseKpis={baseKpis} labKpis={labKpis} />
 
-            <DeltaRow
-              label="Takt time"
-              current={baseKpis.taktTimeMin}
-              projected={labKpis.taktTimeMin}
-              unit="min/ud"
-              invert
-              decimals={1}
-            />
-            <DeltaRow
-              label="Throughput"
-              current={baseKpis.throughputPerDay}
-              projected={labKpis.throughputPerDay}
-              unit="uds/día"
-              decimals={0}
-            />
-            <DeltaRow
-              label="Eficiencia de balanceo"
-              current={baseKpis.balancingEfficiency * 100}
-              projected={labKpis.balancingEfficiency * 100}
-              unit="%"
-              decimals={1}
-            />
-            <DeltaRow
-              label="Lead time"
-              current={baseKpis.leadTimeMin}
-              projected={labKpis.leadTimeMin}
-              unit="min"
-              invert
-              decimals={1}
-            />
-
-            {/* Demand status */}
-            <div className="flex items-center justify-between gap-3 rounded-md border bg-muted/20 px-3 py-2">
-              <span className="text-xs font-medium text-muted-foreground">Cumplimiento de demanda</span>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5">
-                  {baseKpis.meetsDemand ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
-                  ) : (
-                    <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />
-                  )}
-                  <span className="text-xs text-muted-foreground">
-                    {baseKpis.meetsDemand ? "Cumple" : "No cumple"}
+            {/* Primary KPIs */}
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <PrimaryKpi
+                icon={TrendingUp}
+                label="Throughput"
+                current={baseKpis.throughputPerDay}
+                projected={labKpis.throughputPerDay}
+                unit="uds/día"
+                format={(v) => String(Math.round(v))}
+                better="higher"
+              />
+              <div className="flex flex-col rounded-lg border bg-background p-3">
+                <div className="mb-1.5 flex items-center gap-1.5">
+                  <Gauge className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Demanda
                   </span>
                 </div>
-                <span className="text-xs text-muted-foreground/40">→</span>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-baseline gap-1.5">
                   {labKpis.meetsDemand ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
                   ) : (
-                    <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />
+                    <ArrowDownRight className="h-4 w-4 text-red-500" />
                   )}
                   <span
                     className={cn(
-                      "text-xs font-semibold",
-                      labKpis.meetsDemand ? "text-green-600" : "text-red-600"
+                      "text-sm font-bold",
+                      labKpis.meetsDemand ? "text-green-700" : "text-red-700"
                     )}
                   >
                     {labKpis.meetsDemand ? "Cumple" : "No cumple"}
                   </span>
+                </div>
+                <div className="mt-0.5 flex items-center gap-1">
+                  <span className="text-[10px] text-muted-foreground">
+                    {baseKpis.meetsDemand ? "Cumple" : "No cumple"} actual
+                  </span>
                   {labKpis.meetsDemand && !baseKpis.meetsDemand && (
-                    <Badge variant="outline" className="bg-green-50 text-[10px] text-green-700">
-                      Pasa a cumplir
+                    <Badge variant="outline" className="bg-green-50 text-[9px] text-green-700">
+                      +cumple
                     </Badge>
                   )}
                   {!labKpis.meetsDemand && baseKpis.meetsDemand && (
-                    <Badge variant="outline" className="bg-red-50 text-[10px] text-red-700">
-                      Deja de cumplir
+                    <Badge variant="outline" className="bg-red-50 text-[9px] text-red-700">
+                      -cumple
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col rounded-lg border bg-background p-3">
+                <div className="mb-1.5 flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Bottleneck
+                  </span>
+                </div>
+                <span className="truncate text-sm font-bold" title={labKpis.bottleneckStationName}>
+                  {labKpis.bottleneckStationName}
+                </span>
+                <div className="mt-0.5 flex items-center gap-1.5">
+                  <span className="text-[10px] text-muted-foreground">
+                    {labKpis.bottleneckCycleMin.toFixed(1)} min
+                  </span>
+                  {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId && (
+                    <Badge variant="outline" className="text-[9px]">
+                      Cambia
                     </Badge>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Bottleneck */}
-            <div className="flex items-center justify-between gap-3 rounded-md border bg-muted/20 px-3 py-2">
-              <span className="text-xs font-medium text-muted-foreground">Cuello de botella</span>
-              <div className="text-right">
-                <span className="text-xs font-semibold">{labKpis.bottleneckStationName}</span>
-                <span className="ml-1.5 text-[10px] text-muted-foreground">
-                  {labKpis.bottleneckCycleMin.toFixed(1)} min
-                </span>
-                {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId && (
-                  <Badge variant="outline" className="ml-2 text-[10px]">
-                    Cambia
-                  </Badge>
-                )}
-              </div>
+            {/* Secondary KPIs */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                Métricas secundarias
+              </span>
+              <SecondaryDelta
+                label="Takt time"
+                current={baseKpis.taktTimeMin}
+                projected={labKpis.taktTimeMin}
+                unit="min/ud"
+                invert
+                decimals={1}
+              />
+              <SecondaryDelta
+                label="Eficiencia de balanceo"
+                current={baseKpis.balancingEfficiency * 100}
+                projected={labKpis.balancingEfficiency * 100}
+                unit="%"
+                decimals={1}
+              />
+              <SecondaryDelta
+                label="Lead time"
+                current={baseKpis.leadTimeMin}
+                projected={labKpis.leadTimeMin}
+                unit="min"
+                invert
+                decimals={1}
+              />
             </div>
           </div>
         </div>
