@@ -173,7 +173,7 @@ function FeatureCard({
         <Icon className="h-5 w-5 text-primary transition-colors" />
       </div>
       <h3 className="mb-2 text-base font-semibold tracking-tight">{title}</h3>
-      <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+      <p className="text-sm leading-relaxed text-foreground/70">{description}</p>
     </div>
   )
 }
@@ -196,7 +196,7 @@ function CapabilityItem({
       </div>
       <div>
         <p className="text-sm font-semibold">{title}</p>
-        <p className="text-xs leading-relaxed text-muted-foreground">{description}</p>
+        <p className="text-xs leading-relaxed text-foreground/65">{description}</p>
       </div>
     </div>
   )
@@ -224,7 +224,7 @@ function StepCard({
         <Icon className="h-5 w-5 text-primary" />
       </div>
       <h3 className="mb-1 text-sm font-semibold">{title}</h3>
-      <p className="max-w-[16rem] text-xs leading-relaxed text-muted-foreground">{description}</p>
+      <p className="max-w-[16rem] text-xs leading-relaxed text-foreground/70">{description}</p>
     </div>
   )
 }
@@ -255,7 +255,7 @@ export default function Home() {
         </h1>
 
         {/* Subtitle */}
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-foreground/70 sm:text-xl">
           Takt Studio te permite modelar estaciones, detectar cuellos de botella
           y comparar escenarios <em className="not-italic font-medium text-foreground/80">what-if</em> en minutos.{" "}
           <span className="text-foreground/80">Sin tocar la línea real.</span>
@@ -284,7 +284,7 @@ export default function Home() {
         </div>
 
         {/* Metadata strip */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/60">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-foreground/50">
           <span className="inline-flex items-center gap-1.5">
             <CheckCircle2 className="h-3 w-3" />
             Cálculo en tiempo real
@@ -314,7 +314,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
               Análisis operativo en tiempo real
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-foreground/60">
               Fundamentos de Ingeniería de Organización Industrial aplicados a la toma de decisiones
             </p>
           </div>
@@ -347,7 +347,7 @@ export default function Home() {
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Flujo de uso</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-foreground/60">
               De la definición a la decisión en tres pasos
             </p>
           </div>
@@ -380,7 +380,7 @@ export default function Home() {
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Capacidades</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-foreground/60">
               Todo lo que incluye Takt Studio desde el primer acceso
             </p>
           </div>
@@ -426,7 +426,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
             Validación antes de la inversión
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          <p className="mt-4 text-base leading-relaxed text-foreground/70">
             Takt Studio parte de una{" "}
             <span className="font-medium text-foreground">plantilla Monobath calibrada</span>{" "}
             como demostración del método. Puedes ajustar cada parámetro con datos reales de tu
@@ -441,16 +441,16 @@ export default function Home() {
       </section>
 
       {/* ── SOBRE ESTE PROYECTO ──────────────────────────────────────────────── */}
-      <section className="border-t bg-muted/20 px-4 py-20 md:py-24">
+      <section className="border-t bg-muted/20 px-4 py-16 md:py-20">
         <div className="mx-auto max-w-4xl">
-          <div className="rounded-xl border bg-background p-8 shadow-sm md:p-10">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
+          <div className="rounded-xl border bg-background p-8 shadow-sm md:p-12">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
               {/* Text */}
               <div className="flex flex-col justify-center">
                 <h2 className="text-xl font-bold tracking-tight md:text-2xl">
                   Sobre este proyecto
                 </h2>
-                <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                <div className="mt-4 space-y-3 text-sm leading-relaxed text-foreground/70">
                   <p>
                     Takt Studio es un prototipo funcional de simulación y análisis de líneas de
                     producción industrializada. Permite modelar estaciones, calcular KPIs operativos
@@ -469,11 +469,11 @@ export default function Home() {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col justify-center gap-3">
+              <div className="flex flex-col justify-center gap-3.5">
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full justify-start gap-2 transition-all duration-200 hover:bg-muted hover:border-primary/30"
+                  className="h-11 w-full justify-start gap-2.5 rounded-lg border-foreground/15 bg-muted/30 px-5 text-sm transition-all duration-200 hover:bg-muted hover:border-foreground/25"
                 >
                   <a
                     href="https://github.com/markusx5622/takt-studio"
@@ -482,13 +482,13 @@ export default function Home() {
                     aria-label="Ver repositorio en GitHub"
                   >
                     <Code2 className="h-4 w-4 text-primary" />
-                    <span className="font-medium">Ver repositorio</span>
+                    <span className="font-medium text-foreground/90">Ver repositorio</span>
                   </a>
                 </Button>
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full justify-start gap-2 transition-all duration-200 hover:bg-muted hover:border-primary/30"
+                  className="h-11 w-full justify-start gap-2.5 rounded-lg border-foreground/15 bg-muted/30 px-5 text-sm transition-all duration-200 hover:bg-muted hover:border-foreground/25"
                 >
                   <a
                     href="https://www.linkedin.com/in/marc-cubero-cantavella-bb04542a7"
@@ -497,7 +497,7 @@ export default function Home() {
                     aria-label="Ver perfil de LinkedIn"
                   >
                     <Briefcase className="h-4 w-4 text-primary" />
-                    <span className="font-medium">Perfil de LinkedIn</span>
+                    <span className="font-medium text-foreground/90">Perfil de LinkedIn</span>
                   </a>
                 </Button>
               </div>
@@ -507,8 +507,8 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
-      <footer className="border-t px-4 py-6">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-row">
+      <footer className="border-t px-4 py-8">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-foreground/50 sm:flex-row">
           <span className="font-medium">Takt Studio · 2026</span>
           <span>Hecho con Next.js y desplegado en Vercel</span>
         </div>
