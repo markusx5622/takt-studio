@@ -21,6 +21,8 @@ import {
   Gauge,
   Clock,
   BarChart3,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 import type { Scenario, Station, KPIs } from "@/types"
 
@@ -33,12 +35,15 @@ function cloneScenario(scenario: Scenario): Scenario {
   }
 }
 
-// ─── Impact summary ────────────────────────────────────────────────────────────
+// ─── Impact summary (refined) ──────────────────────────────────────────────────
 
 function ImpactSummary({ baseKpis, labKpis }: { baseKpis: KPIs; labKpis: KPIs }) {
   const throughputDelta = labKpis.throughputPerDay - baseKpis.throughputPerDay
   const passedToMeet = !baseKpis.meetsDemand && labKpis.meetsDemand
   const lostMeeting = baseKpis.meetsDemand && !labKpis.meetsDemand
+  const bnChanged = labKpis.bottleneckStationId !== baseKpis.bottleneckStationId
+  const leadDelta = labKpis.leadTimeMin - baseKpis.leadTimeMin
+  const balDelta = (labKpis.balancingEfficiency - baseKpis.balancingEfficiency) * 100
 
   let tone: "positive" | "negative" | "neutral" = "neutral"
   if (passedToMeet || throughputDelta >= 5) tone = "positive"
@@ -61,29 +66,44 @@ function ImpactSummary({ baseKpis, labKpis }: { baseKpis: KPIs; labKpis: KPIs })
         ? "text-red-800"
         : "text-foreground/80"
 
+  const parts: string[] = []
+
+  if (Math.abs(throughputDelta) >= 1) {
+    parts.push(
+      throughputDelta > 0
+        ? `proyecta +${throughputDelta} uds/día`
+        : `proyecta ${throughputDelta} uds/día`
+    )
+  }
+
+  if (passedToMeet) parts.push("la línea pasa a cumplir la demanda")
+  if (lostMeeting) parts.push("la línea deja de cumplir la demanda")
+
+  if (!passedToMeet && !lostMeeting && Math.abs(leadDelta) >= 2) {
+    parts.push(leadDelta < 0 ? `reduce el lead time en ${Math.abs(leadDelta).toFixed(1)} min` : `aumenta el lead time en ${leadDelta.toFixed(1)} min`)
+  }
+
+  if (!passedToMeet && !lostMeeting && Math.abs(balDelta) >= 3) {
+    parts.push(balDelta > 0 ? `mejora el balanceo en ${balDelta.toFixed(1)} pp` : `empeora el balanceo en ${Math.abs(balDelta).toFixed(1)} pp`)
+  }
+
+  if (bnChanged) {
+    parts.push(`el bottleneck pasa a ser ${labKpis.bottleneckStationName}`)
+  }
+
+  const sentence = parts.length > 0 ? `La simulación ${parts.join(", ")}.` : "La simulación no altera significativamente el sistema."
+
   return (
     <div className={cn("mb-3 rounded-lg border px-3 py-2.5", bgClass)}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-start gap-2">
         {tone === "positive" ? (
-          <TrendingUp className={cn("h-4 w-4 shrink-0", iconColor)} />
+          <TrendingUp className={cn("mt-0.5 h-4 w-4 shrink-0", iconColor)} />
         ) : tone === "negative" ? (
-          <TrendingDown className={cn("h-4 w-4 shrink-0", iconColor)} />
+          <TrendingDown className={cn("mt-0.5 h-4 w-4 shrink-0", iconColor)} />
         ) : (
-          <Minus className={cn("h-4 w-4 shrink-0", iconColor)} />
+          <Minus className={cn("mt-0.5 h-4 w-4 shrink-0", iconColor)} />
         )}
-        <p className={cn("text-xs font-medium leading-snug", textColor)}>
-          {passedToMeet
-            ? `La simulación proyecta +${throughputDelta} uds/día. La línea pasa a cumplir la demanda.`
-            : lostMeeting
-              ? `La simulación proyecta ${throughputDelta} uds/día. La línea deja de cumplir la demanda.`
-              : throughputDelta > 0
-                ? `La simulación proyecta +${throughputDelta} uds/día de throughput.`
-                : throughputDelta < 0
-                  ? `La simulación proyecta ${throughputDelta} uds/día de throughput.`
-                  : "La simulación no altera significativamente el throughput."}
-          {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId &&
-            " El cuello de botella cambia de estación."}
-        </p>
+        <p className={cn("text-xs font-medium leading-snug", textColor)}>{sentence}</p>
       </div>
     </div>
   )
@@ -187,6 +207,58 @@ function SecondaryDelta({
           <span
             className={cn(
               "text-[10px] font-semibold",
+              isBetter ? "text-green-600" : isWorse ? "text-red-600" : "text-muted-foreground"
+            )}
+          >
+            {delta > 0 ? "+" : ""}
+            {fmt(delta)}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Detail row (for accordion) ────────────────────────────────────────────────
+
+function DetailRow({
+  label,
+  current,
+  projected,
+  unit,
+  invert,
+  decimals = 1,
+  formatCustom,
+}: {
+  label: string
+  current: number
+  projected: number
+  unit?: string
+  invert?: boolean
+  decimals?: number
+  formatCustom?: (v: number) => string
+}) {
+  const delta = projected - current
+  const isBetter = invert ? delta < 0 : delta > 0
+  const isWorse = invert ? delta > 0 : delta < 0
+  const hasChange = Math.abs(delta) >= 0.01
+
+  const fmt =
+    formatCustom ??
+    ((v: number) => (decimals === 0 ? String(Math.round(v)) : v.toFixed(decimals)))
+
+  return (
+    <div className="flex items-center justify-between border-b border-border/40 px-2 py-1 last:border-0">
+      <span className="text-[11px] text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-[11px] tabular-nums text-muted-foreground/70">{fmt(current)}</span>
+        <span className="text-[10px] text-muted-foreground/30">→</span>
+        <span className="text-[11px] font-semibold tabular-nums">{fmt(projected)}</span>
+        {unit && <span className="text-[10px] text-muted-foreground">{unit}</span>}
+        {hasChange && (
+          <span
+            className={cn(
+              "text-[10px] font-medium",
               isBetter ? "text-green-600" : isWorse ? "text-red-600" : "text-muted-foreground"
             )}
           >
@@ -337,12 +409,18 @@ export default function SensitivityLab() {
   const createScenarioVariant = useTaktStore((s) => s.createScenarioVariant)
 
   const [labScenario, setLabScenario] = useState<Scenario | null>(null)
+  const [targetStationId, setTargetStationId] = useState<string | null>(null)
+  const [showDetail, setShowDetail] = useState(false)
 
+  // Sync labScenario AND fix targetStationId from ACTIVE scenario (stable)
   useEffect(() => {
     if (activeScenario) {
       setLabScenario(cloneScenario(activeScenario))
+      const baseBn = findBottleneck(activeScenario.stations)
+      setTargetStationId(baseBn.stationId)
     } else {
       setLabScenario(null)
+      setTargetStationId(null)
     }
   }, [activeScenario?.id])
 
@@ -356,19 +434,23 @@ export default function SensitivityLab() {
     return calculateAllKPIs(labScenario)
   }, [labScenario])
 
-  const bottleneck = useMemo(() => {
+  // Target station info from ACTIVE scenario (stable label)
+  const targetStation = useMemo(() => {
+    if (!targetStationId || !activeScenario) return null
+    return activeScenario.stations.find((s) => s.id === targetStationId) ?? null
+  }, [targetStationId, activeScenario])
+
+  // Projected bottleneck from LAB (for results only)
+  const projectedBottleneck = useMemo(() => {
     if (!labScenario || labScenario.stations.length === 0) return null
     return findBottleneck(labScenario.stations)
   }, [labScenario])
 
-  const bottleneckStation = useMemo(() => {
-    if (!bottleneck?.stationId || !labScenario) return null
-    return labScenario.stations.find((s) => s.id === bottleneck.stationId) ?? null
-  }, [bottleneck, labScenario])
-
   const handleReset = useCallback(() => {
     if (activeScenario) {
       setLabScenario(cloneScenario(activeScenario))
+      const baseBn = findBottleneck(activeScenario.stations)
+      setTargetStationId(baseBn.stationId)
     }
   }, [activeScenario])
 
@@ -404,12 +486,12 @@ export default function SensitivityLab() {
     if (scenarioChanges.shiftsPerDay !== undefined)
       diffs.push(`${labScenario.shiftsPerDay} turnos`)
     if (stationChanges.some((c) => c.updates.operators !== undefined)) {
-      const st = bottleneckStation?.name ?? "bottleneck"
+      const st = targetStation?.name ?? "bottleneck"
       diffs.push(`+operarios en ${st}`)
     }
     if (stationChanges.some((c) => c.updates.failureRate !== undefined)) {
-      const st = bottleneckStation?.name ?? "bottleneck"
-      diffs.push(`fallo ${labScenario.stations.find((s) => s.id === bottleneck?.stationId)?.failureRate ?? 0}% en ${st}`)
+      const st = targetStation?.name ?? "bottleneck"
+      diffs.push(`fallo ${(labScenario.stations.find((s) => s.id === targetStationId)?.failureRate ?? 0) * 100}% en ${st}`)
     }
 
     const suffix = diffs.length > 0 ? ` — ${diffs.join(", ")}` : " — laboratorio"
@@ -420,7 +502,7 @@ export default function SensitivityLab() {
       stationChanges.length > 0 ? stationChanges : undefined,
       Object.keys(scenarioChanges).length > 0 ? scenarioChanges : undefined
     )
-  }, [activeScenario, labScenario, bottleneckStation, bottleneck, createScenarioVariant])
+  }, [activeScenario, labScenario, targetStation, targetStationId, createScenarioVariant])
 
   if (!hydrated) return <SensitivityLabSkeleton />
 
@@ -494,20 +576,23 @@ export default function SensitivityLab() {
               }
             />
 
-            {bottleneckStation && (
+            {targetStation && (
               <LabControl
-                label={`Operarios en ${bottleneckStation.name}`}
-                value={bottleneckStation.operators}
+                label={`Operarios en ${targetStation.name}`}
+                value={
+                  labScenario.stations.find((s) => s.id === targetStationId)?.operators ??
+                  targetStation.operators
+                }
                 min={1}
                 max={8}
                 step={1}
                 onChange={(v) => {
                   setLabScenario((prev) => {
-                    if (!prev) return prev
+                    if (!prev || !targetStationId) return prev
                     return {
                       ...prev,
                       stations: prev.stations.map((s) =>
-                        s.id === bottleneckStation.id ? { ...s, operators: v } : s
+                        s.id === targetStationId ? { ...s, operators: v } : s
                       ),
                     }
                   })
@@ -515,23 +600,24 @@ export default function SensitivityLab() {
               />
             )}
 
-            {bottleneckStation && (
+            {targetStation && (
               <LabControl
-                label={`Tasa de fallo en ${bottleneckStation.name}`}
-                value={Math.round(bottleneckStation.failureRate * 100)}
+                label={`Tasa de fallo en ${targetStation.name}`}
+                value={Math.round(
+                  (labScenario.stations.find((s) => s.id === targetStationId)?.failureRate ??
+                    targetStation.failureRate) * 100
+                )}
                 min={0}
                 max={15}
                 step={1}
                 unit="%"
                 onChange={(v) => {
                   setLabScenario((prev) => {
-                    if (!prev) return prev
+                    if (!prev || !targetStationId) return prev
                     return {
                       ...prev,
                       stations: prev.stations.map((s) =>
-                        s.id === bottleneckStation.id
-                          ? { ...s, failureRate: v / 100 }
-                          : s
+                        s.id === targetStationId ? { ...s, failureRate: v / 100 } : s
                       ),
                     }
                   })
@@ -665,6 +751,97 @@ export default function SensitivityLab() {
                 invert
                 decimals={1}
               />
+            </div>
+
+            {/* Detail accordion */}
+            <div className="pt-1">
+              <button
+                onClick={() => setShowDetail((v) => !v)}
+                className="flex w-full items-center justify-between rounded-md border bg-muted/20 px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/40"
+              >
+                <span>{showDetail ? "Ocultar detalle técnico" : "Ver detalle técnico completo"}</span>
+                {showDetail ? (
+                  <ChevronUp className="h-3.5 w-3.5" />
+                ) : (
+                  <ChevronDown className="h-3.5 w-3.5" />
+                )}
+              </button>
+              {showDetail && (
+                <div className="mt-1.5 rounded-md border bg-background px-2 py-1">
+                  <DetailRow
+                    label="Takt time"
+                    current={baseKpis.taktTimeMin}
+                    projected={labKpis.taktTimeMin}
+                    unit="min/ud"
+                    invert
+                    decimals={1}
+                  />
+                  <DetailRow
+                    label="Throughput"
+                    current={baseKpis.throughputPerDay}
+                    projected={labKpis.throughputPerDay}
+                    unit="uds/día"
+                    decimals={0}
+                  />
+                  <DetailRow
+                    label="Tiempo disponible"
+                    current={baseKpis.availableTimeMin}
+                    projected={labKpis.availableTimeMin}
+                    unit="min/día"
+                    decimals={0}
+                  />
+                  <DetailRow
+                    label="Eficiencia de balanceo"
+                    current={baseKpis.balancingEfficiency * 100}
+                    projected={labKpis.balancingEfficiency * 100}
+                    unit="%"
+                    decimals={1}
+                  />
+                  <DetailRow
+                    label="Lead time"
+                    current={baseKpis.leadTimeMin}
+                    projected={labKpis.leadTimeMin}
+                    unit="min"
+                    invert
+                    decimals={1}
+                  />
+                  <div className="flex items-center justify-between border-b border-border/40 px-2 py-1 last:border-0">
+                    <span className="text-[11px] text-muted-foreground">Cuello de botella</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted-foreground/70">{baseKpis.bottleneckStationName}</span>
+                      <span className="text-[10px] text-muted-foreground/30">→</span>
+                      <span className="text-[11px] font-semibold">{labKpis.bottleneckStationName}</span>
+                      {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId && (
+                        <span className="text-[10px] font-medium text-amber-600">cambia</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-border/40 px-2 py-1 last:border-0">
+                    <span className="text-[11px] text-muted-foreground">Cumple demanda</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted-foreground/70">
+                        {baseKpis.meetsDemand ? "Sí" : "No"}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/30">→</span>
+                      <span
+                        className={cn(
+                          "text-[11px] font-semibold",
+                          labKpis.meetsDemand ? "text-green-600" : "text-red-600"
+                        )}
+                      >
+                        {labKpis.meetsDemand ? "Sí" : "No"}
+                      </span>
+                    </div>
+                  </div>
+                  <DetailRow
+                    label="Delta de demanda"
+                    current={baseKpis.demandDelta}
+                    projected={labKpis.demandDelta}
+                    unit="uds"
+                    decimals={0}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
