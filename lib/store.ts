@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { useState, useEffect } from "react"
-import type { Station, Scenario, AppState, EconomicInputs } from "@/types"
+import type { Station, Scenario, AppState, EconomicInputs, ScenarioSnapshot } from "@/types"
 import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS } from "@/lib/presets"
 
 interface TaktStore extends AppState {
@@ -32,6 +32,13 @@ interface TaktStore extends AppState {
   // Helpers
   getActiveScenario: () => Scenario | undefined
   getScenarioById: (id: string) => Scenario | undefined
+  // Snapshots
+  saveSnapshot: (scenarioId: string, name?: string, note?: string) => void
+  removeSnapshot: (snapshotId: string) => void
+  setBaselineSnapshot: (snapshotId: string) => void
+  restoreSnapshotAsScenario: (snapshotId: string, newName?: string) => void
+  setCompareFromSnapshots: (snapshotAId: string, snapshotBId: string) => void
+  getSnapshotsByScenarioId: (scenarioId: string) => ScenarioSnapshot[]
 }
 
 function createInitialState(): AppState {
@@ -42,6 +49,7 @@ function createInitialState(): AppState {
     activeScenarioId: scenarioA.id,
     compareScenarioAId: scenarioA.id,
     compareScenarioBId: scenarioB.id,
+    snapshots: [],
   }
 }
 
@@ -211,13 +219,104 @@ export const useTaktStore = create<TaktStore>()(
       },
 
       getScenarioById: (id: string) => get().scenarios.find((s) => s.id === id),
+
+      saveSnapshot: (scenarioId: string, name?: string, note?: string) => {
+        const scenario = get().scenarios.find((s) => s.id === scenarioId)
+        if (!scenario) return
+        const snapshot: ScenarioSnapshot = {
+          id: crypto.randomUUID(),
+          scenarioId,
+          name:
+            name ??
+            `${scenario.name} — snapshot ${new Date().toLocaleString("es-ES", {
+              day: "2-digit",
+              month: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`,
+          createdAt: new Date().toISOString(),
+          isBaseline: false,
+          scenarioData: JSON.parse(JSON.stringify(scenario)),
+          note,
+        }
+        set((state) => ({
+          snapshots: [...state.snapshots, snapshot],
+        }))
+      },
+
+      removeSnapshot: (snapshotId: string) => {
+        set((state) => ({
+          snapshots: state.snapshots.filter((sn) => sn.id !== snapshotId),
+        }))
+      },
+
+      setBaselineSnapshot: (snapshotId: string) => {
+        const snapshot = get().snapshots.find((s) => s.id === snapshotId)
+        if (!snapshot) return
+        set((state) => ({
+          snapshots: state.snapshots.map((sn) =>
+            sn.scenarioId === snapshot.scenarioId
+              ? { ...sn, isBaseline: sn.id === snapshotId }
+              : sn
+          ),
+        }))
+      },
+
+      restoreSnapshotAsScenario: (snapshotId: string, newName?: string) => {
+        const snapshot = get().snapshots.find((s) => s.id === snapshotId)
+        if (!snapshot) return
+        const restored: Scenario = {
+          ...snapshot.scenarioData,
+          id: crypto.randomUUID(),
+          name: newName ?? `${snapshot.name} — restaurado`,
+          stations: snapshot.scenarioData.stations.map((st) => ({
+            ...st,
+            id: crypto.randomUUID(),
+          })),
+        }
+        set((state) => ({
+          scenarios: [...state.scenarios, restored],
+          activeScenarioId: restored.id,
+        }))
+      },
+
+      setCompareFromSnapshots: (snapshotAId: string, snapshotBId: string) => {
+        const snapA = get().snapshots.find((s) => s.id === snapshotAId)
+        const snapB = get().snapshots.find((s) => s.id === snapshotBId)
+        if (!snapA || !snapB) return
+
+        const scenarioA: Scenario = {
+          ...snapA.scenarioData,
+          id: crypto.randomUUID(),
+          name: `${snapA.name} (comparación A)`,
+          stations: snapA.scenarioData.stations.map((st) => ({ ...st, id: crypto.randomUUID() })),
+        }
+        const scenarioB: Scenario = {
+          ...snapB.scenarioData,
+          id: crypto.randomUUID(),
+          name: `${snapB.name} (comparación B)`,
+          stations: snapB.scenarioData.stations.map((st) => ({ ...st, id: crypto.randomUUID() })),
+        }
+
+        set((state) => ({
+          scenarios: [...state.scenarios, scenarioA, scenarioB],
+          compareScenarioAId: scenarioA.id,
+          compareScenarioBId: scenarioB.id,
+        }))
+      },
+
+      getSnapshotsByScenarioId: (scenarioId: string) => {
+        return get()
+          .snapshots.filter((s) => s.scenarioId === scenarioId)
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      },
     }),
     {
       name: "takt-studio-storage",
-      version: 1,
+      version: 2,
       migrate: (persistedState: unknown, version: number) => {
+        const state = persistedState as { scenarios?: Scenario[]; snapshots?: unknown[] }
         if (version < 1) {
-          const state = persistedState as { scenarios?: Scenario[] }
           if (state.scenarios) {
             state.scenarios = state.scenarios.map((s) => ({
               ...s,
@@ -228,7 +327,10 @@ export const useTaktStore = create<TaktStore>()(
             }))
           }
         }
-        return persistedState as { scenarios: Scenario[]; activeScenarioId: string; compareScenarioAId: string; compareScenarioBId: string }
+        if (version < 2) {
+          state.snapshots = state.snapshots ?? []
+        }
+        return persistedState as { scenarios: Scenario[]; activeScenarioId: string; compareScenarioAId: string; compareScenarioBId: string; snapshots: ScenarioSnapshot[] }
       },
     }
   )

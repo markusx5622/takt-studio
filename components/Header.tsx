@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Factory, RotateCcw, BarChart3, GitCompare, BookOpen } from "lucide-react"
+import { Factory, RotateCcw, BarChart3, GitCompare, BookOpen, History } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTaktStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/simulador", label: "Simulador", icon: BarChart3 },
   { href: "/comparar", label: "Comparar", icon: GitCompare },
   { href: "/metodologia", label: "Metodología", icon: BookOpen },
+  { href: "/historial", label: "Historial", icon: History },
 ]
 
 export default function Header() {

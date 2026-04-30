@@ -120,6 +120,17 @@ export type StationWithEffective = Station & {
   exceedsTakt: boolean
 }
 
+/** Snapshot inmutable de un escenario en un momento dado. */
+export type ScenarioSnapshot = {
+  id: string
+  scenarioId: string
+  name: string
+  createdAt: string
+  isBaseline: boolean
+  scenarioData: Scenario
+  note?: string
+}
+
 /**
  * Estado global de la aplicación.
  */
@@ -128,6 +139,7 @@ export type AppState = {
   activeScenarioId: string
   compareScenarioAId: string
   compareScenarioBId: string
+  snapshots: ScenarioSnapshot[]
 }
 
 // ─── Plan de mejora ────────────────────────────────────────────────────────────
