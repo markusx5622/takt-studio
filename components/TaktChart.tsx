@@ -71,10 +71,15 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
-export default function TaktChart() {
+interface TaktChartProps {
+  scenarioId?: string
+  height?: number
+}
+
+export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) {
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
-    state.scenarios.find((sc) => sc.id === state.activeScenarioId)
+    state.scenarios.find((sc) => sc.id === (scenarioId ?? state.activeScenarioId))
   )
 
   if (!hydrated || !scenario || scenario.stations.length === 0) {
@@ -83,7 +88,7 @@ export default function TaktChart() {
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Tiempos de ciclo vs Takt Time</CardTitle>
         </CardHeader>
-        <CardContent className="flex h-[350px] items-center justify-center">
+        <CardContent className="flex items-center justify-center" style={{ height }}>
           <p className="text-sm text-muted-foreground">
             Añade estaciones para ver el gráfico
           </p>
@@ -101,7 +106,7 @@ export default function TaktChart() {
         <CardTitle className="text-lg">Tiempos de ciclo vs Takt Time</CardTitle>
       </CardHeader>
       <CardContent className="pr-2">
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={height}>
           <BarChart
             data={chartData}
             margin={{ top: 10, right: 70, left: 0, bottom: 65 }}

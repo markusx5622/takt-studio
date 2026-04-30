@@ -123,10 +123,14 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function LineDiagram() {
+interface LineDiagramProps {
+  scenarioId?: string
+}
+
+export default function LineDiagram({ scenarioId }: LineDiagramProps = {}) {
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
-    state.scenarios.find((sc) => sc.id === state.activeScenarioId)
+    state.scenarios.find((sc) => sc.id === (scenarioId ?? state.activeScenarioId))
   )
 
   if (!hydrated || !scenario || scenario.stations.length === 0) {
