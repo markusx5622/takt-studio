@@ -440,38 +440,76 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
-      <footer className="border-t px-4 py-8">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-xs text-muted-foreground sm:flex-row">
-          <span className="font-medium">Takt Studio · 2026</span>
+      {/* ── SOBRE ESTE PROYECTO ──────────────────────────────────────────────── */}
+      <section className="border-t bg-muted/20 px-4 py-20 md:py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="rounded-xl border bg-background p-8 shadow-sm md:p-10">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
+              {/* Text */}
+              <div className="flex flex-col justify-center">
+                <h2 className="text-xl font-bold tracking-tight md:text-2xl">
+                  Sobre este proyecto
+                </h2>
+                <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <p>
+                    Takt Studio es un prototipo funcional de simulación y análisis de líneas de
+                    producción industrializada. Permite modelar estaciones, calcular KPIs operativos
+                    y comparar escenarios <em className="not-italic font-medium text-foreground/80">what-if</em>{" "}
+                    antes de realizar cualquier intervención en planta.
+                  </p>
+                  <p>
+                    Desarrollado por{" "}
+                    <span className="font-medium text-foreground">Marc Cubero</span> en el ámbito
+                    de la Ingeniería de Organización Industrial de la{" "}
+                    <span className="font-medium text-foreground">Universidad Europea de Valencia</span>.
+                    El enfoque es práctico: una herramienta que respalde la toma de decisiones con
+                    datos, no que la sustituya.
+                  </p>
+                </div>
+              </div>
 
-          <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-0">
-            <span className="sm:flex-1 leading-relaxed">
-              Desarrollado por Marc Cubero · Ingeniería de Organización Industrial ·{" "}
-              Universidad Europea de Valencia
-            </span>
-            <div className="flex gap-3 border-t border-muted-foreground/20 pt-2 sm:border-t-0 sm:border-l sm:border-muted-foreground/20 sm:pl-3 sm:pt-0">
-              <a
-                href="https://github.com/markusx5622/takt-studio"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="transition-colors hover:text-foreground"
-                aria-label="Repositorio en GitHub"
-              >
-                <Code2 className="h-4 w-4" />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/marc-cubero-cantavella-bb04542a7"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="transition-colors hover:text-foreground"
-                aria-label="Perfil de LinkedIn"
-              >
-                <Briefcase className="h-4 w-4" />
-              </a>
+              {/* Actions */}
+              <div className="flex flex-col justify-center gap-3">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start gap-2 transition-all duration-200 hover:bg-muted hover:border-primary/30"
+                >
+                  <a
+                    href="https://github.com/markusx5622/takt-studio"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label="Ver repositorio en GitHub"
+                  >
+                    <Code2 className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Ver repositorio</span>
+                  </a>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start gap-2 transition-all duration-200 hover:bg-muted hover:border-primary/30"
+                >
+                  <a
+                    href="https://www.linkedin.com/in/marc-cubero-cantavella-bb04542a7"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label="Ver perfil de LinkedIn"
+                  >
+                    <Briefcase className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Perfil de LinkedIn</span>
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
+      {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
+      <footer className="border-t px-4 py-6">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-row">
+          <span className="font-medium">Takt Studio · 2026</span>
           <span>Hecho con Next.js y desplegado en Vercel</span>
         </div>
       </footer>
