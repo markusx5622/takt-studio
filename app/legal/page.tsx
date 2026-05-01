@@ -2,6 +2,7 @@ import Link from "next/link"
 import ConsultingBackground from "@/components/ConsultingBackground"
 import { ShieldCheck, FileText, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import HeroParticles from "@/components/HeroParticles"
 
 export const metadata = {
   title: "Aviso Legal | Takt Studio",
@@ -11,6 +12,9 @@ export const metadata = {
 export default function LegalPage() {
   return (
     <div className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-20 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <HeroParticles />
+      </div>
       <ConsultingBackground />
       
       {/* Glow effects */}
