@@ -43,10 +43,12 @@ function KpiCard({
   )
 }
 
+import ConsultingBackground from "@/components/ConsultingBackground"
+
 export default function MetodologiaPage() {
   return (
-    <div className="relative flex min-h-[calc(100vh-4rem)] flex-col bg-surface-app">
-      <div className="pointer-events-none absolute inset-0 bg-ambient-editorial" />
+    <div className="relative flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
+      <ConsultingBackground />
       {/* ── Encabezado ───────────────────────────────────────────────────────── */}
       <section className="relative z-10 px-4 pb-12 pt-14 text-center md:pt-16">
         <div className="mx-auto max-w-3xl">

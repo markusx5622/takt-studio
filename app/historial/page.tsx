@@ -24,6 +24,7 @@ import {
   Clock,
 } from "lucide-react"
 import type { ScenarioSnapshot } from "@/types"
+import ConsultingBackground from "@/components/ConsultingBackground"
 
 // ─── Format helpers ────────────────────────────────────────────────────────────
 
@@ -198,8 +199,8 @@ function SnapshotCard({
 
 function HistorialSkeleton() {
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-app">
-      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+    <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
+      <ConsultingBackground />
       <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 py-6">
         <div className="page-header-rule pb-4 mb-2">
           <div className="h-8 w-64 animate-pulse rounded bg-muted" />
@@ -249,8 +250,8 @@ export default function HistorialPage() {
   if (!hydrated) return <HistorialSkeleton />
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-app">
-      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+    <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
+      <ConsultingBackground />
       <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 py-6">
         <div className="page-header-rule pb-4 mb-2">
           <h1 className="text-2xl font-bold tracking-tight">Historial de escenarios</h1>

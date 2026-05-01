@@ -24,6 +24,7 @@ import type { KPIs, Scenario } from "@/types"
 // Dynamic imports for browser-only Recharts components
 const TaktChart = dynamic(() => import("@/components/TaktChart"), { ssr: false })
 const LineDiagram = dynamic(() => import("@/components/LineDiagram"), { ssr: false })
+import ConsultingBackground from "@/components/ConsultingBackground"
 
 // ─── Scenario selector ─────────────────────────────────────────────────────────
 
@@ -310,8 +311,8 @@ export default function CompararPage() {
 
   if (!hydrated) {
     return (
-      <div className="relative min-h-[calc(100vh-4rem)] bg-surface-analytical bg-grid-pattern-light">
-        <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
+        <ConsultingBackground />
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-6">
           <div className="page-header-rule pb-4 mb-2">
             <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
@@ -330,8 +331,8 @@ export default function CompararPage() {
 
   if (scenarios.length < 2) {
     return (
-      <div className="relative min-h-[calc(100vh-4rem)] bg-surface-analytical bg-grid-pattern-light">
-        <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+      <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
+        <ConsultingBackground />
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-6">
           <div className="page-header-rule pb-4 mb-2">
             <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
@@ -370,8 +371,8 @@ export default function CompararPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] bg-surface-analytical bg-grid-pattern-light">
-      <div className="pointer-events-none absolute inset-0 bg-ambient-workspace" />
+    <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
+      <ConsultingBackground />
       <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 py-6">
         <div className="page-header-rule pb-4 mb-2">
           <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
