@@ -29,7 +29,7 @@ export default function Header() {
     <>
       <header className={cn(
         "sticky top-0 z-50 h-16 w-full border-b transition-colors backdrop-blur-md",
-        pathname === "/" ? "bg-background/80" : "bg-[#e2e8f0]"
+        pathname === "/" ? "bg-background/80" : "bg-white"
       )}>
         <div className="flex h-full items-center px-4">
           <Link
@@ -50,7 +50,7 @@ export default function Header() {
                     "relative flex items-center justify-center rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-all",
                     pathname === href
                       ? "bg-primary text-white shadow-md shadow-primary/20 scale-105"
-                      : "text-slate-600 hover:bg-slate-300/50 hover:text-slate-900"
+                      : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                   )}
                 >
                   {label}
@@ -65,7 +65,7 @@ export default function Header() {
                 variant="outline" 
                 size="sm" 
                 onClick={handleReset}
-                className="h-8 rounded-lg border-slate-300 bg-slate-100/50 text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+                className="h-8 rounded-lg border-slate-200 bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900"
               >
                 <RotateCcw className="h-3 w-3 md:mr-2" />
                 <span className="hidden md:inline">Reset</span>
@@ -76,7 +76,7 @@ export default function Header() {
       </header>
 
       {pathname !== "/" && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-[#e2e8f0] pb-safe md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-white pb-safe md:hidden">
           {navLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
@@ -85,7 +85,7 @@ export default function Header() {
                 "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all",
                 pathname === href 
                   ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]" 
-                  : "text-slate-500"
+                  : "text-slate-400"
               )}
             >
               <Icon className="h-5 w-5" />
