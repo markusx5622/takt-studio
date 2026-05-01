@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased bg-[#f1f5f9]">
         <TooltipProvider>
           <Header />
           <main className="pb-16 md:pb-0">{children}</main>
