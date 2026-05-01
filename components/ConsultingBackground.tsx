@@ -40,12 +40,12 @@ export default function ConsultingBackground() {
     const draw = () => {
       ctx.clearRect(0, 0, w, h)
       
-      // Dibujar fondo sutil (gris muy claro)
-      ctx.fillStyle = "hsl(0, 0%, 98%)"
+      // Dibujar fondo sutil (gris más oscuro para contraste)
+      ctx.fillStyle = "hsl(215, 15%, 91%)"
       ctx.fillRect(0, 0, w, h)
 
       // Actualizar y dibujar puntos
-      ctx.fillStyle = "rgba(100, 116, 139, 0.4)" // slate-500 suave
+      ctx.fillStyle = "rgba(71, 85, 105, 0.5)" // slate-700 suave
       
       for (let i = 0; i < numDots; i++) {
         const dot = dots[i]
@@ -73,8 +73,8 @@ export default function ConsultingBackground() {
             ctx.moveTo(dot.x, dot.y)
             ctx.lineTo(dot2.x, dot2.y)
             const opacity = 1 - (dist / connectionDistance)
-            // Líneas grises claras y sutiles
-            ctx.strokeStyle = `rgba(148, 163, 184, ${opacity * 0.15})` // slate-400
+            // Líneas grises más definidas
+            ctx.strokeStyle = `rgba(100, 116, 139, ${opacity * 0.2})` // slate-500
             ctx.lineWidth = 1
             ctx.stroke()
           }
@@ -100,14 +100,14 @@ export default function ConsultingBackground() {
   }, [])
 
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-slate-50">
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-slate-200/50">
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-60"
+        className="absolute inset-0 w-full h-full opacity-70"
       />
       {/* Overlay gradiente para suavizar la animación y dar look elegante */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-50/80" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-transparent to-slate-100/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-200/60" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-transparent to-slate-300/30" />
     </div>
   )
 }
