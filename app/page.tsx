@@ -715,9 +715,6 @@ export default function Home() {
           </div>
 
           <div className="relative grid gap-8 md:grid-cols-4">
-            {/* Timeline line - Desktop only */}
-            <div className="absolute left-0 top-1/2 hidden h-0.5 w-full -translate-y-1/2 bg-gradient-to-r from-primary/5 via-primary/40 to-primary/5 md:block" />
-
             {[
               {
                 phase: "Fase 1",
@@ -768,12 +765,6 @@ export default function Home() {
                   item.active && "border-primary/40 ring-1 ring-primary/20 bg-background/80"
                 )}
               >
-                {/* Dot on timeline */}
-                <div className={cn(
-                  "absolute left-1/2 top-0 hidden -translate-x-1/2 -translate-y-[calc(50%+1rem)] h-4 w-4 rounded-full border-4 border-background md:block transition-transform duration-500 group-hover:scale-150",
-                  item.done ? "bg-emerald-500" : (item.active ? "bg-primary animate-pulse" : "bg-slate-300")
-                )} />
-                
                 <div className="mb-5 flex items-center justify-between">
                   <span className={cn(
                     "rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white",
