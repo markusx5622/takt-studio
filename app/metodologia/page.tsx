@@ -50,7 +50,7 @@ export default function MetodologiaPage() {
     <div className="relative flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
       <ConsultingBackground />
       {/* ── Encabezado ───────────────────────────────────────────────────────── */}
-      <section className="relative z-10 px-4 pb-12 pt-14 text-center md:pt-16">
+      <section className="relative z-10 px-4 pb-8 pt-4 text-center md:pt-6">
         <div className="mx-auto max-w-3xl">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
             Metodología y supuestos del modelo
@@ -61,7 +61,7 @@ export default function MetodologiaPage() {
         </div>
       </section>
 
-      <div className="relative z-10 mx-auto w-full max-w-4xl space-y-8 px-4 pb-20">
+      <div className="relative z-10 mx-auto w-full max-w-4xl space-y-8 px-4 pt-2 pb-20">
         {/* ── Introducción ────────────────────────────────────────────────────── */}
         <Card>
           <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-3">
