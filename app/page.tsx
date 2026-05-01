@@ -382,7 +382,7 @@ export default function Home() {
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────────────────────────── */}
-      <section className="reveal relative z-10 border-t border-border/50 px-4 py-20 md:py-24">
+      <section className="reveal relative z-10 px-4 py-20 md:py-24">
         <div className="pointer-events-none absolute inset-0 section-ambient-product" />
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
@@ -418,7 +418,7 @@ export default function Home() {
       </section>
 
       {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────────── */}
-      <section className="reveal relative z-10 border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
+      <section className="reveal relative z-10 bg-grid-pattern-light px-4 py-20 md:py-24">
         <div className="pointer-events-none absolute inset-0 section-ambient-product" />
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
@@ -452,7 +452,7 @@ export default function Home() {
       </section>
 
       {/* ── CAPABILITIES ─────────────────────────────────────────────────────── */}
-      <section className="reveal relative z-10 border-t border-border/50 px-4 py-20 md:py-24">
+      <section className="reveal relative z-10 px-4 py-20 md:py-24">
         <div className="pointer-events-none absolute inset-0 section-ambient-structure" />
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
@@ -498,7 +498,7 @@ export default function Home() {
       </section>
 
       {/* ── CREDIBILIDAD METODOLÓGICA ────────────────────────────────────────── */}
-      <section className="reveal relative z-10 border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
+      <section className="reveal relative z-10 bg-grid-pattern-light px-4 py-20 md:py-24">
         <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -519,7 +519,7 @@ export default function Home() {
       </section>
 
       {/* ── SOBRE ESTE PROYECTO ──────────────────────────────────────────────── */}
-      <section className="reveal relative z-10 border-t border-border/50 px-4 py-16 md:py-20">
+      <section className="reveal relative z-10 px-4 py-16 md:py-20">
         <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
         <div className="mx-auto max-w-4xl">
           <div className="rounded-xl border bg-background p-8 shadow-sm md:p-12">
@@ -586,7 +586,7 @@ export default function Home() {
       </section>
 
       {/* ── TECH STACK & ARCHITECTURE ───────────────────────────────────────── */}
-      <section className="reveal relative z-10 border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
+      <section className="reveal relative z-10 bg-grid-pattern-light px-4 py-20 md:py-24">
         <div className="pointer-events-none absolute inset-0 section-ambient-product opacity-40" />
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
@@ -649,7 +649,7 @@ export default function Home() {
       </section>
 
       {/* ── PREGUNTAS FRECUENTES (FAQ) ───────────────────────────────────────── */}
-      <section className="reveal relative z-10 border-t border-border/50 px-4 py-20 md:py-24">
+      <section className="reveal relative z-10 px-4 py-20 md:py-24">
         <div className="pointer-events-none absolute inset-0 section-ambient-structure opacity-50" />
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
