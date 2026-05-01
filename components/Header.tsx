@@ -28,29 +28,29 @@ export default function Header() {
   return (
     <>
       <header className={cn(
-        "sticky top-0 z-50 h-16 w-full border-b transition-colors",
-        pathname === "/" ? "bg-background" : "bg-[#f1f5f9]"
+        "sticky top-0 z-50 h-16 w-full border-b transition-colors backdrop-blur-md",
+        pathname === "/" ? "bg-background/80" : "bg-[#e2e8f0]"
       )}>
         <div className="flex h-full items-center px-4">
           <Link
             href="/"
-            className="flex items-center gap-2 text-foreground transition-colors hover:text-primary"
+            className="flex items-center gap-2 text-foreground transition-all hover:opacity-80"
           >
             <Factory className="h-6 w-6 text-primary" />
-            <span className="text-lg font-bold">Takt Studio</span>
+            <span className="text-lg font-bold tracking-tight">Takt Studio</span>
           </Link>
 
           {pathname !== "/" && (
-            <nav className="hidden flex-1 justify-center gap-6 md:flex">
+            <nav className="hidden flex-1 justify-center gap-2 md:flex">
               {navLinks.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
+                    "relative flex items-center justify-center rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-all",
                     pathname === href
-                      ? "text-primary underline underline-offset-4"
-                      : "text-muted-foreground"
+                      ? "bg-primary text-white shadow-md shadow-primary/20 scale-105"
+                      : "text-slate-600 hover:bg-slate-300/50 hover:text-slate-900"
                   )}
                 >
                   {label}
@@ -61,9 +61,14 @@ export default function Header() {
 
           {pathname !== "/" && (
             <div className="ml-auto">
-              <Button variant="ghost" size="sm" onClick={handleReset}>
-                <RotateCcw className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">Resetear datos</span>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleReset}
+                className="h-8 rounded-lg border-slate-300 bg-slate-100/50 text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+              >
+                <RotateCcw className="h-3 w-3 md:mr-2" />
+                <span className="hidden md:inline">Reset</span>
               </Button>
             </div>
           )}
@@ -71,18 +76,20 @@ export default function Header() {
       </header>
 
       {pathname !== "/" && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-[#f1f5f9] md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-[#e2e8f0] pb-safe md:hidden">
           {navLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
               className={cn(
-                "flex flex-1 flex-col items-center gap-1 py-3 text-xs font-medium transition-colors",
-                pathname === href ? "text-primary" : "text-muted-foreground"
+                "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all",
+                pathname === href 
+                  ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]" 
+                  : "text-slate-500"
               )}
             >
               <Icon className="h-5 w-5" />
-              {label}
+              {label.split(" ")[0]}
             </Link>
           ))}
         </nav>
