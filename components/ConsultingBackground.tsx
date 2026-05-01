@@ -18,8 +18,8 @@ export default function ConsultingBackground() {
 
     // Puntos para una red sutil de nodos
     const dots: { x: number; y: number; vx: number; vy: number; radius: number }[] = []
-    const numDots = 40 // Menos puntos para elegancia
-    const connectionDistance = 150
+    const numDots = 120 // Más puntos para amplificar el efecto
+    const connectionDistance = 180
 
     const init = () => {
       w = canvas.width = window.innerWidth
@@ -30,8 +30,8 @@ export default function ConsultingBackground() {
         dots.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.3, // Movimiento muy lento
-          vy: (Math.random() - 0.5) * 0.3,
+          vx: (Math.random() - 0.5) * 0.8, // Movimiento más rápido
+          vy: (Math.random() - 0.5) * 0.8,
           radius: Math.random() * 1.5 + 0.5,
         })
       }
