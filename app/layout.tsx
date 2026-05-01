@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans antialiased">
         <TooltipProvider>
           <Header />
-          <main className="pt-16 pb-16 md:pb-0">{children}</main>
+          <main className="pb-16 md:pb-0">{children}</main>
         </TooltipProvider>
       </body>
     </html>
