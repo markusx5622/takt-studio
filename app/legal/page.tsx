@@ -38,7 +38,7 @@ export default function LegalPage() {
               <p>
                 <strong>Titular:</strong> Marc Cubero Cantavella<br />
                 <strong>Ubicación:</strong> Valencia, España<br />
-                <strong>Contacto:</strong> mcubero.uev@gmail.com
+                <strong>Contacto:</strong> marccuberoc@gmail.com
               </p>
             </div>
           </div>
