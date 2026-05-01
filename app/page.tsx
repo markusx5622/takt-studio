@@ -273,7 +273,7 @@ export default function Home() {
           <Button
             asChild
             size="lg"
-            className="gap-2 px-6 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+            className="gap-2 px-6 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 animate-cta-pulse"
           >
             <Link href="/simulador">
               Probar con plantilla Monobath
