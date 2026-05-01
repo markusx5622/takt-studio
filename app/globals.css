@@ -153,7 +153,6 @@
 
 .page-header-rule {
   border-bottom: 1px solid hsl(var(--border) / 0.5);
-  background: linear-gradient(to bottom, hsl(var(--background) / 0.6), transparent);
 }
 
 /* ─── Landing section ambient glows ──────────────────────────────────────────── */

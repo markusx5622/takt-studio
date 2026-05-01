@@ -27,7 +27,10 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-16 w-full border-b bg-background">
+      <header className={cn(
+        "sticky top-0 z-50 h-16 w-full border-b transition-colors",
+        pathname === "/" ? "bg-background" : "bg-[#f1f5f9]"
+      )}>
         <div className="flex h-full items-center px-4">
           <Link
             href="/"
@@ -68,7 +71,7 @@ export default function Header() {
       </header>
 
       {pathname !== "/" && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-background md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-[#f1f5f9] md:hidden">
           {navLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
