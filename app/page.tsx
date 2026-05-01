@@ -16,6 +16,8 @@ import {
   ScanSearch,
   CheckCircle2,
   History,
+  ShieldCheck,
+  FileText,
 } from "lucide-react"
 
 // ─── Interface mockup ──────────────────────────────────────────────────────────
@@ -556,10 +558,31 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
-      <footer className="relative z-10 px-4 py-8">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-foreground/50 sm:flex-row">
-          <span className="font-medium">Takt Studio · 2026</span>
-          <span>Hecho con Next.js y desplegado en Vercel</span>
+      <footer className="relative z-10 px-4 py-12">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 sm:flex-row">
+          <div className="flex flex-col items-center gap-2 sm:items-start">
+            <span className="text-xs font-bold uppercase tracking-widest text-foreground/40">Takt Studio · 2026</span>
+            <span className="text-[10px] text-foreground/30">Ingeniería de Organización Industrial · UEV</span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/privacidad" 
+              className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-foreground/50 transition-all hover:border-primary/20 hover:bg-background hover:text-primary"
+            >
+              <ShieldCheck className="h-3 w-3 transition-transform group-hover:scale-110" />
+              Privacidad
+            </Link>
+            <Link 
+              href="/legal" 
+              className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-foreground/50 transition-all hover:border-primary/20 hover:bg-background hover:text-primary"
+            >
+              <FileText className="h-3 w-3 transition-transform group-hover:scale-110" />
+              Legal
+            </Link>
+          </div>
+
+          <span className="text-[10px] text-foreground/30">Hecho con Next.js y Vercel</span>
         </div>
       </footer>
     </div>
