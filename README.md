@@ -12,6 +12,27 @@
   Plataforma web de ingeniería de organización industrial para el modelado de estaciones, optimización de tiempos de ciclo, detección automática de cuellos de botella, análisis económico de impacto y evaluación de escenarios <em>What-If</em>.
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/NEXT.JS-16.2.4-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js 16.2.4" />
+  <img src="https://img.shields.io/badge/REACT-19.2.4-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19.2.4" />
+  <img src="https://img.shields.io/badge/TYPESCRIPT-5.X-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5.X" />
+  <img src="https://img.shields.io/badge/TAILWIND_CSS-V4.0-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS v4.0" />
+  <br />
+  <img src="https://img.shields.io/badge/ZUSTAND-V5.0-443E38?style=for-the-badge&logo=react&logoColor=white" alt="Zustand v5.0" />
+  <img src="https://img.shields.io/badge/VITEST-V4.1-6E9F18?style=for-the-badge&logo=vitest&logoColor=white" alt="Vitest v4.1" />
+  <img src="https://img.shields.io/badge/JSPDF-V4.2-FF6F00?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="jsPDF v4.2" />
+</p>
+
+<p align="center">
+  <a href="#-contexto-académico">Contexto Académico</a> • 
+  <a href="#-características-principales">Características</a> • 
+  <a href="#-fundamentos-teóricos-y-formulación-matemática">Formulación Matemática</a> • 
+  <a href="#️-stack-técnico">Stack Técnico</a> • 
+  <a href="#-estructura-del-proyecto">Estructura</a> • 
+  <a href="#-instalación-y-desarrollo-local">Instalación</a> • 
+  <a href="#-pruebas-unitarias">Testing</a>
+</p>
+
 ---
 
 ## 🎓 Contexto Académico
