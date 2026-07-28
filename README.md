@@ -178,7 +178,7 @@ takt-studio/
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/tu-usuario/takt-studio.git
+   git clone https://github.com/markusx5622/takt-studio.git
    cd takt-studio
    ```
 
