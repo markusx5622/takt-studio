@@ -233,4 +233,8 @@ npm run test
 
 Desarrollado como proyecto para el área de **Ingeniería de Organización Industrial** de la **Universidad Europea de Valencia**.
 
-Distribuido bajo la Licencia **MIT**. Consulta el archivo `LICENSE` para más información.
+**Copyright © 2026 Marc Cubero Cantavella — Todos los derechos reservados.**
+
+Este proyecto, incluyendo su código fuente, diseño, algoritmos y documentación, es propiedad intelectual exclusiva de su autor. No se concede ningún derecho de uso, copia, modificación, distribución o explotación sin autorización previa y por escrito. La presencia de este código en un repositorio público cumple una función estrictamente demostrativa y de portafolio profesional.
+
+Consulta el archivo [`LICENSE`](./LICENSE) para más información.
