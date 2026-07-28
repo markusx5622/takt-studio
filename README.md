@@ -1,8 +1,16 @@
-# ⚙️ Takt Studio
+<p align="center">
+  <img src="public/logo.svg" alt="Takt Studio Logo" width="420" />
+</p>
 
-> **Simulador y Analizador de Líneas de Producción Industrializada**
-> 
-> Planaforma web de ingeniería de organización industrial para el modelado de estaciones, optimización de tiempos de ciclo, detección automática de cuellos de botella, análisis económico de impacto y evaluación de escenarios *What-If*.
+<h1 align="center">Takt Studio</h1>
+
+<p align="center">
+  <strong>Simulador y Analizador de Líneas de Producción Industrializada</strong>
+</p>
+
+<p align="center">
+  Plataforma web de ingeniería de organización industrial para el modelado de estaciones, optimización de tiempos de ciclo, detección automática de cuellos de botella, análisis económico de impacto y evaluación de escenarios <em>What-If</em>.
+</p>
 
 ---
 

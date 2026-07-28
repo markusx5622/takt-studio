@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 100" width="100%" height="100">
+  <defs>
+    <linearGradient id="gearGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#a855f7" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Dark sleek banner container -->
+  <rect width="450" height="100" rx="16" fill="#0b0f19" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Gear Icon -->
+  <g transform="translate(32, 22)" filter="url(#glow)">
+    <!-- Gear Teeth -->
+    <path fill="url(#gearGrad)" d="
+      M 28 4 L 32 4 L 33.5 10.2 C 35.8 11.1 37.9 12.3 39.8 13.8 L 45.8 11.5 L 48.6 14.3 L 46.3 20.3 C 47.8 22.2 49 24.3 49.9 26.6 L 56 28 L 56 32 L 49.9 33.4 C 49 35.7 47.8 37.8 46.3 39.7 L 48.6 45.7 L 45.8 48.5 L 39.8 46.2 C 37.9 47.7 35.8 48.9 33.5 49.8 L 32 56 L 28 56 L 26.5 49.8 C 24.2 48.9 22.1 47.7 20.2 46.2 L 14.2 48.5 L 11.4 45.7 L 13.7 39.7 C 12.2 37.8 11 35.7 10.1 33.4 L 4 32 L 4 28 L 10.1 26.6 C 11 24.3 12.2 22.2 13.7 20.3 L 11.4 14.3 L 14.2 11.5 L 20.2 13.8 C 22.1 12.3 24.2 11.1 26.5 10.2 Z
+    " />
+    <!-- Gear Inner Hole -->
+    <circle cx="30" cy="30" r="11" fill="#0b0f19"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="110" y="60" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="38" letter-spacing="-0.5">Takt Studio</text>
+</svg>
