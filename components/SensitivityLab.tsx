@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect, useCallback } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs, findBottleneck } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -19,8 +19,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Gauge,
-  Clock,
-  BarChart3,
   ChevronDown,
   ChevronUp,
 } from "lucide-react"
@@ -469,17 +467,19 @@ export default function SensitivityLab() {
   const [targetStationId, setTargetStationId] = useState<string | null>(null)
   const [showDetail, setShowDetail] = useState(false)
 
-  // Sync labScenario AND fix targetStationId from ACTIVE scenario (stable)
-  useEffect(() => {
+  // Sync labScenario AND fix targetStationId from ACTIVE scenario (stable).
+  // Patrón "adjust state during render" (react.dev): mismo comportamiento, sin efecto.
+  const [syncedScenarioId, setSyncedScenarioId] = useState<string | null>(null)
+  if ((activeScenario?.id ?? null) !== syncedScenarioId) {
+    setSyncedScenarioId(activeScenario?.id ?? null)
     if (activeScenario) {
       setLabScenario(cloneScenario(activeScenario))
-      const baseBn = findBottleneck(activeScenario.stations)
-      setTargetStationId(baseBn.stationId)
+      setTargetStationId(findBottleneck(activeScenario.stations).stationId)
     } else {
       setLabScenario(null)
       setTargetStationId(null)
     }
-  }, [activeScenario?.id])
+  }
 
   const baseKpis = useMemo(() => {
     if (!activeScenario || activeScenario.stations.length === 0) return null
@@ -496,12 +496,6 @@ export default function SensitivityLab() {
     if (!targetStationId || !activeScenario) return null
     return activeScenario.stations.find((s) => s.id === targetStationId) ?? null
   }, [targetStationId, activeScenario])
-
-  // Projected bottleneck from LAB (for results only)
-  const projectedBottleneck = useMemo(() => {
-    if (!labScenario || labScenario.stations.length === 0) return null
-    return findBottleneck(labScenario.stations)
-  }, [labScenario])
 
   const handleReset = useCallback(() => {
     if (activeScenario) {

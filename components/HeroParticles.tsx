@@ -105,7 +105,7 @@ export default function HeroParticles() {
       particles = createParticles(w, h)
     }
 
-    const drawConnections = (w: number, h: number) => {
+    const drawConnections = () => {
       const connectDistance = 120
       const moteParticles = particles.filter((p) => p.kind === "mote")
 
@@ -141,7 +141,7 @@ export default function HeroParticles() {
 
       // Draw connections first (behind particles)
       if (!prefersReducedMotion) {
-        drawConnections(w, h)
+        drawConnections()
       }
 
       for (const p of particles) {

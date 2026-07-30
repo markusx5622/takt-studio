@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs } from "@/lib/calculations"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -19,9 +19,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   ArrowRight,
-  Layers,
-  TrendingUp,
-  Clock,
 } from "lucide-react"
 import type { ScenarioSnapshot } from "@/types"
 import ConsultingBackground from "@/components/ConsultingBackground"
@@ -37,10 +34,6 @@ function fmtDate(iso: string) {
     hour: "2-digit",
     minute: "2-digit",
   })
-}
-
-function fmtNumber(n: number) {
-  return new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(n)
 }
 
 // ─── Snapshot metadata ─────────────────────────────────────────────────────────
@@ -67,7 +60,6 @@ function SnapshotCard({
   onToggleSelect,
   onBaseline,
   onRestore,
-  onCompare,
   onDelete,
 }: {
   snapshot: ScenarioSnapshot
@@ -75,7 +67,6 @@ function SnapshotCard({
   onToggleSelect: () => void
   onBaseline: () => void
   onRestore: () => void
-  onCompare: () => void
   onDelete: () => void
 }) {
   const meta = useSnapshotMeta(snapshot)
@@ -409,16 +400,6 @@ export default function HistorialPage() {
               }}
               onBaseline={() => setBaselineSnapshot(snapshot.id)}
               onRestore={() => restoreSnapshotAsScenario(snapshot.id)}
-              onCompare={() => {
-                if (selectedSnapshotId && selectedSnapshotId !== snapshot.id) {
-                  setCompareFromSnapshots(selectedSnapshotId, snapshot.id)
-                  setSelectedSnapshotId(null)
-                } else {
-                  setSelectedSnapshotId(
-                    selectedSnapshotId === snapshot.id ? null : snapshot.id
-                  )
-                }
-              }}
               onDelete={() => {
                 if (confirm(`¿Eliminar el snapshot "${snapshot.name}"?`)) {
                   removeSnapshot(snapshot.id)

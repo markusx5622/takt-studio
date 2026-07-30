@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { useState, useEffect } from "react"
+import { useSyncExternalStore } from "react"
 import type { Station, Scenario, AppState, EconomicInputs, ScenarioSnapshot, ExportPayload } from "@/types"
 import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS } from "@/lib/presets"
 import { buildScenarioExportPayload, buildSnapshotExportPayload, regenerateScenarioIds } from "@/lib/import-export"
@@ -376,9 +376,9 @@ export const useTaktStore = create<TaktStore>()(
 )
 
 export function useHydrated() {
-  const [hydrated, setHydrated] = useState(false)
-  useEffect(() => {
-    setHydrated(true)
-  }, [])
-  return hydrated
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 }

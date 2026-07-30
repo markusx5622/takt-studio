@@ -5,7 +5,6 @@ import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs, calculateEconomicKPIs, normalizeEconomics } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { Euro, TrendingUp, TrendingDown, AlertTriangle, Wallet, Briefcase } from "lucide-react"
 import type { EconomicInputs } from "@/types"
@@ -191,9 +190,6 @@ export default function CostImpactPanel() {
 
   const fmt = (n: number) =>
     new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(n)
-
-  const fmt1 = (n: number) =>
-    new Intl.NumberFormat("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n)
 
   const profitTone: "positive" | "negative" | "neutral" =
     (econKpis?.profitProxyPerDay ?? 0) > 0 ? "positive" : "negative"

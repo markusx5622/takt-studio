@@ -26,9 +26,7 @@ import {
   Box,
   Database,
   Rocket,
-  Milestone,
   FlaskConical,
-  Globe,
   Sparkles,
 } from "lucide-react"
 
@@ -279,12 +277,11 @@ function StepCard({
   )
 }
 
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -642,7 +639,7 @@ export default function Home() {
               </div>
               <h3 className="mb-3 text-lg font-bold">Local Computing</h3>
               <p className="text-sm leading-relaxed text-foreground/70 mb-6">
-                Estrategia "Offline-First" utilizando persistencia en el navegador. Garantiza 
+                Estrategia &quot;Offline-First&quot; utilizando persistencia en el navegador. Garantiza 
                 latencia cero y privacidad total de los datos industriales sin necesidad de base de datos.
               </p>
               <div className="flex flex-wrap gap-2">

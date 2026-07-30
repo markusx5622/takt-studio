@@ -239,13 +239,9 @@ function buildRows(kpisA: KPIs, kpisB: KPIs): TableRow[] {
 function ComparisonTable({
   kpisA,
   kpisB,
-  nameA,
-  nameB,
 }: {
   kpisA: KPIs
   kpisB: KPIs
-  nameA: string
-  nameB: string
 }) {
   const rows = buildRows(kpisA, kpisB)
 
@@ -465,8 +461,6 @@ export default function CompararPage() {
       <ComparisonTable
         kpisA={kpisA}
         kpisB={kpisB}
-        nameA={scenarioA.name}
-        nameB={scenarioB.name}
       />
       </div>
     </div>

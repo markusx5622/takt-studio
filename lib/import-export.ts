@@ -1,5 +1,4 @@
 import type { Scenario, Station, ScenarioSnapshot, ExportPayload } from "@/types"
-import { DEFAULT_ECONOMICS } from "@/lib/presets"
 import { normalizeEconomics } from "@/lib/calculations"
 
 const APP_VERSION = "0.1.0"

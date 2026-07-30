@@ -1,6 +1,6 @@
 import Link from "next/link"
 import ConsultingBackground from "@/components/ConsultingBackground"
-import { ShieldCheck, FileText, ArrowLeft } from "lucide-react"
+import { ShieldCheck, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import HeroParticles from "@/components/HeroParticles"
 
@@ -55,7 +55,7 @@ export default function LegalPage() {
                 Los resultados son estimaciones basadas en modelos matemáticos de producción.
               </p>
               <p>
-                La herramienta se proporciona "tal cual", sin garantías de que los resultados 
+                La herramienta se proporciona &quot;tal cual&quot;, sin garantías de que los resultados 
                 se trasladen idénticamente a la producción física real.
               </p>
             </div>
