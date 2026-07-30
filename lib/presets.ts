@@ -11,13 +11,13 @@ export const DEFAULT_ECONOMICS: EconomicInputs = {
 }
 
 const MONOBATH_STATIONS: Omit<Station, "id">[] = [
-  { name: "Estructura metálica y solera",          cycleTimeMin: 45, operators: 2, failureRate: 0.02 },
-  { name: "Instalación de fontanería",             cycleTimeMin: 55, operators: 2, failureRate: 0.05 },
-  { name: "Instalación eléctrica",                 cycleTimeMin: 35, operators: 1, failureRate: 0.03 },
-  { name: "Alicatado y revestimientos cerámicos",  cycleTimeMin: 90, operators: 3, failureRate: 0.04 },
-  { name: "Montaje sanitarios y grifería",         cycleTimeMin: 50, operators: 2, failureRate: 0.03 },
-  { name: "Control de calidad e inspección",       cycleTimeMin: 25, operators: 1, failureRate: 0.01 },
-  { name: "Embalaje y preparación expedición",     cycleTimeMin: 30, operators: 1, failureRate: 0.02 },
+  { name: "Estructura metálica y solera",          cycleTimeMin: 45, cycleTimeStdDev: 4.5, distributionType: "normal", operators: 2, failureRate: 0.02 },
+  { name: "Instalación de fontanería",             cycleTimeMin: 55, cycleTimeStdDev: 5.5, distributionType: "normal", operators: 2, failureRate: 0.05 },
+  { name: "Instalación eléctrica",                 cycleTimeMin: 35, cycleTimeStdDev: 3.5, distributionType: "normal", operators: 1, failureRate: 0.03 },
+  { name: "Alicatado y revestimientos cerámicos",  cycleTimeMin: 90, cycleTimeStdDev: 12.0, distributionType: "lognormal", operators: 3, failureRate: 0.04 },
+  { name: "Montaje sanitarios y grifería",         cycleTimeMin: 50, cycleTimeStdDev: 5.0, distributionType: "normal", operators: 2, failureRate: 0.03 },
+  { name: "Control de calidad e inspección",       cycleTimeMin: 25, cycleTimeStdDev: 2.0, distributionType: "normal", operators: 1, failureRate: 0.01 },
+  { name: "Embalaje y preparación expedición",     cycleTimeMin: 30, cycleTimeStdDev: 2.5, distributionType: "normal", operators: 1, failureRate: 0.02 },
 ]
 
 export function createMonobathPreset(): Scenario {

@@ -5,6 +5,25 @@ import type { Station, Scenario, AppState, EconomicInputs, ScenarioSnapshot, Exp
 import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS } from "@/lib/presets"
 import { buildScenarioExportPayload, buildSnapshotExportPayload, regenerateScenarioIds } from "@/lib/import-export"
 
+// ─── Custom Storage Engine (Preparación para Cloud Sync Fase 4) ─────────────
+// Actualmente usa localStorage, pero la interfaz permite inyectar 
+// adaptadores remotos (Supabase, Firebase) en el futuro.
+const hybridStorage = {
+  getItem: (name: string) => {
+    const str = localStorage.getItem(name)
+    return str ? JSON.parse(str) : null
+  },
+  setItem: (name: string, value: any) => {
+    localStorage.setItem(name, JSON.stringify(value))
+    // TODO (Fase 4): If user is authenticated, sync 'value' to Cloud DB asynchronously
+  },
+  removeItem: (name: string) => {
+    localStorage.removeItem(name)
+  },
+}
+// ────────────────────────────────────────────────────────────────────────────
+
+
 interface TaktStore extends AppState {
   // Escenarios
   addScenario: (name: string) => void
@@ -353,6 +372,7 @@ export const useTaktStore = create<TaktStore>()(
     {
       name: "takt-studio-storage",
       version: 2,
+      storage: hybridStorage,
       migrate: (persistedState: unknown, version: number) => {
         const state = persistedState as { scenarios?: Scenario[]; snapshots?: unknown[] }
         if (version < 1) {

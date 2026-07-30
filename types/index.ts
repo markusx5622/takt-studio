@@ -9,6 +9,10 @@ export type Station = {
   name: string
   /** Tiempo de ciclo en minutos por unidad */
   cycleTimeMin: number
+  /** Desviación estándar del tiempo de ciclo (minutos). Usado para simulación estocástica. Opcional. */
+  cycleTimeStdDev?: number
+  /** Tipo de distribución estadística para el tiempo de ciclo. Opcional, por defecto "normal". */
+  distributionType?: "normal" | "lognormal" | "constant"
   /** Número de operarios asignados a esta estación (mínimo 1) */
   operators: number
   /** Tasa de fallo/reproceso como decimal 0-1 (ej: 0.05 = 5%). Opcional, default 0 */
