@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import Header from "@/components/Header"
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
   title: "Takt Studio — Simulador de Líneas de Producción Industrializada",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="pb-16 md:pb-0">{children}</main>
         </TooltipProvider>
+        <Analytics />
       </body>
     </html>
   )
