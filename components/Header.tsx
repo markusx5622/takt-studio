@@ -37,8 +37,8 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2 text-foreground transition-all hover:opacity-80"
           >
-            <BrandLogo variant="horizontalLight" className="h-8 w-auto hidden md:block" />
-            <BrandLogo variant="mark" className="h-8 w-auto md:hidden" />
+            <BrandLogo variant="horizontalLight" className="h-10 w-auto hidden md:block" />
+            <BrandLogo variant="mark" className="h-9 w-auto md:hidden" />
           </Link>
 
           {pathname !== "/" && (
