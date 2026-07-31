@@ -27,8 +27,9 @@ export const metadata: Metadata = {
       { url: "/favicon.png", type: "image/png" },
     ],
     shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    apple: "/apple-touch-icon.png",
   },
+  manifest: "/manifest.webmanifest",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

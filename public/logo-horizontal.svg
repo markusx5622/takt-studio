@@ -1,0 +1,15 @@
+<svg width="960" height="256" viewBox="0 0 960 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Takt Studio">
+  <g transform="translate(48, 48) scale(0,3125)">
+  <rect width="512" height="512" rx="112" fill="#2563EB"/>
+  <path d="M128 170H384" stroke="white" stroke-width="38" stroke-linecap="round"/>
+  <path d="M256 170V334" stroke="white" stroke-width="38" stroke-linecap="round"/>
+  <path d="M140 300C184 252 218 252 256 300C294 348 336 348 376 300" stroke="#06B6D4" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="140" cy="300" r="16.5" fill="white"/>
+  <circle cx="256" cy="300" r="18" fill="white"/>
+  <circle cx="376" cy="300" r="16.5" fill="white"/>
+  <circle cx="256" cy="300" r="10.5" fill="#22C55E"/>
+  </g>
+  <text x="240" y="140" font-size="72" font-weight="800" letter-spacing="-2" font-family="Inter, Geist, Arial, sans-serif" fill="#0F172A">Takt</text>
+  <text x="405" y="140" font-size="72" font-weight="800" letter-spacing="-2" font-family="Inter, Geist, Arial, sans-serif" fill="#2563EB">Studio</text>
+  <text x="245" y="180" font-size="20" font-weight="500" letter-spacing="0" font-family="Inter, Geist, Arial, sans-serif" fill="#64748B">Simulación y análisis de líneas de producción</text>
+</svg>

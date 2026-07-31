@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Factory, RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import BrandLogo from "@/components/BrandLogo"
 import { useTaktStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 
@@ -36,8 +37,8 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2 text-foreground transition-all hover:opacity-80"
           >
-            <Factory className="h-6 w-6 text-primary" />
-            <span className="text-lg font-bold tracking-tight">Takt Studio</span>
+            <BrandLogo variant="compact" className="h-8 w-auto hidden md:block" />
+            <BrandLogo variant="mark" className="h-8 w-auto md:hidden" />
           </Link>
 
           {pathname !== "/" && (
