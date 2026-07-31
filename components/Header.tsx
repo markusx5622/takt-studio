@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Factory, RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight } from "lucide-react"
+import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import BrandLogo from "@/components/BrandLogo"
 import { useTaktStore } from "@/lib/store"

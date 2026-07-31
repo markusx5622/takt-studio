@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 
 type LogoVariant = 
   | "mark" 
@@ -39,6 +39,7 @@ export default function BrandLogo({
   // Given we want styling flexibility with className and these are scalable SVGs,
   // a standard img tag is very robust for SVGs in Next.js without needing width/height props.
   return (
+    {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src={variantPaths[variant]}
       alt={alt}
