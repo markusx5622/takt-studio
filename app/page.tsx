@@ -726,14 +726,14 @@ export default function Home() {
               },
               {
                 phase: "Fase 2",
-                status: "En desarrollo",
+                status: "Completado",
                 title: "Advanced Analytics",
                 desc: "Simulación Monte Carlo, análisis de sensibilidad y exportación técnica avanzada.",
                 icon: FlaskConical,
-                color: "bg-primary",
-                shadow: "shadow-primary/20",
-                done: false,
-                active: true
+                color: "bg-emerald-500",
+                shadow: "shadow-emerald-500/20",
+                done: true,
+                active: false
               },
               {
                 phase: "Fase 3",

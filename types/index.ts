@@ -184,3 +184,36 @@ export type SnapshotExportPayload = {
 }
 
 export type ExportPayload = ScenarioExportPayload | SnapshotExportPayload
+
+export type MonteCarloOptions = {
+  runs?: number
+  cv?: number
+  seed?: number
+}
+
+export type ThroughputStats = {
+  min: number
+  p5: number
+  p25: number
+  mean: number
+  median: number
+  p75: number
+  p95: number
+  max: number
+}
+
+export type HistogramBin = {
+  binStart: number
+  binEnd: number
+  count: number
+}
+
+export type MonteCarloResult = {
+  runs: number
+  cv: number
+  seed: number
+  demandPerDay: number
+  throughput: ThroughputStats
+  probabilityMeetDemand: number
+  histogram: HistogramBin[]
+}

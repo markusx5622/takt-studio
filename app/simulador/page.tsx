@@ -7,6 +7,7 @@ import InsightsPanel from "@/components/InsightsPanel"
 import ImprovementPlan from "@/components/ImprovementPlan"
 import CostImpactPanel from "@/components/CostImpactPanel"
 import SensitivityLab from "@/components/SensitivityLab"
+import MonteCarloPanel from "@/components/MonteCarloPanel"
 import ConsultingBackground from "@/components/ConsultingBackground"
 import SharedScenarioLoader from "@/components/SharedScenarioLoader"
 
@@ -43,10 +44,13 @@ export default function SimuladorPage() {
       {/* ── 6. Laboratorio de sensibilidad ──────────────────────────────────── */}
       <SensitivityLab />
 
-      {/* ── 6. Diagrama de flujo ────────────────────────────────────────────── */}
+      {/* ── 7. Simulación Monte Carlo ───────────────────────────────────────── */}
+      <MonteCarloPanel />
+
+      {/* ── 8. Diagrama de flujo ────────────────────────────────────────────── */}
       <LineDiagram />
 
-      {/* ── 7. Análisis interpretativo ──────────────────────────────────────── */}
+      {/* ── 9. Análisis interpretativo ──────────────────────────────────────── */}
       <InsightsPanel />
       </div>
     </div>
