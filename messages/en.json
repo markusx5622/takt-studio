@@ -279,5 +279,159 @@
       "legal": "Legal",
       "madeWith": "Built with Next.js and Vercel"
     }
+  },
+  "legal": {
+    "metaTitle": "Legal Notice | Takt Studio",
+    "metaDescription": "Legal information and terms of use of Takt Studio.",
+    "title": "Legal Notice",
+    "subtitle": "Terms of use, liability and regulatory compliance of Takt Studio.",
+    "s1Title": "General Information",
+    "s1p1": "Takt Studio is an industrial simulation platform developed as a support tool for industrial organization engineering.",
+    "s1holder": "Owner:",
+    "s1location": "Location:",
+    "s1contact": "Contact:",
+    "s2Title": "Use of the Tool",
+    "s2p1": "Takt Studio is a prototype for educational and professional simulation purposes. Results are estimates based on mathematical production models.",
+    "s2p2": "The tool is provided \"as is\", with no guarantee that results will translate identically to real physical production.",
+    "s3Title": "Intellectual Property",
+    "s3p1": "The source code, interface design and simulation algorithms are the property of Takt Studio and its developer. Total or partial reproduction without express authorization is prohibited.",
+    "s3p2": "Takt Studio uses open-source technologies (Next.js, Tailwind CSS, Lucide) under their respective MIT and Apache 2.0 licenses.",
+    "back": "Back to home"
+  },
+  "privacidad": {
+    "metaTitle": "Privacy Policy | Takt Studio",
+    "metaDescription": "How we handle your data in Takt Studio.",
+    "title": "Privacy",
+    "subtitle": "Your engineering data is yours. Full transparency about information handling.",
+    "cards": [
+      {
+        "title": "Privacy by Design",
+        "text": "We do not store your model data on external servers. All computation happens in your browser."
+      },
+      {
+        "title": "No Accounts",
+        "text": "No registration required. No user profiles or personal identity tracking."
+      },
+      {
+        "title": "Local Security",
+        "text": "Data persistence uses your browser's local storage (localStorage)."
+      }
+    ],
+    "treatmentTitle": "Data Processing",
+    "sec1Title": "1. Data Collected",
+    "sec1Text": "Takt Studio does not collect personally identifiable data. The technical data entered in the simulator (cycle times, station names) remains exclusively on the user's device.",
+    "sec2Title": "2. Usage Analytics",
+    "sec2Text": "We may use anonymous analytics tools to understand the technical performance of the application and improve the user experience, never linking this information to physical persons.",
+    "back": "Back to home"
+  },
+  "metodologia": {
+    "title": "Methodology and model assumptions",
+    "subtitle": "How Takt Studio calculates its metrics and the limitations of the analytical model.",
+    "introTitle": "What Takt Studio is, methodologically",
+    "introP1": "Takt Studio is a deterministic analytical model of industrialized production lines. It uses cycle times, number of operators, demand and shifts to calculate key operational metrics: takt time, throughput, lead time and balancing efficiency.",
+    "introP2": "The tool is neither a full discrete event simulation (DES) nor a definitive financial validation. Its value lies in pre-validating improvement decisions before intervening on the shop floor, providing a fast and rigorous first quantitative approximation.",
+    "introWarning": "Results are indicative. For real investment decisions, they must be calibrated with real operational and financial data from the line.",
+    "kpisTitle": "Operational KPIs",
+    "kpiCards": [
+      {
+        "title": "Takt Time",
+        "p": "The rate at which you must produce to meet demand. It expresses the maximum allowed time per unit.",
+        "formula": "taktTime = (shiftHours × 60 × shiftsPerDay) / demandPerDay",
+        "note": "A low takt time indicates aggressive demand; a high takt time, relaxed demand."
+      },
+      {
+        "title": "Effective cycle time",
+        "p": "The real time a station consumes per unit, considering parallel operators and rework rate.",
+        "formula": "effectiveCycle = (cycleTimeMin / operators) × (1 + failureRate)",
+        "note": "More operators reduce effective time; more failures increase it through inherent rework."
+      },
+      {
+        "title": "Bottleneck",
+        "p": "The station that limits the overall line rate: the one with the highest effective cycle time.",
+        "formula": "bottleneck = max(effectiveCycle₁, effectiveCycle₂, …)",
+        "note": "Relieving the bottleneck is the highest-impact action on overall throughput."
+      },
+      {
+        "title": "Throughput",
+        "p": "Maximum units the line can produce per day, limited by the bottleneck.",
+        "formula": "throughput = ⌊availableTimeMin / bottleneckEffectiveCycle⌋",
+        "note": "Throughput never exceeds the bottleneck's capacity, regardless of the performance of the other stations."
+      },
+      {
+        "title": "Lead Time",
+        "p": "Estimated total time for a unit to travel the entire line from entry to exit.",
+        "formula": "leadTime = Σ effectiveCycleᵢ",
+        "note": "It does not model queues or buffer waits; it approximates pure travel time."
+      },
+      {
+        "title": "Balancing efficiency",
+        "p": "A measure of how balanced effective times are across stations.",
+        "formula": "balance = Σ effectiveCycleᵢ / (nStations × maxEffectiveCycle)",
+        "note": "A value of 1.0 indicates a perfectly balanced line. Values below 0.7 suggest an opportunity to redistribute workloads."
+      }
+    ],
+    "econTitle": "Economic layer",
+    "econIntro": "Takt Studio's economic layer translates operational metrics into financial impact estimates under scenario-configurable assumptions.",
+    "costTitle": "Daily operating costs",
+    "costItems": [
+      {
+        "label": "Labor",
+        "formula": "operators × hours × shifts × hourlyCost"
+      },
+      {
+        "label": "Shifts",
+        "formula": "shifts × shiftFixedCost"
+      },
+      {
+        "label": "Rework",
+        "formula": "units × failureRate × reworkCost"
+      }
+    ],
+    "proxyTitle": "Margin proxy",
+    "proxyText": "The difference between the contribution generated by served units and the total daily operating cost.",
+    "proxyFormula": "profitProxy = (servedUnits × unitMargin) − totalOperatingCost",
+    "impactTitle": "Net impact of a recommendation",
+    "impactText": "For each proposed improvement action, the estimated change in contribution minus the change in operating costs is calculated.",
+    "impactFormula": "netImpact = Δcontribution − Δlabor − Δshifts − Δrework",
+    "paybackTitle": "Payback",
+    "paybackText": "If the recommendation involves a one-off initial investment (method or quality improvement), the recovery time is estimated.",
+    "paybackFormula": "payback = initialInvestment / dailyNetImpact",
+    "econWarning": "The economic layer is an indicative estimate under configurable assumptions. It does not replace a detailed financial analysis or the company's real accounting validation.",
+    "limitsTitle": "Assumptions and limitations",
+    "limits": [
+      {
+        "label": "Deterministic model",
+        "text": "The calculation is analytical and does not model stochastic cycle time variability, absences or random failures."
+      },
+      {
+        "label": "No full DES",
+        "text": "It is not a discrete event simulation (DES). It does not model queues, buffers or WIP accumulation between stations."
+      },
+      {
+        "label": "No complex sequencing",
+        "text": "It does not model alternative routings, complex parallelism or sequence dependencies between stations."
+      },
+      {
+        "label": "Approximate bottleneck",
+        "text": "The bottleneck is identified as the station with the highest effective cycle time. In reality, the constraint may also depend on WIP policies, staggered shifts or materials."
+      },
+      {
+        "label": "Indicative economic layer",
+        "text": "Costs, margins and impacts are configurable estimates. They must be calibrated with real accounting and operational data before being used for investment decisions."
+      },
+      {
+        "label": "Simplified lead time",
+        "text": "Lead time is the sum of effective times. It does not include queue waiting times or transport times between stations."
+      }
+    ],
+    "noteTitle": "Professional use note",
+    "noteP1": "Takt Studio's value lies in offering a fast and consistent first quantitative approximation to pre-validate improvement decisions before intervening on the real line. It allows discarding unviable options, prioritizing interventions with the greatest operational impact and backing proposals with numbers.",
+    "noteP2": "For real investment, plant reorganization or hiring decisions, Takt Studio results should be complemented with:",
+    "noteItems": [
+      "In-situ operational validation (direct observation, time studies)",
+      "Detailed financial analysis with real accounting data",
+      "DES simulation if line complexity justifies it",
+      "Judgment of the engineering team and production management"
+    ]
   }
 }

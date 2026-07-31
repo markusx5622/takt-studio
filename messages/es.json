@@ -279,5 +279,159 @@
       "legal": "Legal",
       "madeWith": "Hecho con Next.js y Vercel"
     }
+  },
+  "legal": {
+    "metaTitle": "Aviso Legal | Takt Studio",
+    "metaDescription": "Información legal y términos de uso de Takt Studio.",
+    "title": "Aviso Legal",
+    "subtitle": "Términos de uso, responsabilidad y cumplimiento normativo de Takt Studio.",
+    "s1Title": "Información General",
+    "s1p1": "Takt Studio es una plataforma de simulación industrial desarrollada como herramienta de apoyo a la ingeniería de organización industrial.",
+    "s1holder": "Titular:",
+    "s1location": "Ubicación:",
+    "s1contact": "Contacto:",
+    "s2Title": "Uso de la Herramienta",
+    "s2p1": "Takt Studio es un prototipo con fines educativos y profesionales de simulación. Los resultados son estimaciones basadas en modelos matemáticos de producción.",
+    "s2p2": "La herramienta se proporciona \"tal cual\", sin garantías de que los resultados se trasladen idénticamente a la producción física real.",
+    "s3Title": "Propiedad Intelectual",
+    "s3p1": "El código fuente, diseño de interfaz y algoritmos de simulación son propiedad de Takt Studio y su desarrollador. Queda prohibida la reproducción total o parcial sin autorización expresa.",
+    "s3p2": "Takt Studio utiliza tecnologías de código abierto (Next.js, Tailwind CSS, Lucide) bajo sus respectivas licencias MIT y Apache 2.0.",
+    "back": "Volver al inicio"
+  },
+  "privacidad": {
+    "metaTitle": "Política de Privacidad | Takt Studio",
+    "metaDescription": "Cómo tratamos tus datos en Takt Studio.",
+    "title": "Privacidad",
+    "subtitle": "Tus datos de ingeniería son tuyos. Transparencia total sobre el tratamiento de información.",
+    "cards": [
+      {
+        "title": "Privacidad por Diseño",
+        "text": "No guardamos datos de tus modelos en servidores externos. Todo el cálculo ocurre en tu navegador."
+      },
+      {
+        "title": "Sin Cuentas",
+        "text": "No requerimos registro. No hay perfiles de usuario ni rastreo de identidad personal."
+      },
+      {
+        "title": "Seguridad Local",
+        "text": "La persistencia de datos utiliza el almacenamiento local de tu navegador (localStorage)."
+      }
+    ],
+    "treatmentTitle": "Tratamiento de Datos",
+    "sec1Title": "1. Datos Recopilados",
+    "sec1Text": "Takt Studio no recopila datos personales identificables. Los datos técnicos introducidos en el simulador (tiempos de ciclo, nombres de estaciones) permanecen exclusivamente en el dispositivo del usuario.",
+    "sec2Title": "2. Analítica de Uso",
+    "sec2Text": "Podemos utilizar herramientas de analítica anónima para entender el rendimiento técnico de la aplicación y mejorar la experiencia de usuario, sin vincular nunca esta información a personas físicas.",
+    "back": "Volver al inicio"
+  },
+  "metodologia": {
+    "title": "Metodología y supuestos del modelo",
+    "subtitle": "Cómo calcula Takt Studio sus métricas y qué limitaciones tiene el modelo analítico.",
+    "introTitle": "Qué es Takt Studio metodológicamente",
+    "introP1": "Takt Studio es un modelo analítico determinista de líneas de producción industrializada. Parte de los tiempos de ciclo, el número de operarios, la demanda y los turnos para calcular métricas operativas clave: takt time, throughput, lead time y eficiencia de balanceo.",
+    "introP2": "La herramienta no es una simulación de eventos discretos (DES) completa ni una validación financiera definitiva. Su valor está en prevalidar decisiones de mejora antes de intervenir en planta, proporcionando una primera aproximación cuantitativa rápida y rigurosa.",
+    "introWarning": "Los resultados son orientativos. Para decisiones reales de inversión, deben calibrarse con datos operativos y financieros reales de la línea.",
+    "kpisTitle": "KPIs operativos",
+    "kpiCards": [
+      {
+        "title": "Takt Time",
+        "p": "Ritmo al que hay que producir para satisfacer la demanda. Expresa el tiempo máximo permitido por unidad.",
+        "formula": "taktTime = (shiftHours × 60 × shiftsPerDay) / demandPerDay",
+        "note": "Un takt time bajo indica una demanda agresiva; un takt time alto, una demanda relajada."
+      },
+      {
+        "title": "Tiempo de ciclo efectivo",
+        "p": "Tiempo real que consume una estación por unidad, considerando operarios paralelos y tasa de reproceso.",
+        "formula": "effectiveCycle = (cycleTimeMin / operators) × (1 + failureRate)",
+        "note": "Más operarios reducen el tiempo efectivo; más fallos lo aumentan por el retrabajo inherente."
+      },
+      {
+        "title": "Cuello de botella",
+        "p": "Estación que limita el ritmo global de la línea: aquella con el mayor tiempo de ciclo efectivo.",
+        "formula": "bottleneck = max(effectiveCycle₁, effectiveCycle₂, …)",
+        "note": "Aliviar el bottleneck es la acción de mayor impacto sobre el throughput global."
+      },
+      {
+        "title": "Throughput",
+        "p": "Unidades máximas que la línea puede producir por día, limitada por el bottleneck.",
+        "formula": "throughput = ⌊availableTimeMin / bottleneckEffectiveCycle⌋",
+        "note": "El throughput nunca supera la capacidad del cuello de botella, independientemente del rendimiento del resto de estaciones."
+      },
+      {
+        "title": "Lead Time",
+        "p": "Tiempo total estimado que tarda una unidad en recorrer toda la línea desde la entrada hasta la salida.",
+        "formula": "leadTime = Σ effectiveCycleᵢ",
+        "note": "No modela colas ni esperas en buffer; es una aproximación del tiempo de recorrido puro."
+      },
+      {
+        "title": "Eficiencia de balanceo",
+        "p": "Medida de qué tan equilibrados están los tiempos efectivos entre estaciones.",
+        "formula": "balance = Σ effectiveCycleᵢ / (nStations × maxEffectiveCycle)",
+        "note": "Un valor de 1.0 indica una línea perfectamente balanceada. Valores por debajo de 0.7 sugieren oportunidad de redistribución de cargas."
+      }
+    ],
+    "econTitle": "Capa económica",
+    "econIntro": "La capa económica de Takt Studio traduce las métricas operativas a estimaciones de impacto financiero bajo supuestos configurables por escenario.",
+    "costTitle": "Costes operativos diarios",
+    "costItems": [
+      {
+        "label": "Laboral",
+        "formula": "operarios × horas × turnos × costeHora"
+      },
+      {
+        "label": "Turnos",
+        "formula": "turnos × costeFijoTurno"
+      },
+      {
+        "label": "Reproceso",
+        "formula": "uds × tasaFallo × costeReproceso"
+      }
+    ],
+    "proxyTitle": "Proxy de margen",
+    "proxyText": "Diferencia entre la contribución generada por las unidades servidas y el coste operativo total diario.",
+    "proxyFormula": "profitProxy = (udsServidas × margenUnidad) − costeOperativoTotal",
+    "impactTitle": "Impacto neto de una recomendación",
+    "impactText": "Para cada acción de mejora propuesta, se calcula el cambio estimado en contribución menos el cambio en costes operativos.",
+    "impactFormula": "netImpact = Δcontribución − Δlabor − Δturnos − Δreproceso",
+    "paybackTitle": "Payback",
+    "paybackText": "Si la recomendación conlleva una inversión inicial one-off (mejora de método o de calidad), se estima el tiempo de recuperación.",
+    "paybackFormula": "payback = inversiónInicial / impactoNetoDiario",
+    "econWarning": "La capa económica es una estimación orientativa bajo supuestos configurables. No sustituye un análisis financiero detallado ni la validación contable real de la empresa.",
+    "limitsTitle": "Supuestos y limitaciones",
+    "limits": [
+      {
+        "label": "Modelo determinista",
+        "text": "El cálculo es analítico y no modela la variabilidad estocástica del tiempo de ciclo, ausencias ni fallos aleatorios."
+      },
+      {
+        "label": "Sin DES completa",
+        "text": "No es una simulación de eventos discretos (DES). No modela colas, buffers ni acumulación de WIP entre estaciones."
+      },
+      {
+        "label": "Sin secuenciación compleja",
+        "text": "No modela rutas alternativas, paralelismo complejo ni dependencias de secuencia entre estaciones."
+      },
+      {
+        "label": "Bottleneck aproximado",
+        "text": "El cuello de botella se identifica como la estación con mayor tiempo de ciclo efectivo. En la realidad, el constraint puede depender también de políticas de WIP, turnos escalonados o materiales."
+      },
+      {
+        "label": "Capa económica orientativa",
+        "text": "Los costes, márgenes e impactos son estimaciones configurables. Deben calibrarse con datos contables y operativos reales antes de usarse para decisiones de inversión."
+      },
+      {
+        "label": "Lead time simplificado",
+        "text": "El lead time es la suma de tiempos efectivos. No incluye tiempos de espera en cola ni tiempos de transporte entre estaciones."
+      }
+    ],
+    "noteTitle": "Nota de uso profesional",
+    "noteP1": "El valor de Takt Studio está en ofrecer una primera aproximación cuantitativa rápida y consistente para prevalidar decisiones de mejora antes de intervenir en la línea real. Permite descartar opciones inviables, priorizar intervenciones con mayor impacto operativo y respaldar propuestas con números.",
+    "noteP2": "Para decisiones reales de inversión, reorganización de planta o contratación, los resultados de Takt Studio deben complementarse con:",
+    "noteItems": [
+      "Validación operativa in situ (observación directa, cronometraje)",
+      "Análisis financiero detallado con datos contables reales",
+      "Simulación DES si la complejidad de la línea lo justifica",
+      "Juicio del equipo de ingeniería y dirección de producción"
+    ]
   }
 }
