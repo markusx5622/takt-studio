@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import ConsultingBackground from "@/components/ConsultingBackground"
 import { ShieldCheck, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"

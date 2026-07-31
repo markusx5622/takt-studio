@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Code2,
@@ -5,6 +6,8 @@ import {
 } from "lucide-react"
 
 export default function AboutSection() {
+  const t = useTranslations("landing.about")
+
   return (
 <section className="reveal relative z-10 px-4 py-16 md:py-20">
     <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
@@ -14,22 +17,20 @@ export default function AboutSection() {
           {/* Text */}
           <div className="flex flex-col justify-center">
             <h2 className="text-xl font-bold tracking-tight md:text-2xl">
-              Sobre este proyecto
+              {t("heading")}
             </h2>
             <div className="mt-4 space-y-3 text-sm leading-relaxed text-foreground/70">
               <p>
-                Takt Studio es un prototipo funcional de simulación y análisis de líneas de
-                producción industrializada. Permite modelar estaciones, calcular KPIs operativos
-                y comparar escenarios <em className="not-italic font-medium text-foreground/80">what-if</em>{" "}
-                antes de realizar cualquier intervención en planta.
+                {t("p1A")}{" "}
+                <em className="not-italic font-medium text-foreground/80">what-if</em>{" "}
+                {t("p1B")}
               </p>
               <p>
-                Desarrollado por{" "}
-                <span className="font-medium text-foreground">Marc Cubero</span> en el ámbito
-                de la Ingeniería de Organización Industrial de la{" "}
-                <span className="font-medium text-foreground">Universidad Europea de Valencia</span>.
-                El enfoque es práctico: una herramienta que respalde la toma de decisiones con
-                datos, no que la sustituya.
+                {t("p2A")}{" "}
+                <span className="font-medium text-foreground">Marc Cubero</span>{" "}
+                {t("p2B")}{" "}
+                <span className="font-medium text-foreground">Universidad Europea de Valencia</span>.{" "}
+                {t("p2C")}
               </p>
             </div>
           </div>
@@ -45,10 +46,10 @@ export default function AboutSection() {
                 href="https://github.com/markusx5622/takt-studio"
                 target="_blank"
                 rel="noreferrer noopener"
-                aria-label="Ver repositorio en GitHub"
+                aria-label={t("repoAria")}
               >
                 <Code2 className="h-4 w-4 text-primary" />
-                <span className="font-medium text-foreground/90">Ver repositorio</span>
+                <span className="font-medium text-foreground/90">{t("repo")}</span>
               </a>
             </Button>
             <Button
@@ -60,10 +61,10 @@ export default function AboutSection() {
                 href="https://www.linkedin.com/in/marc-cubero-cantavella-bb04542a7"
                 target="_blank"
                 rel="noreferrer noopener"
-                aria-label="Ver perfil de LinkedIn"
+                aria-label={t("linkedinAria")}
               >
                 <Briefcase className="h-4 w-4 text-primary" />
-                <span className="font-medium text-foreground/90">Perfil de LinkedIn</span>
+                <span className="font-medium text-foreground/90">{t("linkedin")}</span>
               </a>
             </Button>
           </div>

@@ -1,0 +1,283 @@
+{
+  "metadata": {
+    "title": "Takt Studio — Simulador de Líneas de Producción Industrializada",
+    "description": "Herramienta de simulación y análisis de líneas de producción. Calcula takt time, detecta cuellos de botella y compara escenarios what-if. Ingeniería de Organización Industrial.",
+    "ogTitle": "Takt Studio — Simulador de Líneas de Producción",
+    "ogDescription": "Diseña, simula y optimiza tu línea de producción antes de tocarla. Takt time, cuellos de botella y escenarios what-if.",
+    "twitterDescription": "Diseña, simula y optimiza tu línea de producción antes de tocarla.",
+    "ogImageAlt": "Takt Studio — Gráfico de tiempos de ciclo vs takt time y KPIs de la línea de producción"
+  },
+  "header": {
+    "nav": {
+      "simulador": "Simulador",
+      "comparar": "Comparar",
+      "metodologia": "Metodología",
+      "historial": "Historial",
+      "importarExportar": "Importar / exportar"
+    },
+    "reset": "Reset",
+    "resetConfirm": "¿Seguro? Se perderán todos los cambios.",
+    "switchLocale": "Cambiar idioma a {locale}"
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Ingeniería de Organización Industrial",
+      "titleA": "Diseña, simula y optimiza",
+      "titleB": "tu línea de producción",
+      "subtitleA": "Modela estaciones, calcula KPIs operativos y compara escenarios",
+      "subtitleB": "Sin tocar la planta real.",
+      "ctaPrimary": "Probar con plantilla Monobath",
+      "ctaSecondary": "Ver comparador",
+      "badges": [
+        "Cálculo en tiempo real",
+        "Sin cuenta",
+        "Sin instalación"
+      ]
+    },
+    "mockup": {
+      "prototype": "Prototipo V.2.0",
+      "dashboardTitle": "Dashboard de Producción",
+      "dashboardSub": "Línea Monobath — Planta Valencia Centro",
+      "report": "Reporte",
+      "simulate": "Simular",
+      "kpis": [
+        {
+          "label": "Takt Time",
+          "value": "7.5",
+          "unit": "min/ud",
+          "trend": "+2.4%"
+        },
+        {
+          "label": "Throughput",
+          "value": "64",
+          "unit": "uds/día",
+          "trend": "-1.2%"
+        },
+        {
+          "label": "Cuello bot.",
+          "value": "Alicatado",
+          "unit": "9.2 min",
+          "trend": "Crítico"
+        },
+        {
+          "label": "Balanceo",
+          "value": "81%",
+          "unit": "efic.",
+          "trend": "+5.1%"
+        }
+      ],
+      "stations": [
+        {
+          "name": "Prep",
+          "h": 42,
+          "bottleneck": false
+        },
+        {
+          "name": "Mont",
+          "h": 62,
+          "bottleneck": false
+        },
+        {
+          "name": "Alic",
+          "h": 100,
+          "bottleneck": true
+        },
+        {
+          "name": "Elec",
+          "h": 58,
+          "bottleneck": false
+        },
+        {
+          "name": "Font",
+          "h": 55,
+          "bottleneck": false
+        },
+        {
+          "name": "Pint",
+          "h": 48,
+          "bottleneck": false
+        },
+        {
+          "name": "QC",
+          "h": 38,
+          "bottleneck": false
+        },
+        {
+          "name": "Emb",
+          "h": 32,
+          "bottleneck": false
+        }
+      ],
+      "chartTitle": "Ciclo efectivo vs Takt",
+      "standard": "Estándar",
+      "oee": "Eficiencia Global (OEE)",
+      "availability": "Disponibilidad",
+      "performance": "Rendimiento"
+    },
+    "features": {
+      "heading": "Análisis operativo en tiempo real",
+      "sub": "Fundamentos de Ingeniería de Organización Industrial aplicados a la toma de decisiones",
+      "items": [
+        {
+          "title": "Métricas operativas continuas",
+          "description": "Takt time, throughput, eficiencia de balanceo y lead time se recalculan automáticamente a cada cambio. Sin esperas, sin exportar a Excel."
+        },
+        {
+          "title": "Identificación del constraint",
+          "description": "Localiza con precisión la estación que limita el ritmo de producción y evalúa el impacto de aliviarla antes de invertir en planta."
+        },
+        {
+          "title": "Análisis de escenarios A/B",
+          "description": "Duplica una configuración, modifica parámetros y compara métricas diferenciadas para justificar decisiones de mejora con datos."
+        }
+      ]
+    },
+    "howItWorks": {
+      "heading": "Flujo de uso",
+      "sub": "De la definición a la decisión en tres pasos",
+      "steps": [
+        {
+          "title": "Define la línea",
+          "description": "Configura estaciones, tiempos de ciclo, operarios, demanda y turnos. Parte de la plantilla Monobath o construye desde cero."
+        },
+        {
+          "title": "Detecta el cuello de botella",
+          "description": "El simulador identifica automáticamente el constraint y muestra su impacto sobre el throughput y el balanceo global."
+        },
+        {
+          "title": "Compara antes de intervenir",
+          "description": "Evalúa escenarios what-if en el comparador y exporta el análisis para respaldar la propuesta de mejora."
+        }
+      ]
+    },
+    "capabilities": {
+      "heading": "Capacidades",
+      "sub": "Todo lo que incluye Takt Studio desde el primer acceso",
+      "items": [
+        {
+          "title": "Plantilla Monobath",
+          "description": "Línea de baños prefabricados preconfigurada como caso de estudio operativo."
+        },
+        {
+          "title": "Comparación A/B",
+          "description": "Contrasta dos escenarios lado a lado con delta automático en cada métrica."
+        },
+        {
+          "title": "KPIs clave",
+          "description": "Takt time, throughput, lead time, eficiencia de balanceo y análisis de constraint."
+        },
+        {
+          "title": "Exportación PDF",
+          "description": "Genera informes del escenario activo para documentación o presentaciones."
+        },
+        {
+          "title": "Simulación instantánea",
+          "description": "Cálculo en tiempo real sin latencia perceptible al ajustar cualquier parámetro."
+        },
+        {
+          "title": "Sin instalación",
+          "description": "Funciona en el navegador. Sin cuentas, sin licencias, sin dependencias externas."
+        }
+      ]
+    },
+    "methodology": {
+      "heading": "Validación antes de la inversión",
+      "textA": "Takt Studio parte de una",
+      "boldA": "plantilla Monobath calibrada",
+      "textB": "como demostración del método. Puedes ajustar cada parámetro con datos reales de tu propia línea y validar decisiones antes de cualquier intervención física.",
+      "boldB": "La herramienta está pensada para reducir el riesgo operativo de las mejoras de producción",
+      "textC": "mediante simulación analítica, no para sustituir el juicio del ingeniero."
+    },
+    "about": {
+      "heading": "Sobre este proyecto",
+      "p1A": "Takt Studio es un prototipo funcional de simulación y análisis de líneas de producción industrializada. Permite modelar estaciones, calcular KPIs operativos y comparar escenarios",
+      "p1B": "antes de realizar cualquier intervención en planta.",
+      "p2A": "Desarrollado por",
+      "p2B": "en el ámbito de la Ingeniería de Organización Industrial de la",
+      "p2C": "El enfoque es práctico: una herramienta que respalde la toma de decisiones con datos, no que la sustituya.",
+      "repo": "Ver repositorio",
+      "repoAria": "Ver repositorio en GitHub",
+      "linkedin": "Perfil de LinkedIn",
+      "linkedinAria": "Ver perfil de LinkedIn"
+    },
+    "tech": {
+      "heading": "Ingeniería y Arquitectura",
+      "sub": "Tecnología de vanguardia para simulaciones industriales de alto rendimiento",
+      "cards": [
+        {
+          "title": "Motor Reactivo",
+          "description": "Algoritmos optimizados en JavaScript que recalculan el flujo completo de la línea y detectan cuellos de botella en milisegundos ante cualquier cambio de parámetros."
+        },
+        {
+          "title": "Industrial Design",
+          "description": "Interfaz de alta fidelidad construida con Tailwind CSS, priorizando la legibilidad técnica y la ergonomía visual para entornos profesionales de ingeniería."
+        },
+        {
+          "title": "Local Computing",
+          "description": "Estrategia \"Offline-First\" utilizando persistencia en el navegador. Garantiza latencia cero y privacidad total de los datos industriales sin necesidad de base de datos."
+        }
+      ]
+    },
+    "faq": {
+      "heading": "Preguntas frecuentes",
+      "sub": "Todo lo que necesitas saber sobre Takt Studio y la simulación de líneas",
+      "items": [
+        {
+          "q": "¿Qué precisión tienen los cálculos de Takt Studio?",
+          "a": "Los cálculos se basan en fórmulas estándar de Ingeniería de Organización Industrial. La precisión depende de la calidad de los datos de entrada (tiempos de ciclo, eficiencias). Es una herramienta de simulación analítica para toma de decisiones, no un sistema de control en tiempo real."
+        },
+        {
+          "q": "¿Dónde se guardan mis datos de simulación?",
+          "a": "Por privacidad y seguridad, tus datos nunca salen de tu dispositivo. Se guardan en el almacenamiento local de tu navegador (localStorage). Si borras la caché o cambias de navegador, los datos no se sincronizarán a menos que los exportes manualmente."
+        },
+        {
+          "q": "¿Puedo exportar mis análisis a otros formatos?",
+          "a": "Sí, Takt Studio permite exportar los resultados y la configuración actual en formato PDF para presentaciones e informes técnicos, así como importar/exportar archivos JSON para compartir modelos entre diferentes usuarios."
+        },
+        {
+          "q": "¿Es necesario tener conocimientos avanzados de Lean Manufacturing?",
+          "a": "No es obligatorio, pero ayuda. La herramienta está diseñada para ser intuitiva, pero conceptos como 'Cuello de Botella' o 'Balanceo de Línea' son fundamentales para interpretar correctamente los resultados y tomar decisiones de mejora."
+        }
+      ]
+    },
+    "roadmap": {
+      "heading": "Roadmap & Visión 2026",
+      "sub": "Evolución continua del simulador: de la analítica local a la inteligencia industrial global",
+      "phases": [
+        {
+          "phase": "Fase 1",
+          "status": "Completado",
+          "title": "Core Sim Engine",
+          "desc": "Motor de cálculo reactivo, comparador A/B y sistema de plantillas dinámicas."
+        },
+        {
+          "phase": "Fase 2",
+          "status": "Completado",
+          "title": "Advanced Analytics",
+          "desc": "Simulación Monte Carlo, análisis de sensibilidad y exportación técnica avanzada."
+        },
+        {
+          "phase": "Fase 3",
+          "status": "Q3 2026",
+          "title": "IoT Sync",
+          "desc": "Conectividad con sensores en planta para captura de tiempos de ciclo en tiempo real."
+        },
+        {
+          "phase": "Fase 4",
+          "status": "Visión 2027",
+          "title": "Takt Cloud AI",
+          "desc": "Optimización de líneas basada en IA y colaboración multi-usuario en la nube."
+        }
+      ],
+      "tagline": "Impulsando la industria 4.0",
+      "cta": "Empieza tu simulación ahora"
+    },
+    "footer": {
+      "tagline": "Takt Studio · 2026",
+      "subtitle": "Ingeniería de Organización Industrial · UEV",
+      "privacy": "Privacidad",
+      "legal": "Legal",
+      "madeWith": "Hecho con Next.js y Vercel"
+    }
+  }
+}

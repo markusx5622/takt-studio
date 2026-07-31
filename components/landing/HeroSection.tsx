@@ -1,5 +1,6 @@
+import { useTranslations } from "next-intl"
 import InterfaceMockup from "@/components/landing/InterfaceMockup"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import {
   ArrowRight,
@@ -7,6 +8,9 @@ import {
 } from "lucide-react"
 
 export default function HeroSection() {
+  const t = useTranslations("landing.hero")
+  const badges = t.raw("badges") as string[]
+
   return (
 <section className="relative z-10 flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32">
     {/* Ambient glow behind content */}
@@ -19,20 +23,20 @@ export default function HeroSection() {
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-40" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse-soft" />
       </span>
-      Ingeniería de Organización Industrial
+      {t("eyebrow")}
     </div>
 
     {/* Title */}
     <h1 className="max-w-5xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-      Diseña, simula y optimiza
-      <span className="block shimmer-text">tu línea de producción</span>
+      {t("titleA")}
+      <span className="block shimmer-text">{t("titleB")}</span>
     </h1>
 
     {/* Subtitle */}
     <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-foreground/70 sm:text-xl">
-      Modela estaciones, calcula KPIs operativos y compara escenarios{" "}
+      {t("subtitleA")}{" "}
       <em className="not-italic font-medium text-foreground/80">what-if</em>.{" "}
-      Sin tocar la planta real.
+      {t("subtitleB")}
     </p>
 
     {/* CTAs */}
@@ -43,7 +47,7 @@ export default function HeroSection() {
         className="gap-2 px-6 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 animate-cta-pulse"
       >
         <Link href="/simulador">
-          Probar con plantilla Monobath
+          {t("ctaPrimary")}
           <ArrowRight className="h-4 w-4" />
         </Link>
       </Button>
@@ -53,7 +57,7 @@ export default function HeroSection() {
         variant="outline"
         className="gap-2 px-6 bg-background/80 backdrop-blur-sm transition-all duration-200 hover:bg-background hover:shadow-md"
       >
-        <Link href="/comparar">Ver comparador</Link>
+        <Link href="/comparar">{t("ctaSecondary")}</Link>
       </Button>
     </div>
 
@@ -61,17 +65,17 @@ export default function HeroSection() {
     <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-foreground/50">
       <span className="inline-flex items-center gap-1.5">
         <CheckCircle2 className="h-3 w-3" />
-        Cálculo en tiempo real
+        {badges[0]}
       </span>
       <span className="hidden h-px w-4 bg-border sm:block" />
       <span className="inline-flex items-center gap-1.5">
         <CheckCircle2 className="h-3 w-3" />
-        Sin cuenta
+        {badges[1]}
       </span>
       <span className="hidden h-px w-4 bg-border sm:block" />
       <span className="inline-flex items-center gap-1.5">
         <CheckCircle2 className="h-3 w-3" />
-        Sin instalación
+        {badges[2]}
       </span>
     </div>
 

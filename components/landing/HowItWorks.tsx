@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import {
   GitCompare,
   Settings2,
@@ -31,37 +32,33 @@ function StepCard({
   )
 }
 
+const STEP_ICONS = [Settings2, ScanSearch, GitCompare]
+
 export default function HowItWorks() {
+  const t = useTranslations("landing.howItWorks")
+  const steps = t.raw("steps") as { title: string; description: string }[]
+
   return (
 <section className="reveal relative z-10 bg-grid-pattern-light px-4 py-20 md:py-24">
     <div className="pointer-events-none absolute inset-0 section-ambient-product" />
     <div className="mx-auto max-w-4xl">
       <div className="mb-14 text-center">
-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Flujo de uso</h2>
+        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
         <p className="mt-2 text-sm text-foreground/60">
-          De la definición a la decisión en tres pasos
+          {t("sub")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
-        <StepCard
-          step="1"
-          icon={Settings2}
-          title="Define la línea"
-          description="Configura estaciones, tiempos de ciclo, operarios, demanda y turnos. Parte de la plantilla Monobath o construye desde cero."
-        />
-        <StepCard
-          step="2"
-          icon={ScanSearch}
-          title="Detecta el cuello de botella"
-          description="El simulador identifica automáticamente el constraint y muestra su impacto sobre el throughput y el balanceo global."
-        />
-        <StepCard
-          step="3"
-          icon={GitCompare}
-          title="Compara antes de intervenir"
-          description="Evalúa escenarios what-if en el comparador y exporta el análisis para respaldar la propuesta de mejora."
-        />
+        {steps.map((s, i) => (
+          <StepCard
+            key={i}
+            step={`${i + 1}`}
+            icon={STEP_ICONS[i]}
+            title={s.title}
+            description={s.description}
+          />
+        ))}
       </div>
     </div>
   </section>

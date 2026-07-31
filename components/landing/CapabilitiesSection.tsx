@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import {
   Gauge,
   GitCompare,
@@ -31,49 +32,32 @@ function CapabilityItem({
   )
 }
 
+const CAPABILITY_ICONS = [Layers, GitCompare, BarChart3, FileDown, Zap, Gauge]
+
 export default function CapabilitiesSection() {
+  const t = useTranslations("landing.capabilities")
+  const items = t.raw("items") as { title: string; description: string }[]
+
   return (
 <section className="reveal relative z-10 px-4 py-20 md:py-24">
     <div className="pointer-events-none absolute inset-0 section-ambient-structure" />
     <div className="mx-auto max-w-4xl">
       <div className="mb-14 text-center">
-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Capacidades</h2>
+        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
         <p className="mt-2 text-sm text-foreground/60">
-          Todo lo que incluye Takt Studio desde el primer acceso
+          {t("sub")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <CapabilityItem
-          icon={Layers}
-          title="Plantilla Monobath"
-          description="Línea de baños prefabricados preconfigurada como caso de estudio operativo."
-        />
-        <CapabilityItem
-          icon={GitCompare}
-          title="Comparación A/B"
-          description="Contrasta dos escenarios lado a lado con delta automático en cada métrica."
-        />
-        <CapabilityItem
-          icon={BarChart3}
-          title="KPIs clave"
-          description="Takt time, throughput, lead time, eficiencia de balanceo y análisis de constraint."
-        />
-        <CapabilityItem
-          icon={FileDown}
-          title="Exportación PDF"
-          description="Genera informes del escenario activo para documentación o presentaciones."
-        />
-        <CapabilityItem
-          icon={Zap}
-          title="Simulación instantánea"
-          description="Cálculo en tiempo real sin latencia perceptible al ajustar cualquier parámetro."
-        />
-        <CapabilityItem
-          icon={Gauge}
-          title="Sin instalación"
-          description="Funciona en el navegador. Sin cuentas, sin licencias, sin dependencias externas."
-        />
+        {items.map((item, i) => (
+          <CapabilityItem
+            key={i}
+            icon={CAPABILITY_ICONS[i]}
+            title={item.title}
+            description={item.description}
+          />
+        ))}
       </div>
     </div>
   </section>

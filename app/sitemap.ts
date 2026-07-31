@@ -17,5 +17,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
     changeFrequency: route === "" ? ("weekly" as const) : ("monthly" as const),
     priority: route === "" ? 1 : route === "/simulador" ? 0.9 : 0.6,
+    alternates: {
+      languages: {
+        es: `${base}${route}`,
+        en: `${base}/en${route}`,
+      },
+    },
   }))
 }

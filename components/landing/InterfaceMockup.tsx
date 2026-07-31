@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import {
   GitCompare,
   Layers,
@@ -11,24 +12,19 @@ import {
 
 // ─── Interface mockup ──────────────────────────────────────────────────────────
 
-export default function InterfaceMockup() {
-  const kpis = [
-    { label: "Takt Time", value: "7.5", unit: "min/ud", bar: "bg-blue-500", trend: "+2.4%", status: "up" },
-    { label: "Throughput", value: "64", unit: "uds/día", bar: "bg-emerald-500", trend: "-1.2%", status: "down" },
-    { label: "Cuello bot.", value: "Alicatado", unit: "9.2 min", bar: "bg-red-500", trend: "Crítico", status: "warning" },
-    { label: "Balanceo", value: "81%", unit: "efic.", bar: "bg-amber-400", trend: "+5.1%", status: "up" },
-  ]
+const KPI_META = [
+  { bar: "bg-blue-500", status: "up" },
+  { bar: "bg-emerald-500", status: "down" },
+  { bar: "bg-red-500", status: "warning" },
+  { bar: "bg-amber-400", status: "up" },
+]
 
-  const stations = [
-    { name: "Prep", h: 42, bottleneck: false },
-    { name: "Mont", h: 62, bottleneck: false },
-    { name: "Alic", h: 100, bottleneck: true },
-    { name: "Elec", h: 58, bottleneck: false },
-    { name: "Font", h: 55, bottleneck: false },
-    { name: "Pint", h: 48, bottleneck: false },
-    { name: "QC", h: 38, bottleneck: false },
-    { name: "Emb", h: 32, bottleneck: false },
-  ]
+export default function InterfaceMockup() {
+  const t = useTranslations("landing.mockup")
+  const kpis = (t.raw("kpis") as { label: string; value: string; unit: string; trend: string }[]).map(
+    (k, i) => ({ ...k, ...KPI_META[i] })
+  )
+  const stations = t.raw("stations") as { name: string; h: number; bottleneck: boolean }[]
 
   return (
     <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-background/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] backdrop-blur-xl transition-all duration-700 hover:scale-[1.015] hover:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18)]">
@@ -42,7 +38,7 @@ export default function InterfaceMockup() {
         <div className="flex flex-1 items-center justify-center">
           <div className="flex h-7 w-full max-w-sm items-center gap-2 rounded-lg border bg-background/50 px-3 text-[10px] text-muted-foreground/60 backdrop-blur-sm">
             <ScanSearch className="h-3 w-3" />
-            <span>takt-studio.vercel.app/simulador — Prototipo V.2.0</span>
+            <span>takt-studio.vercel.app/simulador — {t("prototype")}</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -75,15 +71,15 @@ export default function InterfaceMockup() {
           {/* Header Area */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-bold tracking-tight">Dashboard de Producción</h3>
-              <p className="text-[10px] text-muted-foreground">Línea Monobath — Planta Valencia Centro</p>
+              <h3 className="text-lg font-bold tracking-tight">{t("dashboardTitle")}</h3>
+              <p className="text-[10px] text-muted-foreground">{t("dashboardSub")}</p>
             </div>
             <div className="flex gap-2">
               <div className="h-8 w-24 rounded-md border bg-background/50 flex items-center justify-center text-[10px] font-medium gap-2">
-                <FileDown className="h-3 w-3" /> Reporte
+                <FileDown className="h-3 w-3" /> {t("report")}
               </div>
               <div className="h-8 w-24 rounded-md bg-primary text-white flex items-center justify-center text-[10px] font-bold">
-                Simular
+                {t("simulate")}
               </div>
             </div>
           </div>
@@ -98,7 +94,7 @@ export default function InterfaceMockup() {
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/70">{label}</p>
                   <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${
-                    status === 'up' ? 'bg-emerald-100 text-emerald-600' : 
+                    status === 'up' ? 'bg-emerald-100 text-emerald-600' :
                     status === 'down' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'
                   }`}>
                     {trend}
@@ -120,9 +116,9 @@ export default function InterfaceMockup() {
             {/* Bar chart - Simulation */}
             <div className="col-span-3 rounded-xl border bg-background/40 p-4 relative overflow-hidden">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ciclo efectivo vs Takt</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("chartTitle")}</p>
                 <div className="flex gap-2">
-                   <div className="flex items-center gap-1"><div className="h-1.5 w-1.5 rounded-full bg-blue-500/60" /><span className="text-[8px] text-muted-foreground">Estándar</span></div>
+                   <div className="flex items-center gap-1"><div className="h-1.5 w-1.5 rounded-full bg-blue-500/60" /><span className="text-[8px] text-muted-foreground">{t("standard")}</span></div>
                    <div className="flex items-center gap-1"><div className="h-1.5 w-1.5 rounded-full bg-red-500/80" /><span className="text-[8px] text-muted-foreground">Bottleneck</span></div>
                 </div>
               </div>
@@ -148,7 +144,7 @@ export default function InterfaceMockup() {
             {/* Performance Mini Card */}
             <div className="col-span-2 rounded-xl border bg-background/40 p-4 flex flex-col justify-between">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Eficiencia Global (OEE)</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">{t("oee")}</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-black text-primary tracking-tighter">92.4%</span>
                   <span className="text-[10px] text-emerald-500 font-bold">↑ 2.1%</span>
@@ -156,14 +152,14 @@ export default function InterfaceMockup() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-[9px] font-medium">
-                  <span className="text-muted-foreground">Disponibilidad</span>
+                  <span className="text-muted-foreground">{t("availability")}</span>
                   <span>98%</span>
                 </div>
                 <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
                   <div className="h-full bg-primary w-[98%]" />
                 </div>
                 <div className="flex justify-between text-[9px] font-medium">
-                  <span className="text-muted-foreground">Rendimiento</span>
+                  <span className="text-muted-foreground">{t("performance")}</span>
                   <span>94%</span>
                 </div>
                 <div className="h-1 w-full bg-muted rounded-full overflow-hidden">

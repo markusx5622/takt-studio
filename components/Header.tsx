@@ -1,30 +1,45 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight } from "lucide-react"
+import { Link, usePathname } from "@/i18n/navigation"
+import { useLocale, useTranslations } from "next-intl"
+import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight, Languages } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import BrandLogo from "@/components/BrandLogo"
 import { useTaktStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
-  { href: "/simulador", label: "Simulador", icon: BarChart3 },
-  { href: "/comparar", label: "Comparar", icon: GitCompare },
-  { href: "/metodologia", label: "Metodología", icon: BookOpen },
-  { href: "/historial", label: "Historial", icon: History },
-  { href: "/importar-exportar", label: "Importar / exportar", icon: ArrowLeftRight },
-]
+  { href: "/simulador", key: "simulador", icon: BarChart3 },
+  { href: "/comparar", key: "comparar", icon: GitCompare },
+  { href: "/metodologia", key: "metodologia", icon: BookOpen },
+  { href: "/historial", key: "historial", icon: History },
+  { href: "/importar-exportar", key: "importarExportar", icon: ArrowLeftRight },
+] as const
 
 export default function Header() {
+  const t = useTranslations("header")
+  const locale = useLocale()
   const pathname = usePathname()
   const resetToPreset = useTaktStore((s) => s.resetToPreset)
+  const otherLocale = locale === "es" ? "en" : "es"
 
   function handleReset() {
-    if (confirm("¿Seguro? Se perderán todos los cambios.")) {
+    if (confirm(t("resetConfirm"))) {
       resetToPreset()
     }
   }
+
+  const languageToggle = (
+    <Link
+      href={pathname}
+      locale={otherLocale}
+      className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+      aria-label={t("switchLocale", { locale: otherLocale.toUpperCase() })}
+    >
+      <Languages className="h-3.5 w-3.5" />
+      {otherLocale}
+    </Link>
+  )
 
   return (
     <>
@@ -43,7 +58,7 @@ export default function Header() {
 
           {pathname !== "/" && (
             <nav className="hidden flex-1 justify-center gap-2 md:flex">
-              {navLinks.map(({ href, label }) => (
+              {navLinks.map(({ href, key }) => (
                 <Link
                   key={href}
                   href={href}
@@ -54,22 +69,25 @@ export default function Header() {
                       : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                   )}
                 >
-                  {label}
+                  {t(`nav.${key}`)}
                 </Link>
               ))}
             </nav>
           )}
 
-          {pathname !== "/" && (
-            <div className="ml-auto">
-              <Button 
-                variant="outline" 
-                size="sm" 
+          {pathname === "/" ? (
+            <div className="ml-auto">{languageToggle}</div>
+          ) : (
+            <div className="ml-auto flex items-center gap-2">
+              {languageToggle}
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleReset}
                 className="h-8 rounded-lg border-slate-200 bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900"
               >
                 <RotateCcw className="h-3 w-3 md:mr-2" />
-                <span className="hidden md:inline">Reset</span>
+                <span className="hidden md:inline">{t("reset")}</span>
               </Button>
             </div>
           )}
@@ -78,19 +96,19 @@ export default function Header() {
 
       {pathname !== "/" && (
         <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-white pb-safe md:hidden">
-          {navLinks.map(({ href, label, icon: Icon }) => (
+          {navLinks.map(({ href, key, icon: Icon }) => (
             <Link
               key={href}
               href={href}
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all",
-                pathname === href 
-                  ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]" 
+                pathname === href
+                  ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]"
                   : "text-slate-400"
               )}
             >
               <Icon className="h-5 w-5" />
-              {label.split(" ")[0]}
+              {t(`nav.${key}`).split(" ")[0]}
             </Link>
           ))}
         </nav>

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import {
   Gauge,
   AlertTriangle,
@@ -31,39 +32,36 @@ function FeatureCard({
   )
 }
 
+const FEATURE_ICONS = [Gauge, AlertTriangle, GitCompare]
+const FEATURE_DELAYS = ["0ms", "100ms", "200ms"]
+
 export default function FeaturesSection() {
+  const t = useTranslations("landing.features")
+  const items = t.raw("items") as { title: string; description: string }[]
+
   return (
 <section className="reveal relative z-10 px-4 py-20 md:py-24">
     <div className="pointer-events-none absolute inset-0 section-ambient-product" />
     <div className="mx-auto max-w-5xl">
       <div className="mb-14 text-center">
         <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-          Análisis operativo en tiempo real
+          {t("heading")}
         </h2>
         <p className="mt-2 text-sm text-foreground/60">
-          Fundamentos de Ingeniería de Organización Industrial aplicados a la toma de decisiones
+          {t("sub")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <FeatureCard
-          icon={Gauge}
-          title="Métricas operativas continuas"
-          description="Takt time, throughput, eficiencia de balanceo y lead time se recalculan automáticamente a cada cambio. Sin esperas, sin exportar a Excel."
-          delay="0ms"
-        />
-        <FeatureCard
-          icon={AlertTriangle}
-          title="Identificación del constraint"
-          description="Localiza con precisión la estación que limita el ritmo de producción y evalúa el impacto de aliviarla antes de invertir en planta."
-          delay="100ms"
-        />
-        <FeatureCard
-          icon={GitCompare}
-          title="Análisis de escenarios A/B"
-          description="Duplica una configuración, modifica parámetros y compara métricas diferenciadas para justificar decisiones de mejora con datos."
-          delay="200ms"
-        />
+        {items.map((item, i) => (
+          <FeatureCard
+            key={i}
+            icon={FEATURE_ICONS[i]}
+            title={item.title}
+            description={item.description}
+            delay={FEATURE_DELAYS[i]}
+          />
+        ))}
       </div>
     </div>
   </section>
