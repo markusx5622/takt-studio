@@ -1,5 +1,5 @@
 <svg width="960" height="256" viewBox="0 0 960 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Takt Studio">
-  <g transform="translate(48, 48) scale(0,3125)">
+  <g transform="translate(48, 48) scale(0.3125)">
   <rect width="512" height="512" rx="112" fill="#2563EB"/>
   <path d="M128 170H384" stroke="white" stroke-width="38" stroke-linecap="round"/>
   <path d="M256 170V334" stroke="white" stroke-width="38" stroke-linecap="round"/>

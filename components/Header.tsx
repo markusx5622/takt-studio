@@ -37,7 +37,7 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2 text-foreground transition-all hover:opacity-80"
           >
-            <BrandLogo variant="compact" className="h-8 w-auto hidden md:block" />
+            <BrandLogo variant="horizontalLight" className="h-8 w-auto hidden md:block" />
             <BrandLogo variant="mark" className="h-8 w-auto md:hidden" />
           </Link>
 
