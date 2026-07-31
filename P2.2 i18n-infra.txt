@@ -1,0 +1,2778 @@
+diff --git a/app/comparar/page.tsx b/app/[locale]/comparar/page.tsx
+similarity index 99%
+rename from app/comparar/page.tsx
+rename to app/[locale]/comparar/page.tsx
+index 1f0ea5f..a195dd5 100644
+--- a/app/comparar/page.tsx
++++ b/app/[locale]/comparar/page.tsx
+@@ -1,7 +1,7 @@
+ "use client"
+ 
+ import dynamic from "next/dynamic"
+-import Link from "next/link"
++import { Link } from "@/i18n/navigation"
+ import { useTaktStore, useHydrated } from "@/lib/store"
+ import { calculateAllKPIs } from "@/lib/calculations"
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+diff --git a/app/historial/page.tsx b/app/[locale]/historial/page.tsx
+similarity index 99%
+rename from app/historial/page.tsx
+rename to app/[locale]/historial/page.tsx
+index e975219..decc946 100644
+--- a/app/historial/page.tsx
++++ b/app/[locale]/historial/page.tsx
+@@ -1,7 +1,7 @@
+ "use client"
+ 
+ import { useMemo, useState } from "react"
+-import Link from "next/link"
++import { Link } from "@/i18n/navigation"
+ import { useTaktStore, useHydrated } from "@/lib/store"
+ import { calculateAllKPIs } from "@/lib/calculations"
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+diff --git a/app/importar-exportar/page.tsx b/app/[locale]/importar-exportar/page.tsx
+similarity index 99%
+rename from app/importar-exportar/page.tsx
+rename to app/[locale]/importar-exportar/page.tsx
+index fc94a5b..f5b08ff 100644
+--- a/app/importar-exportar/page.tsx
++++ b/app/[locale]/importar-exportar/page.tsx
+@@ -1,7 +1,7 @@
+ "use client"
+ 
+ import { useMemo, useRef, useState } from "react"
+-import Link from "next/link"
++import { Link } from "@/i18n/navigation"
+ import { useTaktStore, useHydrated } from "@/lib/store"
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+ import { Button } from "@/components/ui/button"
+diff --git a/app/[locale]/layout.tsx b/app/[locale]/layout.tsx
+new file mode 100644
+index 0000000..efb9313
+--- /dev/null
++++ b/app/[locale]/layout.tsx
+@@ -0,0 +1,97 @@
++import type { Metadata } from "next"
++import { notFound } from "next/navigation"
++import { NextIntlClientProvider, hasLocale } from "next-intl"
++import { setRequestLocale, getTranslations } from "next-intl/server"
++import { routing } from "@/i18n/routing"
++import "../globals.css"
++import { TooltipProvider } from "@/components/ui/tooltip"
++import Header from "@/components/Header"
++import { Analytics } from "@vercel/analytics/react"
++
++export function generateStaticParams() {
++  return routing.locales.map((locale) => ({ locale }))
++}
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ locale: string }>
++}): Promise<Metadata> {
++  const { locale } = await params
++  const t = await getTranslations({ locale, namespace: "metadata" })
++
++  return {
++    metadataBase: new URL("https://takt-studio.vercel.app"),
++    title: t("title"),
++    description: t("description"),
++    keywords: [
++      "takt time",
++      "simulador producción",
++      "production line simulator",
++      "lean manufacturing",
++      "línea de producción",
++      "cuello de botella",
++      "bottleneck analysis",
++      "ingeniería organización industrial",
++    ],
++    openGraph: {
++      title: t("ogTitle"),
++      description: t("ogDescription"),
++      url: "https://takt-studio.vercel.app",
++      siteName: "Takt Studio",
++      locale: locale === "en" ? "en_US" : "es_ES",
++      type: "website",
++      images: [
++        {
++          url: "/og-image.png",
++          width: 1200,
++          height: 630,
++          alt: t("ogImageAlt"),
++        },
++      ],
++    },
++    twitter: {
++      card: "summary_large_image",
++      title: t("ogTitle"),
++      description: t("twitterDescription"),
++      images: ["/og-image.png"],
++    },
++    icons: {
++      icon: [
++        { url: "/favicon.svg", type: "image/svg+xml" },
++        { url: "/favicon.png", type: "image/png" },
++      ],
++      shortcut: "/favicon.png",
++      apple: "/apple-touch-icon.png",
++    },
++    manifest: "/manifest.webmanifest",
++  }
++}
++
++export default async function LocaleLayout({
++  children,
++  params,
++}: {
++  children: React.ReactNode
++  params: Promise<{ locale: string }>
++}) {
++  const { locale } = await params
++  if (!hasLocale(routing.locales, locale)) {
++    notFound()
++  }
++  setRequestLocale(locale)
++
++  return (
++    <html lang={locale}>
++      <body className="font-sans antialiased bg-[#f1f5f9]">
++        <NextIntlClientProvider>
++          <TooltipProvider>
++            <Header />
++            <main className="pb-16 md:pb-0">{children}</main>
++          </TooltipProvider>
++          <Analytics />
++        </NextIntlClientProvider>
++      </body>
++    </html>
++  )
++}
+diff --git a/app/legal/page.tsx b/app/[locale]/legal/page.tsx
+similarity index 99%
+rename from app/legal/page.tsx
+rename to app/[locale]/legal/page.tsx
+index 5775f62..8d5aa31 100644
+--- a/app/legal/page.tsx
++++ b/app/[locale]/legal/page.tsx
+@@ -1,4 +1,4 @@
+-import Link from "next/link"
++import { Link } from "@/i18n/navigation"
+ import ConsultingBackground from "@/components/ConsultingBackground"
+ import { ShieldCheck, ArrowLeft } from "lucide-react"
+ import { Button } from "@/components/ui/button"
+diff --git a/app/metodologia/page.tsx b/app/[locale]/metodologia/page.tsx
+similarity index 100%
+rename from app/metodologia/page.tsx
+rename to app/[locale]/metodologia/page.tsx
+diff --git a/app/page.tsx b/app/[locale]/page.tsx
+similarity index 100%
+rename from app/page.tsx
+rename to app/[locale]/page.tsx
+diff --git a/app/privacidad/page.tsx b/app/[locale]/privacidad/page.tsx
+similarity index 99%
+rename from app/privacidad/page.tsx
+rename to app/[locale]/privacidad/page.tsx
+index 60a9660..bacd273 100644
+--- a/app/privacidad/page.tsx
++++ b/app/[locale]/privacidad/page.tsx
+@@ -1,4 +1,4 @@
+-import Link from "next/link"
++import { Link } from "@/i18n/navigation"
+ import ConsultingBackground from "@/components/ConsultingBackground"
+ import { Lock, Eye, ArrowLeft } from "lucide-react"
+ import { Button } from "@/components/ui/button"
+diff --git a/app/simulador/page.tsx b/app/[locale]/simulador/page.tsx
+similarity index 100%
+rename from app/simulador/page.tsx
+rename to app/[locale]/simulador/page.tsx
+diff --git a/app/layout.tsx b/app/layout.tsx
+deleted file mode 100644
+index 272489f..0000000
+--- a/app/layout.tsx
++++ /dev/null
+@@ -1,66 +0,0 @@
+-import type { Metadata } from "next"
+-import "./globals.css"
+-import { TooltipProvider } from "@/components/ui/tooltip"
+-import Header from "@/components/Header"
+-import { Analytics } from "@vercel/analytics/react"
+-
+-export const metadata: Metadata = {
+-  metadataBase: new URL("https://takt-studio.vercel.app"),
+-  title: "Takt Studio — Simulador de Líneas de Producción Industrializada",
+-  description:
+-    "Herramienta de simulación y análisis de líneas de producción. Calcula takt time, detecta cuellos de botella y compara escenarios what-if. Ingeniería de Organización Industrial.",
+-  keywords: [
+-    "takt time",
+-    "simulador producción",
+-    "lean manufacturing",
+-    "línea de producción",
+-    "cuello de botella",
+-    "ingeniería organización industrial",
+-  ],
+-  openGraph: {
+-    title: "Takt Studio — Simulador de Líneas de Producción",
+-    description:
+-      "Diseña, simula y optimiza tu línea de producción antes de tocarla. Takt time, cuellos de botella y escenarios what-if.",
+-    url: "https://takt-studio.vercel.app",
+-    siteName: "Takt Studio",
+-    locale: "es_ES",
+-    type: "website",
+-    images: [
+-      {
+-        url: "/og-image.png",
+-        width: 1200,
+-        height: 630,
+-        alt: "Takt Studio — Gráfico de tiempos de ciclo vs takt time y KPIs de la línea de producción",
+-      },
+-    ],
+-  },
+-  twitter: {
+-    card: "summary_large_image",
+-    title: "Takt Studio — Simulador de Líneas de Producción",
+-    description: "Diseña, simula y optimiza tu línea de producción antes de tocarla.",
+-    images: ["/og-image.png"],
+-  },
+-  icons: {
+-    icon: [
+-      { url: "/favicon.svg", type: "image/svg+xml" },
+-      { url: "/favicon.png", type: "image/png" },
+-    ],
+-    shortcut: "/favicon.png",
+-    apple: "/apple-touch-icon.png",
+-  },
+-  manifest: "/manifest.webmanifest",
+-}
+-
+-export default function RootLayout({ children }: { children: React.ReactNode }) {
+-  return (
+-    <html lang="es">
+-      <body className="font-sans antialiased bg-[#f1f5f9]">
+-        <TooltipProvider>
+-          <Header />
+-          <main className="pb-16 md:pb-0">{children}</main>
+-        </TooltipProvider>
+-        <Analytics />
+-      </body>
+-    </html>
+-  )
+-}
+diff --git a/app/sitemap.ts b/app/sitemap.ts
+index 4de47ed..3abf712 100644
+--- a/app/sitemap.ts
++++ b/app/sitemap.ts
+@@ -17,5 +17,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
+     lastModified: new Date(),
+     changeFrequency: route === "" ? ("weekly" as const) : ("monthly" as const),
+     priority: route === "" ? 1 : route === "/simulador" ? 0.9 : 0.6,
++    alternates: {
++      languages: {
++        es: `${base}${route}`,
++        en: `${base}/en${route}`,
++      },
++    },
+   }))
+ }
+diff --git a/components/Header.tsx b/components/Header.tsx
+index e11a51c..b6217cf 100644
+--- a/components/Header.tsx
++++ b/components/Header.tsx
+@@ -1,31 +1,46 @@
+ "use client"
+ 
+-import Link from "next/link"
+-import { usePathname } from "next/navigation"
+-import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight } from "lucide-react"
++import { Link, usePathname } from "@/i18n/navigation"
++import { useLocale, useTranslations } from "next-intl"
++import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight, Languages } from "lucide-react"
+ import { Button } from "@/components/ui/button"
+ import BrandLogo from "@/components/BrandLogo"
+ import { useTaktStore } from "@/lib/store"
+ import { cn } from "@/lib/utils"
+ 
+ const navLinks = [
+-  { href: "/simulador", label: "Simulador", icon: BarChart3 },
+-  { href: "/comparar", label: "Comparar", icon: GitCompare },
+-  { href: "/metodologia", label: "Metodología", icon: BookOpen },
+-  { href: "/historial", label: "Historial", icon: History },
+-  { href: "/importar-exportar", label: "Importar / exportar", icon: ArrowLeftRight },
+-]
++  { href: "/simulador", key: "simulador", icon: BarChart3 },
++  { href: "/comparar", key: "comparar", icon: GitCompare },
++  { href: "/metodologia", key: "metodologia", icon: BookOpen },
++  { href: "/historial", key: "historial", icon: History },
++  { href: "/importar-exportar", key: "importarExportar", icon: ArrowLeftRight },
++] as const
+ 
+ export default function Header() {
++  const t = useTranslations("header")
++  const locale = useLocale()
+   const pathname = usePathname()
+   const resetToPreset = useTaktStore((s) => s.resetToPreset)
++  const otherLocale = locale === "es" ? "en" : "es"
+ 
+   function handleReset() {
+-    if (confirm("¿Seguro? Se perderán todos los cambios.")) {
++    if (confirm(t("resetConfirm"))) {
+       resetToPreset()
+     }
+   }
+ 
++  const languageToggle = (
++    <Link
++      href={pathname}
++      locale={otherLocale}
++      className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
++      aria-label={t("switchLocale", { locale: otherLocale.toUpperCase() })}
++    >
++      <Languages className="h-3.5 w-3.5" />
++      {otherLocale}
++    </Link>
++  )
++
+   return (
+     <>
+       <header className={cn(
+@@ -43,7 +58,7 @@ export default function Header() {
+ 
+           {pathname !== "/" && (
+             <nav className="hidden flex-1 justify-center gap-2 md:flex">
+-              {navLinks.map(({ href, label }) => (
++              {navLinks.map(({ href, key }) => (
+                 <Link
+                   key={href}
+                   href={href}
+@@ -54,22 +69,25 @@ export default function Header() {
+                       : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                   )}
+                 >
+-                  {label}
++                  {t(`nav.${key}`)}
+                 </Link>
+               ))}
+             </nav>
+           )}
+ 
+-          {pathname !== "/" && (
+-            <div className="ml-auto">
+-              <Button 
+-                variant="outline" 
+-                size="sm" 
++          {pathname === "/" ? (
++            <div className="ml-auto">{languageToggle}</div>
++          ) : (
++            <div className="ml-auto flex items-center gap-2">
++              {languageToggle}
++              <Button
++                variant="outline"
++                size="sm"
+                 onClick={handleReset}
+                 className="h-8 rounded-lg border-slate-200 bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+               >
+                 <RotateCcw className="h-3 w-3 md:mr-2" />
+-                <span className="hidden md:inline">Reset</span>
++                <span className="hidden md:inline">{t("reset")}</span>
+               </Button>
+             </div>
+           )}
+@@ -78,19 +96,19 @@ export default function Header() {
+ 
+       {pathname !== "/" && (
+         <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-white pb-safe md:hidden">
+-          {navLinks.map(({ href, label, icon: Icon }) => (
++          {navLinks.map(({ href, key, icon: Icon }) => (
+             <Link
+               key={href}
+               href={href}
+               className={cn(
+                 "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all",
+-                pathname === href 
+-                  ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]" 
++                pathname === href
++                  ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]"
+                   : "text-slate-400"
+               )}
+             >
+               <Icon className="h-5 w-5" />
+-              {label.split(" ")[0]}
++              {t(`nav.${key}`).split(" ")[0]}
+             </Link>
+           ))}
+         </nav>
+diff --git a/components/landing/AboutSection.tsx b/components/landing/AboutSection.tsx
+index cd4e42b..aece3b8 100644
+--- a/components/landing/AboutSection.tsx
++++ b/components/landing/AboutSection.tsx
+@@ -1,3 +1,4 @@
++import { useTranslations } from "next-intl"
+ import { Button } from "@/components/ui/button"
+ import {
+   Code2,
+@@ -5,6 +6,8 @@ import {
+ } from "lucide-react"
+ 
+ export default function AboutSection() {
++  const t = useTranslations("landing.about")
++
+   return (
+ <section className="reveal relative z-10 px-4 py-16 md:py-20">
+     <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
+@@ -14,22 +17,20 @@ export default function AboutSection() {
+           {/* Text */}
+           <div className="flex flex-col justify-center">
+             <h2 className="text-xl font-bold tracking-tight md:text-2xl">
+-              Sobre este proyecto
++              {t("heading")}
+             </h2>
+             <div className="mt-4 space-y-3 text-sm leading-relaxed text-foreground/70">
+               <p>
+-                Takt Studio es un prototipo funcional de simulación y análisis de líneas de
+-                producción industrializada. Permite modelar estaciones, calcular KPIs operativos
+-                y comparar escenarios <em className="not-italic font-medium text-foreground/80">what-if</em>{" "}
+-                antes de realizar cualquier intervención en planta.
++                {t("p1A")}{" "}
++                <em className="not-italic font-medium text-foreground/80">what-if</em>{" "}
++                {t("p1B")}
+               </p>
+               <p>
+-                Desarrollado por{" "}
+-                <span className="font-medium text-foreground">Marc Cubero</span> en el ámbito
+-                de la Ingeniería de Organización Industrial de la{" "}
+-                <span className="font-medium text-foreground">Universidad Europea de Valencia</span>.
+-                El enfoque es práctico: una herramienta que respalde la toma de decisiones con
+-                datos, no que la sustituya.
++                {t("p2A")}{" "}
++                <span className="font-medium text-foreground">Marc Cubero</span>{" "}
++                {t("p2B")}{" "}
++                <span className="font-medium text-foreground">Universidad Europea de Valencia</span>.{" "}
++                {t("p2C")}
+               </p>
+             </div>
+           </div>
+@@ -45,10 +46,10 @@ export default function AboutSection() {
+                 href="https://github.com/markusx5622/takt-studio"
+                 target="_blank"
+                 rel="noreferrer noopener"
+-                aria-label="Ver repositorio en GitHub"
++                aria-label={t("repoAria")}
+               >
+                 <Code2 className="h-4 w-4 text-primary" />
+-                <span className="font-medium text-foreground/90">Ver repositorio</span>
++                <span className="font-medium text-foreground/90">{t("repo")}</span>
+               </a>
+             </Button>
+             <Button
+@@ -60,10 +61,10 @@ export default function AboutSection() {
+                 href="https://www.linkedin.com/in/marc-cubero-cantavella-bb04542a7"
+                 target="_blank"
+                 rel="noreferrer noopener"
+-                aria-label="Ver perfil de LinkedIn"
++                aria-label={t("linkedinAria")}
+               >
+                 <Briefcase className="h-4 w-4 text-primary" />
+-                <span className="font-medium text-foreground/90">Perfil de LinkedIn</span>
++                <span className="font-medium text-foreground/90">{t("linkedin")}</span>
+               </a>
+             </Button>
+           </div>
+diff --git a/components/landing/CapabilitiesSection.tsx b/components/landing/CapabilitiesSection.tsx
+index d0061dd..9df55d2 100644
+--- a/components/landing/CapabilitiesSection.tsx
++++ b/components/landing/CapabilitiesSection.tsx
+@@ -1,3 +1,4 @@
++import { useTranslations } from "next-intl"
+ import {
+   Gauge,
+   GitCompare,
+@@ -31,49 +32,32 @@ function CapabilityItem({
+   )
+ }
+ 
++const CAPABILITY_ICONS = [Layers, GitCompare, BarChart3, FileDown, Zap, Gauge]
++
+ export default function CapabilitiesSection() {
++  const t = useTranslations("landing.capabilities")
++  const items = t.raw("items") as { title: string; description: string }[]
++
+   return (
+ <section className="reveal relative z-10 px-4 py-20 md:py-24">
+     <div className="pointer-events-none absolute inset-0 section-ambient-structure" />
+     <div className="mx-auto max-w-4xl">
+       <div className="mb-14 text-center">
+-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Capacidades</h2>
++        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
+         <p className="mt-2 text-sm text-foreground/60">
+-          Todo lo que incluye Takt Studio desde el primer acceso
++          {t("sub")}
+         </p>
+       </div>
+ 
+       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+-        <CapabilityItem
+-          icon={Layers}
+-          title="Plantilla Monobath"
+-          description="Línea de baños prefabricados preconfigurada como caso de estudio operativo."
+-        />
+-        <CapabilityItem
+-          icon={GitCompare}
+-          title="Comparación A/B"
+-          description="Contrasta dos escenarios lado a lado con delta automático en cada métrica."
+-        />
+-        <CapabilityItem
+-          icon={BarChart3}
+-          title="KPIs clave"
+-          description="Takt time, throughput, lead time, eficiencia de balanceo y análisis de constraint."
+-        />
+-        <CapabilityItem
+-          icon={FileDown}
+-          title="Exportación PDF"
+-          description="Genera informes del escenario activo para documentación o presentaciones."
+-        />
+-        <CapabilityItem
+-          icon={Zap}
+-          title="Simulación instantánea"
+-          description="Cálculo en tiempo real sin latencia perceptible al ajustar cualquier parámetro."
+-        />
+-        <CapabilityItem
+-          icon={Gauge}
+-          title="Sin instalación"
+-          description="Funciona en el navegador. Sin cuentas, sin licencias, sin dependencias externas."
+-        />
++        {items.map((item, i) => (
++          <CapabilityItem
++            key={i}
++            icon={CAPABILITY_ICONS[i]}
++            title={item.title}
++            description={item.description}
++          />
++        ))}
+       </div>
+     </div>
+   </section>
+diff --git a/components/landing/FaqSection.tsx b/components/landing/FaqSection.tsx
+index e0366e8..33c3a8f 100644
+--- a/components/landing/FaqSection.tsx
++++ b/components/landing/FaqSection.tsx
+@@ -1,39 +1,26 @@
++import { useTranslations } from "next-intl"
+ import {
+   HelpCircle,
+ } from "lucide-react"
+ 
+ export default function FaqSection() {
++  const t = useTranslations("landing.faq")
++  const items = t.raw("items") as { q: string; a: string }[]
++
+   return (
+ <section className="reveal relative z-10 px-4 py-20 md:py-24">
+     <div className="pointer-events-none absolute inset-0 section-ambient-structure opacity-50" />
+     <div className="mx-auto max-w-4xl">
+       <div className="mb-14 text-center">
+-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Preguntas frecuentes</h2>
++        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
+         <p className="mt-2 text-sm text-foreground/60">
+-          Todo lo que necesitas saber sobre Takt Studio y la simulación de líneas
++          {t("sub")}
+         </p>
+       </div>
+ 
+       <div className="grid gap-4">
+-        {[
+-          {
+-            q: "¿Qué precisión tienen los cálculos de Takt Studio?",
+-            a: "Los cálculos se basan en fórmulas estándar de Ingeniería de Organización Industrial. La precisión depende de la calidad de los datos de entrada (tiempos de ciclo, eficiencias). Es una herramienta de simulación analítica para toma de decisiones, no un sistema de control en tiempo real."
+-          },
+-          {
+-            q: "¿Dónde se guardan mis datos de simulación?",
+-            a: "Por privacidad y seguridad, tus datos nunca salen de tu dispositivo. Se guardan en el almacenamiento local de tu navegador (localStorage). Si borras la caché o cambias de navegador, los datos no se sincronizarán a menos que los exportes manualmente."
+-          },
+-          {
+-            q: "¿Puedo exportar mis análisis a otros formatos?",
+-            a: "Sí, Takt Studio permite exportar los resultados y la configuración actual en formato PDF para presentaciones e informes técnicos, así como importar/exportar archivos JSON para compartir modelos entre diferentes usuarios."
+-          },
+-          {
+-            q: "¿Es necesario tener conocimientos avanzados de Lean Manufacturing?",
+-            a: "No es obligatorio, pero ayuda. La herramienta está diseñada para ser intuitiva, pero conceptos como 'Cuello de Botella' o 'Balanceo de Línea' son fundamentales para interpretar correctamente los resultados y tomar decisiones de mejora."
+-          }
+-        ].map((faq, i) => (
+-          <div 
++        {items.map((faq, i) => (
++          <div
+             key={i}
+             className="group rounded-2xl border bg-background/40 p-6 backdrop-blur-xl transition-all hover:bg-background/60 hover:shadow-md"
+           >
+diff --git a/components/landing/FeaturesSection.tsx b/components/landing/FeaturesSection.tsx
+index 36ed272..bc95286 100644
+--- a/components/landing/FeaturesSection.tsx
++++ b/components/landing/FeaturesSection.tsx
+@@ -1,3 +1,4 @@
++import { useTranslations } from "next-intl"
+ import {
+   Gauge,
+   AlertTriangle,
+@@ -31,39 +32,36 @@ function FeatureCard({
+   )
+ }
+ 
++const FEATURE_ICONS = [Gauge, AlertTriangle, GitCompare]
++const FEATURE_DELAYS = ["0ms", "100ms", "200ms"]
++
+ export default function FeaturesSection() {
++  const t = useTranslations("landing.features")
++  const items = t.raw("items") as { title: string; description: string }[]
++
+   return (
+ <section className="reveal relative z-10 px-4 py-20 md:py-24">
+     <div className="pointer-events-none absolute inset-0 section-ambient-product" />
+     <div className="mx-auto max-w-5xl">
+       <div className="mb-14 text-center">
+         <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+-          Análisis operativo en tiempo real
++          {t("heading")}
+         </h2>
+         <p className="mt-2 text-sm text-foreground/60">
+-          Fundamentos de Ingeniería de Organización Industrial aplicados a la toma de decisiones
++          {t("sub")}
+         </p>
+       </div>
+ 
+       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+-        <FeatureCard
+-          icon={Gauge}
+-          title="Métricas operativas continuas"
+-          description="Takt time, throughput, eficiencia de balanceo y lead time se recalculan automáticamente a cada cambio. Sin esperas, sin exportar a Excel."
+-          delay="0ms"
+-        />
+-        <FeatureCard
+-          icon={AlertTriangle}
+-          title="Identificación del constraint"
+-          description="Localiza con precisión la estación que limita el ritmo de producción y evalúa el impacto de aliviarla antes de invertir en planta."
+-          delay="100ms"
+-        />
+-        <FeatureCard
+-          icon={GitCompare}
+-          title="Análisis de escenarios A/B"
+-          description="Duplica una configuración, modifica parámetros y compara métricas diferenciadas para justificar decisiones de mejora con datos."
+-          delay="200ms"
+-        />
++        {items.map((item, i) => (
++          <FeatureCard
++            key={i}
++            icon={FEATURE_ICONS[i]}
++            title={item.title}
++            description={item.description}
++            delay={FEATURE_DELAYS[i]}
++          />
++        ))}
+       </div>
+     </div>
+   </section>
+diff --git a/components/landing/HeroSection.tsx b/components/landing/HeroSection.tsx
+index 002f2c2..7c02e61 100644
+--- a/components/landing/HeroSection.tsx
++++ b/components/landing/HeroSection.tsx
+@@ -1,5 +1,6 @@
++import { useTranslations } from "next-intl"
+ import InterfaceMockup from "@/components/landing/InterfaceMockup"
+-import Link from "next/link"
++import { Link } from "@/i18n/navigation"
+ import { Button } from "@/components/ui/button"
+ import {
+   ArrowRight,
+@@ -7,6 +8,9 @@ import {
+ } from "lucide-react"
+ 
+ export default function HeroSection() {
++  const t = useTranslations("landing.hero")
++  const badges = t.raw("badges") as string[]
++
+   return (
+ <section className="relative z-10 flex flex-1 flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-24 text-center md:pt-32">
+     {/* Ambient glow behind content */}
+@@ -19,20 +23,20 @@ export default function HeroSection() {
+         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-40" />
+         <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse-soft" />
+       </span>
+-      Ingeniería de Organización Industrial
++      {t("eyebrow")}
+     </div>
+ 
+     {/* Title */}
+     <h1 className="max-w-5xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+-      Diseña, simula y optimiza
+-      <span className="block shimmer-text">tu línea de producción</span>
++      {t("titleA")}
++      <span className="block shimmer-text">{t("titleB")}</span>
+     </h1>
+ 
+     {/* Subtitle */}
+     <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-foreground/70 sm:text-xl">
+-      Modela estaciones, calcula KPIs operativos y compara escenarios{" "}
++      {t("subtitleA")}{" "}
+       <em className="not-italic font-medium text-foreground/80">what-if</em>.{" "}
+-      Sin tocar la planta real.
++      {t("subtitleB")}
+     </p>
+ 
+     {/* CTAs */}
+@@ -43,7 +47,7 @@ export default function HeroSection() {
+         className="gap-2 px-6 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 animate-cta-pulse"
+       >
+         <Link href="/simulador">
+-          Probar con plantilla Monobath
++          {t("ctaPrimary")}
+           <ArrowRight className="h-4 w-4" />
+         </Link>
+       </Button>
+@@ -53,7 +57,7 @@ export default function HeroSection() {
+         variant="outline"
+         className="gap-2 px-6 bg-background/80 backdrop-blur-sm transition-all duration-200 hover:bg-background hover:shadow-md"
+       >
+-        <Link href="/comparar">Ver comparador</Link>
++        <Link href="/comparar">{t("ctaSecondary")}</Link>
+       </Button>
+     </div>
+ 
+@@ -61,17 +65,17 @@ export default function HeroSection() {
+     <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-foreground/50">
+       <span className="inline-flex items-center gap-1.5">
+         <CheckCircle2 className="h-3 w-3" />
+-        Cálculo en tiempo real
++        {badges[0]}
+       </span>
+       <span className="hidden h-px w-4 bg-border sm:block" />
+       <span className="inline-flex items-center gap-1.5">
+         <CheckCircle2 className="h-3 w-3" />
+-        Sin cuenta
++        {badges[1]}
+       </span>
+       <span className="hidden h-px w-4 bg-border sm:block" />
+       <span className="inline-flex items-center gap-1.5">
+         <CheckCircle2 className="h-3 w-3" />
+-        Sin instalación
++        {badges[2]}
+       </span>
+     </div>
+ 
+diff --git a/components/landing/HowItWorks.tsx b/components/landing/HowItWorks.tsx
+index 5333796..1ee9ccd 100644
+--- a/components/landing/HowItWorks.tsx
++++ b/components/landing/HowItWorks.tsx
+@@ -1,3 +1,4 @@
++import { useTranslations } from "next-intl"
+ import {
+   GitCompare,
+   Settings2,
+@@ -31,37 +32,33 @@ function StepCard({
+   )
+ }
+ 
++const STEP_ICONS = [Settings2, ScanSearch, GitCompare]
++
+ export default function HowItWorks() {
++  const t = useTranslations("landing.howItWorks")
++  const steps = t.raw("steps") as { title: string; description: string }[]
++
+   return (
+ <section className="reveal relative z-10 bg-grid-pattern-light px-4 py-20 md:py-24">
+     <div className="pointer-events-none absolute inset-0 section-ambient-product" />
+     <div className="mx-auto max-w-4xl">
+       <div className="mb-14 text-center">
+-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Flujo de uso</h2>
++        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
+         <p className="mt-2 text-sm text-foreground/60">
+-          De la definición a la decisión en tres pasos
++          {t("sub")}
+         </p>
+       </div>
+ 
+       <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
+-        <StepCard
+-          step="1"
+-          icon={Settings2}
+-          title="Define la línea"
+-          description="Configura estaciones, tiempos de ciclo, operarios, demanda y turnos. Parte de la plantilla Monobath o construye desde cero."
+-        />
+-        <StepCard
+-          step="2"
+-          icon={ScanSearch}
+-          title="Detecta el cuello de botella"
+-          description="El simulador identifica automáticamente el constraint y muestra su impacto sobre el throughput y el balanceo global."
+-        />
+-        <StepCard
+-          step="3"
+-          icon={GitCompare}
+-          title="Compara antes de intervenir"
+-          description="Evalúa escenarios what-if en el comparador y exporta el análisis para respaldar la propuesta de mejora."
+-        />
++        {steps.map((s, i) => (
++          <StepCard
++            key={i}
++            step={`${i + 1}`}
++            icon={STEP_ICONS[i]}
++            title={s.title}
++            description={s.description}
++          />
++        ))}
+       </div>
+     </div>
+   </section>
+diff --git a/components/landing/InterfaceMockup.tsx b/components/landing/InterfaceMockup.tsx
+index 622bb14..49af1dd 100644
+--- a/components/landing/InterfaceMockup.tsx
++++ b/components/landing/InterfaceMockup.tsx
+@@ -1,3 +1,4 @@
++import { useTranslations } from "next-intl"
+ import {
+   GitCompare,
+   Layers,
+@@ -11,24 +12,19 @@ import {
+ 
+ // ─── Interface mockup ──────────────────────────────────────────────────────────
+ 
+-export default function InterfaceMockup() {
+-  const kpis = [
+-    { label: "Takt Time", value: "7.5", unit: "min/ud", bar: "bg-blue-500", trend: "+2.4%", status: "up" },
+-    { label: "Throughput", value: "64", unit: "uds/día", bar: "bg-emerald-500", trend: "-1.2%", status: "down" },
+-    { label: "Cuello bot.", value: "Alicatado", unit: "9.2 min", bar: "bg-red-500", trend: "Crítico", status: "warning" },
+-    { label: "Balanceo", value: "81%", unit: "efic.", bar: "bg-amber-400", trend: "+5.1%", status: "up" },
+-  ]
++const KPI_META = [
++  { bar: "bg-blue-500", status: "up" },
++  { bar: "bg-emerald-500", status: "down" },
++  { bar: "bg-red-500", status: "warning" },
++  { bar: "bg-amber-400", status: "up" },
++]
+ 
+-  const stations = [
+-    { name: "Prep", h: 42, bottleneck: false },
+-    { name: "Mont", h: 62, bottleneck: false },
+-    { name: "Alic", h: 100, bottleneck: true },
+-    { name: "Elec", h: 58, bottleneck: false },
+-    { name: "Font", h: 55, bottleneck: false },
+-    { name: "Pint", h: 48, bottleneck: false },
+-    { name: "QC", h: 38, bottleneck: false },
+-    { name: "Emb", h: 32, bottleneck: false },
+-  ]
++export default function InterfaceMockup() {
++  const t = useTranslations("landing.mockup")
++  const kpis = (t.raw("kpis") as { label: string; value: string; unit: string; trend: string }[]).map(
++    (k, i) => ({ ...k, ...KPI_META[i] })
++  )
++  const stations = t.raw("stations") as { name: string; h: number; bottleneck: boolean }[]
+ 
+   return (
+     <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-background/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] backdrop-blur-xl transition-all duration-700 hover:scale-[1.015] hover:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18)]">
+@@ -42,7 +38,7 @@ export default function InterfaceMockup() {
+         <div className="flex flex-1 items-center justify-center">
+           <div className="flex h-7 w-full max-w-sm items-center gap-2 rounded-lg border bg-background/50 px-3 text-[10px] text-muted-foreground/60 backdrop-blur-sm">
+             <ScanSearch className="h-3 w-3" />
+-            <span>takt-studio.vercel.app/simulador — Prototipo V.2.0</span>
++            <span>takt-studio.vercel.app/simulador — {t("prototype")}</span>
+           </div>
+         </div>
+         <div className="flex items-center gap-3">
+@@ -75,15 +71,15 @@ export default function InterfaceMockup() {
+           {/* Header Area */}
+           <div className="flex items-center justify-between">
+             <div>
+-              <h3 className="text-lg font-bold tracking-tight">Dashboard de Producción</h3>
+-              <p className="text-[10px] text-muted-foreground">Línea Monobath — Planta Valencia Centro</p>
++              <h3 className="text-lg font-bold tracking-tight">{t("dashboardTitle")}</h3>
++              <p className="text-[10px] text-muted-foreground">{t("dashboardSub")}</p>
+             </div>
+             <div className="flex gap-2">
+               <div className="h-8 w-24 rounded-md border bg-background/50 flex items-center justify-center text-[10px] font-medium gap-2">
+-                <FileDown className="h-3 w-3" /> Reporte
++                <FileDown className="h-3 w-3" /> {t("report")}
+               </div>
+               <div className="h-8 w-24 rounded-md bg-primary text-white flex items-center justify-center text-[10px] font-bold">
+-                Simular
++                {t("simulate")}
+               </div>
+             </div>
+           </div>
+@@ -98,7 +94,7 @@ export default function InterfaceMockup() {
+                 <div className="flex items-center justify-between mb-2">
+                   <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/70">{label}</p>
+                   <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${
+-                    status === 'up' ? 'bg-emerald-100 text-emerald-600' : 
++                    status === 'up' ? 'bg-emerald-100 text-emerald-600' :
+                     status === 'down' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'
+                   }`}>
+                     {trend}
+@@ -120,9 +116,9 @@ export default function InterfaceMockup() {
+             {/* Bar chart - Simulation */}
+             <div className="col-span-3 rounded-xl border bg-background/40 p-4 relative overflow-hidden">
+               <div className="flex items-center justify-between mb-4">
+-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ciclo efectivo vs Takt</p>
++                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("chartTitle")}</p>
+                 <div className="flex gap-2">
+-                   <div className="flex items-center gap-1"><div className="h-1.5 w-1.5 rounded-full bg-blue-500/60" /><span className="text-[8px] text-muted-foreground">Estándar</span></div>
++                   <div className="flex items-center gap-1"><div className="h-1.5 w-1.5 rounded-full bg-blue-500/60" /><span className="text-[8px] text-muted-foreground">{t("standard")}</span></div>
+                    <div className="flex items-center gap-1"><div className="h-1.5 w-1.5 rounded-full bg-red-500/80" /><span className="text-[8px] text-muted-foreground">Bottleneck</span></div>
+                 </div>
+               </div>
+@@ -148,7 +144,7 @@ export default function InterfaceMockup() {
+             {/* Performance Mini Card */}
+             <div className="col-span-2 rounded-xl border bg-background/40 p-4 flex flex-col justify-between">
+               <div>
+-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Eficiencia Global (OEE)</p>
++                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">{t("oee")}</p>
+                 <div className="flex items-baseline gap-2">
+                   <span className="text-3xl font-black text-primary tracking-tighter">92.4%</span>
+                   <span className="text-[10px] text-emerald-500 font-bold">↑ 2.1%</span>
+@@ -156,14 +152,14 @@ export default function InterfaceMockup() {
+               </div>
+               <div className="space-y-2">
+                 <div className="flex justify-between text-[9px] font-medium">
+-                  <span className="text-muted-foreground">Disponibilidad</span>
++                  <span className="text-muted-foreground">{t("availability")}</span>
+                   <span>98%</span>
+                 </div>
+                 <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                   <div className="h-full bg-primary w-[98%]" />
+                 </div>
+                 <div className="flex justify-between text-[9px] font-medium">
+-                  <span className="text-muted-foreground">Rendimiento</span>
++                  <span className="text-muted-foreground">{t("performance")}</span>
+                   <span>94%</span>
+                 </div>
+                 <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+diff --git a/components/landing/LandingFooter.tsx b/components/landing/LandingFooter.tsx
+index 3b86dd1..1523c35 100644
+--- a/components/landing/LandingFooter.tsx
++++ b/components/landing/LandingFooter.tsx
+@@ -1,4 +1,5 @@
+-import Link from "next/link"
++import { useTranslations } from "next-intl"
++import { Link } from "@/i18n/navigation"
+ import BrandLogo from "@/components/BrandLogo"
+ import {
+   ShieldCheck,
+@@ -6,33 +7,35 @@ import {
+ } from "lucide-react"
+ 
+ export default function LandingFooter() {
++  const t = useTranslations("landing.footer")
++
+   return (
+ <footer className="relative z-10 px-4 py-12">
+     <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 sm:flex-row">
+       <div className="flex flex-col items-center gap-2 sm:items-start">
+         <BrandLogo variant="horizontalLight" className="h-9 w-auto mb-1" />
+-        <span className="text-xs font-bold uppercase tracking-widest text-foreground/40">Takt Studio · 2026</span>
+-        <span className="text-[10px] text-foreground/30">Ingeniería de Organización Industrial · UEV</span>
++        <span className="text-xs font-bold uppercase tracking-widest text-foreground/40">{t("tagline")}</span>
++        <span className="text-[10px] text-foreground/30">{t("subtitle")}</span>
+       </div>
+ 
+       <div className="flex items-center gap-4">
+-        <Link 
+-          href="/privacidad" 
++        <Link
++          href="/privacidad"
+           className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-foreground/50 transition-all hover:border-primary/20 hover:bg-background hover:text-primary"
+         >
+           <ShieldCheck className="h-3 w-3 transition-transform group-hover:scale-110" />
+-          Privacidad
++          {t("privacy")}
+         </Link>
+-        <Link 
+-          href="/legal" 
++        <Link
++          href="/legal"
+           className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-foreground/50 transition-all hover:border-primary/20 hover:bg-background hover:text-primary"
+         >
+           <FileText className="h-3 w-3 transition-transform group-hover:scale-110" />
+-          Legal
++          {t("legal")}
+         </Link>
+       </div>
+ 
+-      <span className="text-[10px] text-foreground/30">Hecho con Next.js y Vercel</span>
++      <span className="text-[10px] text-foreground/30">{t("madeWith")}</span>
+     </div>
+   </footer>
+   )
+diff --git a/components/landing/MethodologySection.tsx b/components/landing/MethodologySection.tsx
+index 5072132..c4ebdb0 100644
+--- a/components/landing/MethodologySection.tsx
++++ b/components/landing/MethodologySection.tsx
+@@ -1,21 +1,23 @@
++import { useTranslations } from "next-intl"
++
+ export default function MethodologySection() {
++  const t = useTranslations("landing.methodology")
++
+   return (
+ <section className="reveal relative z-10 bg-grid-pattern-light px-4 py-20 md:py-24">
+     <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
+     <div className="mx-auto max-w-3xl text-center">
+       <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+-        Validación antes de la inversión
++        {t("heading")}
+       </h2>
+       <p className="mt-4 text-base leading-relaxed text-foreground/70">
+-        Takt Studio parte de una{" "}
+-        <span className="font-medium text-foreground">plantilla Monobath calibrada</span>{" "}
+-        como demostración del método. Puedes ajustar cada parámetro con datos reales de tu
+-        propia línea y validar decisiones antes de cualquier intervención física.{" "}
++        {t("textA")}{" "}
++        <span className="font-medium text-foreground">{t("boldA")}</span>{" "}
++        {t("textB")}{" "}
+         <span className="font-medium text-foreground">
+-          La herramienta está pensada para reducir el riesgo operativo de las mejoras de
+-          producción
++          {t("boldB")}
+         </span>{" "}
+-        mediante simulación analítica, no para sustituir el juicio del ingeniero.
++        {t("textC")}
+       </p>
+     </div>
+   </section>
+diff --git a/components/landing/RoadmapSection.tsx b/components/landing/RoadmapSection.tsx
+index 883fcad..48b8960 100644
+--- a/components/landing/RoadmapSection.tsx
++++ b/components/landing/RoadmapSection.tsx
+@@ -1,4 +1,5 @@
+-import Link from "next/link"
++import { useTranslations } from "next-intl"
++import { Link } from "@/i18n/navigation"
+ import { Button } from "@/components/ui/button"
+ import { cn } from "@/lib/utils"
+ import {
+@@ -9,111 +10,83 @@ import {
+   Sparkles,
+ } from "lucide-react"
+ 
++const PHASE_META = [
++  { icon: Cpu, color: "bg-emerald-500", shadow: "shadow-emerald-500/20", done: true, active: false },
++  { icon: FlaskConical, color: "bg-emerald-500", shadow: "shadow-emerald-500/20", done: true, active: false },
++  { icon: Rocket, color: "bg-slate-400", shadow: "shadow-slate-400/10", done: false, active: false },
++  { icon: Sparkles, color: "bg-slate-400", shadow: "shadow-slate-400/10", done: false, active: false },
++]
++
+ export default function RoadmapSection() {
++  const t = useTranslations("landing.roadmap")
++  const phases = t.raw("phases") as { phase: string; status: string; title: string; desc: string }[]
++
+   return (
+ <section className="reveal relative z-10 border-t border-border/50 bg-grid-pattern-light px-4 py-20 md:py-24">
+     <div className="pointer-events-none absolute inset-0 section-ambient-product opacity-30" />
+     <div className="mx-auto max-w-5xl">
+       <div className="mb-14 text-center">
+-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Roadmap & Visión 2026</h2>
++        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
+         <p className="mt-2 text-sm text-foreground/60">
+-          Evolución continua del simulador: de la analítica local a la inteligencia industrial global
++          {t("sub")}
+         </p>
+       </div>
+ 
+       <div className="relative grid gap-8 md:grid-cols-4">
+-        {[
+-          {
+-            phase: "Fase 1",
+-            status: "Completado",
+-            title: "Core Sim Engine",
+-            desc: "Motor de cálculo reactivo, comparador A/B y sistema de plantillas dinámicas.",
+-            icon: Cpu,
+-            color: "bg-emerald-500",
+-            shadow: "shadow-emerald-500/20",
+-            done: true
+-          },
+-          {
+-            phase: "Fase 2",
+-            status: "Completado",
+-            title: "Advanced Analytics",
+-            desc: "Simulación Monte Carlo, análisis de sensibilidad y exportación técnica avanzada.",
+-            icon: FlaskConical,
+-            color: "bg-emerald-500",
+-            shadow: "shadow-emerald-500/20",
+-            done: true,
+-            active: false
+-          },
+-          {
+-            phase: "Fase 3",
+-            status: "Q3 2026",
+-            title: "IoT Sync",
+-            desc: "Conectividad con sensores en planta para captura de tiempos de ciclo en tiempo real.",
+-            icon: Rocket,
+-            color: "bg-slate-400",
+-            shadow: "shadow-slate-400/10",
+-            done: false
+-          },
+-          {
+-            phase: "Fase 4",
+-            status: "Visión 2027",
+-            title: "Takt Cloud AI",
+-            desc: "Optimización de líneas basada en IA y colaboración multi-usuario en la nube.",
+-            icon: Sparkles,
+-            color: "bg-slate-400",
+-            shadow: "shadow-slate-400/10",
+-            done: false
+-          }
+-        ].map((item, i) => (
+-          <div 
+-            key={i}
+-            className={cn(
+-              "relative group rounded-2xl border bg-background/60 p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:border-primary/30",
+-              item.active && "border-primary/40 ring-1 ring-primary/20 bg-background/80"
+-            )}
+-          >
+-            <div className="mb-5 flex items-center justify-between">
+-              <span className={cn(
+-                "rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white",
+-                item.color,
+-                item.shadow
+-              )}>
+-                {item.phase}
+-              </span>
+-              <span className="text-[9px] font-bold text-muted-foreground/60 uppercase">{item.status}</span>
+-            </div>
++        {phases.map((item, i) => {
++          const meta = PHASE_META[i]
++          const Icon = meta.icon
++          return (
++            <div
++              key={i}
++              className={cn(
++                "relative group rounded-2xl border bg-background/60 p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:border-primary/30",
++                meta.active && "border-primary/40 ring-1 ring-primary/20 bg-background/80"
++              )}
++            >
++              <div className="mb-5 flex items-center justify-between">
++                <span className={cn(
++                  "rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white",
++                  meta.color,
++                  meta.shadow
++                )}>
++                  {item.phase}
++                </span>
++                <span className="text-[9px] font-bold text-muted-foreground/60 uppercase">{item.status}</span>
++              </div>
+ 
+-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/5 border border-primary/10 transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+-              <item.icon className={cn("h-6 w-6 transition-transform duration-500 group-hover:scale-110", item.done ? "text-emerald-500" : "text-primary")} />
+-            </div>
++              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/5 border border-primary/10 transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
++                <Icon className={cn("h-6 w-6 transition-transform duration-500 group-hover:scale-110", meta.done ? "text-emerald-500" : "text-primary")} />
++              </div>
++
++              <h3 className="mb-2 text-sm font-bold tracking-tight">{item.title}</h3>
++              <p className="text-xs leading-relaxed text-foreground/60">{item.desc}</p>
+ 
+-            <h3 className="mb-2 text-sm font-bold tracking-tight">{item.title}</h3>
+-            <p className="text-xs leading-relaxed text-foreground/60">{item.desc}</p>
+-            
+-            {item.active && (
+-              <div className="mt-4 flex items-center gap-2">
+-                <div className="flex-1 h-1 bg-primary/10 rounded-full overflow-hidden">
+-                  <div className="h-full bg-primary w-2/3 animate-shimmer" />
++              {meta.active && (
++                <div className="mt-4 flex items-center gap-2">
++                  <div className="flex-1 h-1 bg-primary/10 rounded-full overflow-hidden">
++                    <div className="h-full bg-primary w-2/3 animate-shimmer" />
++                  </div>
++                  <span className="text-[8px] font-bold text-primary">65%</span>
+                 </div>
+-                <span className="text-[8px] font-bold text-primary">65%</span>
+-              </div>
+-            )}
+-          </div>
+-        ))}
++              )}
++            </div>
++          )
++        })}
+       </div>
+-      
++
+       <div className="mt-16 flex flex-col items-center justify-center space-y-6">
+         <div className="flex items-center gap-4 text-xs font-bold text-foreground/40 uppercase tracking-[0.2em]">
+           <div className="h-px w-8 bg-border" />
+-          Impulsando la industria 4.0
++          {t("tagline")}
+           <div className="h-px w-8 bg-border" />
+         </div>
+-        <Button 
++        <Button
+           size="lg"
+           className="group h-14 px-8 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95"
+         >
+           <Link href="/simulador" className="flex items-center gap-3">
+-            Empieza tu simulación ahora
++            {t("cta")}
+             <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+           </Link>
+         </Button>
+diff --git a/components/landing/TechStackSection.tsx b/components/landing/TechStackSection.tsx
+index 4e46eab..692dfd3 100644
+--- a/components/landing/TechStackSection.tsx
++++ b/components/landing/TechStackSection.tsx
+@@ -1,69 +1,52 @@
++import { useTranslations } from "next-intl"
+ import {
+   Cpu,
+   Box,
+   Database,
+ } from "lucide-react"
+ 
++const CARD_ICONS = [Cpu, Box, Database]
++const CARD_TAGS = [
++  ["Next.js 16", "TypeScript"],
++  ["Tailwind v4", "Lucide Icons"],
++  ["Local Storage", "Zustand"],
++]
++
+ export default function TechStackSection() {
++  const t = useTranslations("landing.tech")
++  const cards = t.raw("cards") as { title: string; description: string }[]
++
+   return (
+ <section className="reveal relative z-10 bg-grid-pattern-light px-4 py-20 md:py-24">
+     <div className="pointer-events-none absolute inset-0 section-ambient-product opacity-40" />
+     <div className="mx-auto max-w-5xl">
+       <div className="mb-14 text-center">
+-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Ingeniería y Arquitectura</h2>
++        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
+         <p className="mt-2 text-sm text-foreground/60">
+-          Tecnología de vanguardia para simulaciones industriales de alto rendimiento
++          {t("sub")}
+         </p>
+       </div>
+ 
+       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+-        {/* Core Engine */}
+-        <div className="rounded-2xl border bg-background/60 p-8 backdrop-blur-xl shadow-sm transition-all hover:shadow-md">
+-          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+-            <Cpu className="h-6 w-6 text-primary" />
+-          </div>
+-          <h3 className="mb-3 text-lg font-bold">Motor Reactivo</h3>
+-          <p className="text-sm leading-relaxed text-foreground/70 mb-6">
+-            Algoritmos optimizados en JavaScript que recalculan el flujo completo de la línea 
+-            y detectan cuellos de botella en milisegundos ante cualquier cambio de parámetros.
+-          </p>
+-          <div className="flex flex-wrap gap-2">
+-            <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">Next.js 16</span>
+-            <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">TypeScript</span>
+-          </div>
+-        </div>
+-
+-        {/* Interface & Experience */}
+-        <div className="rounded-2xl border bg-background/60 p-8 backdrop-blur-xl shadow-sm transition-all hover:shadow-md">
+-          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+-            <Box className="h-6 w-6 text-primary" />
+-          </div>
+-          <h3 className="mb-3 text-lg font-bold">Industrial Design</h3>
+-          <p className="text-sm leading-relaxed text-foreground/70 mb-6">
+-            Interfaz de alta fidelidad construida con Tailwind CSS, priorizando la 
+-            legibilidad técnica y la ergonomía visual para entornos profesionales de ingeniería.
+-          </p>
+-          <div className="flex flex-wrap gap-2">
+-            <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">Tailwind v4</span>
+-            <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">Lucide Icons</span>
+-          </div>
+-        </div>
+-
+-        {/* Infrastructure */}
+-        <div className="rounded-2xl border bg-background/60 p-8 backdrop-blur-xl shadow-sm transition-all hover:shadow-md">
+-          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+-            <Database className="h-6 w-6 text-primary" />
+-          </div>
+-          <h3 className="mb-3 text-lg font-bold">Local Computing</h3>
+-          <p className="text-sm leading-relaxed text-foreground/70 mb-6">
+-            Estrategia &quot;Offline-First&quot; utilizando persistencia en el navegador. Garantiza 
+-            latencia cero y privacidad total de los datos industriales sin necesidad de base de datos.
+-          </p>
+-          <div className="flex flex-wrap gap-2">
+-            <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">Local Storage</span>
+-            <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">Zustand</span>
+-          </div>
+-        </div>
++        {cards.map((card, i) => {
++          const Icon = CARD_ICONS[i]
++          return (
++            <div key={i} className="rounded-2xl border bg-background/60 p-8 backdrop-blur-xl shadow-sm transition-all hover:shadow-md">
++              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
++                <Icon className="h-6 w-6 text-primary" />
++              </div>
++              <h3 className="mb-3 text-lg font-bold">{card.title}</h3>
++              <p className="text-sm leading-relaxed text-foreground/70 mb-6">
++                {card.description}
++              </p>
++              <div className="flex flex-wrap gap-2">
++                {CARD_TAGS[i].map((tag) => (
++                  <span key={tag} className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">{tag}</span>
++                ))}
++              </div>
++            </div>
++          )
++        })}
+       </div>
+     </div>
+   </section>
+diff --git a/i18n/navigation.ts b/i18n/navigation.ts
+new file mode 100644
+index 0000000..98256db
+--- /dev/null
++++ b/i18n/navigation.ts
+@@ -0,0 +1,5 @@
++import { createNavigation } from "next-intl/navigation"
++import { routing } from "./routing"
++
++export const { Link, redirect, usePathname, useRouter, getPathname } =
++  createNavigation(routing)
+diff --git a/i18n/request.ts b/i18n/request.ts
+new file mode 100644
+index 0000000..eb5c98b
+--- /dev/null
++++ b/i18n/request.ts
+@@ -0,0 +1,15 @@
++import { getRequestConfig } from "next-intl/server"
++import { hasLocale } from "next-intl"
++import { routing } from "./routing"
++
++export default getRequestConfig(async ({ requestLocale }) => {
++  const requested = await requestLocale
++  const locale = hasLocale(routing.locales, requested)
++    ? requested
++    : routing.defaultLocale
++
++  return {
++    locale,
++    messages: (await import(`@/messages/${locale}.json`)).default,
++  }
++})
+diff --git a/i18n/routing.ts b/i18n/routing.ts
+new file mode 100644
+index 0000000..f863892
+--- /dev/null
++++ b/i18n/routing.ts
+@@ -0,0 +1,7 @@
++import { defineRouting } from "next-intl/routing"
++
++export const routing = defineRouting({
++  locales: ["es", "en"],
++  defaultLocale: "es",
++  localePrefix: "as-needed",
++})
+diff --git a/messages/en.json b/messages/en.json
+new file mode 100644
+index 0000000..57b6e52
+--- /dev/null
++++ b/messages/en.json
+@@ -0,0 +1,283 @@
++{
++  "metadata": {
++    "title": "Takt Studio — Production Line Simulator",
++    "description": "Production line simulation and analysis tool. Calculate takt time, detect bottlenecks and compare what-if scenarios. Industrial Organization Engineering.",
++    "ogTitle": "Takt Studio — Production Line Simulator",
++    "ogDescription": "Design, simulate and optimize your production line before touching it. Takt time, bottlenecks and what-if scenarios.",
++    "twitterDescription": "Design, simulate and optimize your production line before touching it.",
++    "ogImageAlt": "Takt Studio — Cycle time vs takt time chart and production line KPIs"
++  },
++  "header": {
++    "nav": {
++      "simulador": "Simulator",
++      "comparar": "Compare",
++      "metodologia": "Methodology",
++      "historial": "History",
++      "importarExportar": "Import / export"
++    },
++    "reset": "Reset",
++    "resetConfirm": "Are you sure? All changes will be lost.",
++    "switchLocale": "Switch language to {locale}"
++  },
++  "landing": {
++    "hero": {
++      "eyebrow": "Industrial Organization Engineering",
++      "titleA": "Design, simulate and optimize",
++      "titleB": "your production line",
++      "subtitleA": "Model stations, calculate operational KPIs and compare",
++      "subtitleB": "Without touching the real plant.",
++      "ctaPrimary": "Try the Monobath template",
++      "ctaSecondary": "Open the comparator",
++      "badges": [
++        "Real-time calculation",
++        "No account",
++        "No installation"
++      ]
++    },
++    "mockup": {
++      "prototype": "Prototype V.2.0",
++      "dashboardTitle": "Production Dashboard",
++      "dashboardSub": "Monobath Line — Valencia Centro Plant",
++      "report": "Report",
++      "simulate": "Simulate",
++      "kpis": [
++        {
++          "label": "Takt Time",
++          "value": "7.5",
++          "unit": "min/unit",
++          "trend": "+2.4%"
++        },
++        {
++          "label": "Throughput",
++          "value": "64",
++          "unit": "units/day",
++          "trend": "-1.2%"
++        },
++        {
++          "label": "Bottleneck",
++          "value": "Tiling",
++          "unit": "9.2 min",
++          "trend": "Critical"
++        },
++        {
++          "label": "Balancing",
++          "value": "81%",
++          "unit": "eff.",
++          "trend": "+5.1%"
++        }
++      ],
++      "stations": [
++        {
++          "name": "Prep",
++          "h": 42,
++          "bottleneck": false
++        },
++        {
++          "name": "Asm",
++          "h": 62,
++          "bottleneck": false
++        },
++        {
++          "name": "Tile",
++          "h": 100,
++          "bottleneck": true
++        },
++        {
++          "name": "Elec",
++          "h": 58,
++          "bottleneck": false
++        },
++        {
++          "name": "Plumb",
++          "h": 55,
++          "bottleneck": false
++        },
++        {
++          "name": "Paint",
++          "h": 48,
++          "bottleneck": false
++        },
++        {
++          "name": "QC",
++          "h": 38,
++          "bottleneck": false
++        },
++        {
++          "name": "Pack",
++          "h": 32,
++          "bottleneck": false
++        }
++      ],
++      "chartTitle": "Effective cycle vs Takt",
++      "standard": "Standard",
++      "oee": "Overall Efficiency (OEE)",
++      "availability": "Availability",
++      "performance": "Performance"
++    },
++    "features": {
++      "heading": "Real-time operational analysis",
++      "sub": "Industrial Organization Engineering fundamentals applied to decision-making",
++      "items": [
++        {
++          "title": "Continuous operational metrics",
++          "description": "Takt time, throughput, balancing efficiency and lead time recalculate automatically with every change. No waiting, no exporting to Excel."
++        },
++        {
++          "title": "Constraint identification",
++          "description": "Pinpoint the station limiting your production rate and assess the impact of relieving it before investing in the plant."
++        },
++        {
++          "title": "A/B scenario analysis",
++          "description": "Duplicate a configuration, adjust parameters and compare side-by-side metrics to justify improvement decisions with data."
++        }
++      ]
++    },
++    "howItWorks": {
++      "heading": "Workflow",
++      "sub": "From definition to decision in three steps",
++      "steps": [
++        {
++          "title": "Define the line",
++          "description": "Configure stations, cycle times, operators, demand and shifts. Start from the Monobath template or build from scratch."
++        },
++        {
++          "title": "Detect the bottleneck",
++          "description": "The simulator automatically identifies the constraint and shows its impact on throughput and overall balancing."
++        },
++        {
++          "title": "Compare before acting",
++          "description": "Evaluate what-if scenarios in the comparator and export the analysis to back your improvement proposal."
++        }
++      ]
++    },
++    "capabilities": {
++      "heading": "Capabilities",
++      "sub": "Everything included in Takt Studio from the first visit",
++      "items": [
++        {
++          "title": "Monobath template",
++          "description": "A prefabricated bathroom pod line preconfigured as an operational case study."
++        },
++        {
++          "title": "A/B comparison",
++          "description": "Contrast two scenarios side by side with automatic deltas on every metric."
++        },
++        {
++          "title": "Key KPIs",
++          "description": "Takt time, throughput, lead time, balancing efficiency and constraint analysis."
++        },
++        {
++          "title": "PDF export",
++          "description": "Generate reports of the active scenario for documentation or presentations."
++        },
++        {
++          "title": "Instant simulation",
++          "description": "Real-time calculation with no perceptible latency when adjusting any parameter."
++        },
++        {
++          "title": "No installation",
++          "description": "Runs in the browser. No accounts, no licenses, no external dependencies."
++        }
++      ]
++    },
++    "methodology": {
++      "heading": "Validation before investment",
++      "textA": "Takt Studio starts from a",
++      "boldA": "calibrated Monobath template",
++      "textB": "as a demonstration of the method. You can adjust every parameter with real data from your own line and validate decisions before any physical intervention.",
++      "boldB": "The tool is designed to reduce the operational risk of production improvements",
++      "textC": "through analytical simulation, not to replace the engineer's judgment."
++    },
++    "about": {
++      "heading": "About this project",
++      "p1A": "Takt Studio is a working prototype for simulating and analyzing industrialized production lines. It lets you model stations, calculate operational KPIs and compare",
++      "p1B": "scenarios before making any intervention on the shop floor.",
++      "p2A": "Developed by",
++      "p2B": "within the Industrial Organization Engineering program at",
++      "p2C": "The approach is practical: a tool that supports data-driven decision-making, not one that replaces it.",
++      "repo": "View repository",
++      "repoAria": "View repository on GitHub",
++      "linkedin": "LinkedIn profile",
++      "linkedinAria": "View LinkedIn profile"
++    },
++    "tech": {
++      "heading": "Engineering & Architecture",
++      "sub": "Cutting-edge technology for high-performance industrial simulations",
++      "cards": [
++        {
++          "title": "Reactive Engine",
++          "description": "Optimized JavaScript algorithms that recalculate the complete line flow and detect bottlenecks in milliseconds on any parameter change."
++        },
++        {
++          "title": "Industrial Design",
++          "description": "High-fidelity interface built with Tailwind CSS, prioritizing technical legibility and visual ergonomics for professional engineering environments."
++        },
++        {
++          "title": "Local Computing",
++          "description": "\"Offline-First\" strategy using browser persistence. Guarantees zero latency and total privacy of industrial data with no database required."
++        }
++      ]
++    },
++    "faq": {
++      "heading": "Frequently asked questions",
++      "sub": "Everything you need to know about Takt Studio and line simulation",
++      "items": [
++        {
++          "q": "How accurate are Takt Studio's calculations?",
++          "a": "Calculations are based on standard Industrial Organization Engineering formulas. Accuracy depends on the quality of input data (cycle times, efficiencies). It is an analytical simulation tool for decision-making, not a real-time control system."
++        },
++        {
++          "q": "Where is my simulation data stored?",
++          "a": "For privacy and security, your data never leaves your device. It is stored in your browser's local storage (localStorage). If you clear your cache or switch browsers, data will not sync unless you export it manually."
++        },
++        {
++          "q": "Can I export my analyses to other formats?",
++          "a": "Yes, Takt Studio lets you export results and the current configuration as PDF for presentations and technical reports, as well as import/export JSON files to share models between users."
++        },
++        {
++          "q": "Do I need advanced Lean Manufacturing knowledge?",
++          "a": "Not required, but it helps. The tool is designed to be intuitive, but concepts like 'Bottleneck' or 'Line Balancing' are fundamental to correctly interpret results and make improvement decisions."
++        }
++      ]
++    },
++    "roadmap": {
++      "heading": "Roadmap & Vision 2026",
++      "sub": "Continuous evolution of the simulator: from local analytics to global industrial intelligence",
++      "phases": [
++        {
++          "phase": "Phase 1",
++          "status": "Completed",
++          "title": "Core Sim Engine",
++          "desc": "Reactive calculation engine, A/B comparator and dynamic template system."
++        },
++        {
++          "phase": "Phase 2",
++          "status": "Completed",
++          "title": "Advanced Analytics",
++          "desc": "Monte Carlo simulation, sensitivity analysis and advanced technical export."
++        },
++        {
++          "phase": "Phase 3",
++          "status": "Q3 2026",
++          "title": "IoT Sync",
++          "desc": "Connectivity with shop-floor sensors for real-time cycle time capture."
++        },
++        {
++          "phase": "Phase 4",
++          "status": "Vision 2027",
++          "title": "Takt Cloud AI",
++          "desc": "AI-based line optimization and multi-user cloud collaboration."
++        }
++      ],
++      "tagline": "Powering Industry 4.0",
++      "cta": "Start your simulation now"
++    },
++    "footer": {
++      "tagline": "Takt Studio · 2026",
++      "subtitle": "Industrial Organization Engineering · UEV",
++      "privacy": "Privacy",
++      "legal": "Legal",
++      "madeWith": "Built with Next.js and Vercel"
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/messages/es.json b/messages/es.json
+new file mode 100644
+index 0000000..58df374
+--- /dev/null
++++ b/messages/es.json
+@@ -0,0 +1,283 @@
++{
++  "metadata": {
++    "title": "Takt Studio — Simulador de Líneas de Producción Industrializada",
++    "description": "Herramienta de simulación y análisis de líneas de producción. Calcula takt time, detecta cuellos de botella y compara escenarios what-if. Ingeniería de Organización Industrial.",
++    "ogTitle": "Takt Studio — Simulador de Líneas de Producción",
++    "ogDescription": "Diseña, simula y optimiza tu línea de producción antes de tocarla. Takt time, cuellos de botella y escenarios what-if.",
++    "twitterDescription": "Diseña, simula y optimiza tu línea de producción antes de tocarla.",
++    "ogImageAlt": "Takt Studio — Gráfico de tiempos de ciclo vs takt time y KPIs de la línea de producción"
++  },
++  "header": {
++    "nav": {
++      "simulador": "Simulador",
++      "comparar": "Comparar",
++      "metodologia": "Metodología",
++      "historial": "Historial",
++      "importarExportar": "Importar / exportar"
++    },
++    "reset": "Reset",
++    "resetConfirm": "¿Seguro? Se perderán todos los cambios.",
++    "switchLocale": "Cambiar idioma a {locale}"
++  },
++  "landing": {
++    "hero": {
++      "eyebrow": "Ingeniería de Organización Industrial",
++      "titleA": "Diseña, simula y optimiza",
++      "titleB": "tu línea de producción",
++      "subtitleA": "Modela estaciones, calcula KPIs operativos y compara escenarios",
++      "subtitleB": "Sin tocar la planta real.",
++      "ctaPrimary": "Probar con plantilla Monobath",
++      "ctaSecondary": "Ver comparador",
++      "badges": [
++        "Cálculo en tiempo real",
++        "Sin cuenta",
++        "Sin instalación"
++      ]
++    },
++    "mockup": {
++      "prototype": "Prototipo V.2.0",
++      "dashboardTitle": "Dashboard de Producción",
++      "dashboardSub": "Línea Monobath — Planta Valencia Centro",
++      "report": "Reporte",
++      "simulate": "Simular",
++      "kpis": [
++        {
++          "label": "Takt Time",
++          "value": "7.5",
++          "unit": "min/ud",
++          "trend": "+2.4%"
++        },
++        {
++          "label": "Throughput",
++          "value": "64",
++          "unit": "uds/día",
++          "trend": "-1.2%"
++        },
++        {
++          "label": "Cuello bot.",
++          "value": "Alicatado",
++          "unit": "9.2 min",
++          "trend": "Crítico"
++        },
++        {
++          "label": "Balanceo",
++          "value": "81%",
++          "unit": "efic.",
++          "trend": "+5.1%"
++        }
++      ],
++      "stations": [
++        {
++          "name": "Prep",
++          "h": 42,
++          "bottleneck": false
++        },
++        {
++          "name": "Mont",
++          "h": 62,
++          "bottleneck": false
++        },
++        {
++          "name": "Alic",
++          "h": 100,
++          "bottleneck": true
++        },
++        {
++          "name": "Elec",
++          "h": 58,
++          "bottleneck": false
++        },
++        {
++          "name": "Font",
++          "h": 55,
++          "bottleneck": false
++        },
++        {
++          "name": "Pint",
++          "h": 48,
++          "bottleneck": false
++        },
++        {
++          "name": "QC",
++          "h": 38,
++          "bottleneck": false
++        },
++        {
++          "name": "Emb",
++          "h": 32,
++          "bottleneck": false
++        }
++      ],
++      "chartTitle": "Ciclo efectivo vs Takt",
++      "standard": "Estándar",
++      "oee": "Eficiencia Global (OEE)",
++      "availability": "Disponibilidad",
++      "performance": "Rendimiento"
++    },
++    "features": {
++      "heading": "Análisis operativo en tiempo real",
++      "sub": "Fundamentos de Ingeniería de Organización Industrial aplicados a la toma de decisiones",
++      "items": [
++        {
++          "title": "Métricas operativas continuas",
++          "description": "Takt time, throughput, eficiencia de balanceo y lead time se recalculan automáticamente a cada cambio. Sin esperas, sin exportar a Excel."
++        },
++        {
++          "title": "Identificación del constraint",
++          "description": "Localiza con precisión la estación que limita el ritmo de producción y evalúa el impacto de aliviarla antes de invertir en planta."
++        },
++        {
++          "title": "Análisis de escenarios A/B",
++          "description": "Duplica una configuración, modifica parámetros y compara métricas diferenciadas para justificar decisiones de mejora con datos."
++        }
++      ]
++    },
++    "howItWorks": {
++      "heading": "Flujo de uso",
++      "sub": "De la definición a la decisión en tres pasos",
++      "steps": [
++        {
++          "title": "Define la línea",
++          "description": "Configura estaciones, tiempos de ciclo, operarios, demanda y turnos. Parte de la plantilla Monobath o construye desde cero."
++        },
++        {
++          "title": "Detecta el cuello de botella",
++          "description": "El simulador identifica automáticamente el constraint y muestra su impacto sobre el throughput y el balanceo global."
++        },
++        {
++          "title": "Compara antes de intervenir",
++          "description": "Evalúa escenarios what-if en el comparador y exporta el análisis para respaldar la propuesta de mejora."
++        }
++      ]
++    },
++    "capabilities": {
++      "heading": "Capacidades",
++      "sub": "Todo lo que incluye Takt Studio desde el primer acceso",
++      "items": [
++        {
++          "title": "Plantilla Monobath",
++          "description": "Línea de baños prefabricados preconfigurada como caso de estudio operativo."
++        },
++        {
++          "title": "Comparación A/B",
++          "description": "Contrasta dos escenarios lado a lado con delta automático en cada métrica."
++        },
++        {
++          "title": "KPIs clave",
++          "description": "Takt time, throughput, lead time, eficiencia de balanceo y análisis de constraint."
++        },
++        {
++          "title": "Exportación PDF",
++          "description": "Genera informes del escenario activo para documentación o presentaciones."
++        },
++        {
++          "title": "Simulación instantánea",
++          "description": "Cálculo en tiempo real sin latencia perceptible al ajustar cualquier parámetro."
++        },
++        {
++          "title": "Sin instalación",
++          "description": "Funciona en el navegador. Sin cuentas, sin licencias, sin dependencias externas."
++        }
++      ]
++    },
++    "methodology": {
++      "heading": "Validación antes de la inversión",
++      "textA": "Takt Studio parte de una",
++      "boldA": "plantilla Monobath calibrada",
++      "textB": "como demostración del método. Puedes ajustar cada parámetro con datos reales de tu propia línea y validar decisiones antes de cualquier intervención física.",
++      "boldB": "La herramienta está pensada para reducir el riesgo operativo de las mejoras de producción",
++      "textC": "mediante simulación analítica, no para sustituir el juicio del ingeniero."
++    },
++    "about": {
++      "heading": "Sobre este proyecto",
++      "p1A": "Takt Studio es un prototipo funcional de simulación y análisis de líneas de producción industrializada. Permite modelar estaciones, calcular KPIs operativos y comparar escenarios",
++      "p1B": "antes de realizar cualquier intervención en planta.",
++      "p2A": "Desarrollado por",
++      "p2B": "en el ámbito de la Ingeniería de Organización Industrial de la",
++      "p2C": "El enfoque es práctico: una herramienta que respalde la toma de decisiones con datos, no que la sustituya.",
++      "repo": "Ver repositorio",
++      "repoAria": "Ver repositorio en GitHub",
++      "linkedin": "Perfil de LinkedIn",
++      "linkedinAria": "Ver perfil de LinkedIn"
++    },
++    "tech": {
++      "heading": "Ingeniería y Arquitectura",
++      "sub": "Tecnología de vanguardia para simulaciones industriales de alto rendimiento",
++      "cards": [
++        {
++          "title": "Motor Reactivo",
++          "description": "Algoritmos optimizados en JavaScript que recalculan el flujo completo de la línea y detectan cuellos de botella en milisegundos ante cualquier cambio de parámetros."
++        },
++        {
++          "title": "Industrial Design",
++          "description": "Interfaz de alta fidelidad construida con Tailwind CSS, priorizando la legibilidad técnica y la ergonomía visual para entornos profesionales de ingeniería."
++        },
++        {
++          "title": "Local Computing",
++          "description": "Estrategia \"Offline-First\" utilizando persistencia en el navegador. Garantiza latencia cero y privacidad total de los datos industriales sin necesidad de base de datos."
++        }
++      ]
++    },
++    "faq": {
++      "heading": "Preguntas frecuentes",
++      "sub": "Todo lo que necesitas saber sobre Takt Studio y la simulación de líneas",
++      "items": [
++        {
++          "q": "¿Qué precisión tienen los cálculos de Takt Studio?",
++          "a": "Los cálculos se basan en fórmulas estándar de Ingeniería de Organización Industrial. La precisión depende de la calidad de los datos de entrada (tiempos de ciclo, eficiencias). Es una herramienta de simulación analítica para toma de decisiones, no un sistema de control en tiempo real."
++        },
++        {
++          "q": "¿Dónde se guardan mis datos de simulación?",
++          "a": "Por privacidad y seguridad, tus datos nunca salen de tu dispositivo. Se guardan en el almacenamiento local de tu navegador (localStorage). Si borras la caché o cambias de navegador, los datos no se sincronizarán a menos que los exportes manualmente."
++        },
++        {
++          "q": "¿Puedo exportar mis análisis a otros formatos?",
++          "a": "Sí, Takt Studio permite exportar los resultados y la configuración actual en formato PDF para presentaciones e informes técnicos, así como importar/exportar archivos JSON para compartir modelos entre diferentes usuarios."
++        },
++        {
++          "q": "¿Es necesario tener conocimientos avanzados de Lean Manufacturing?",
++          "a": "No es obligatorio, pero ayuda. La herramienta está diseñada para ser intuitiva, pero conceptos como 'Cuello de Botella' o 'Balanceo de Línea' son fundamentales para interpretar correctamente los resultados y tomar decisiones de mejora."
++        }
++      ]
++    },
++    "roadmap": {
++      "heading": "Roadmap & Visión 2026",
++      "sub": "Evolución continua del simulador: de la analítica local a la inteligencia industrial global",
++      "phases": [
++        {
++          "phase": "Fase 1",
++          "status": "Completado",
++          "title": "Core Sim Engine",
++          "desc": "Motor de cálculo reactivo, comparador A/B y sistema de plantillas dinámicas."
++        },
++        {
++          "phase": "Fase 2",
++          "status": "Completado",
++          "title": "Advanced Analytics",
++          "desc": "Simulación Monte Carlo, análisis de sensibilidad y exportación técnica avanzada."
++        },
++        {
++          "phase": "Fase 3",
++          "status": "Q3 2026",
++          "title": "IoT Sync",
++          "desc": "Conectividad con sensores en planta para captura de tiempos de ciclo en tiempo real."
++        },
++        {
++          "phase": "Fase 4",
++          "status": "Visión 2027",
++          "title": "Takt Cloud AI",
++          "desc": "Optimización de líneas basada en IA y colaboración multi-usuario en la nube."
++        }
++      ],
++      "tagline": "Impulsando la industria 4.0",
++      "cta": "Empieza tu simulación ahora"
++    },
++    "footer": {
++      "tagline": "Takt Studio · 2026",
++      "subtitle": "Ingeniería de Organización Industrial · UEV",
++      "privacy": "Privacidad",
++      "legal": "Legal",
++      "madeWith": "Hecho con Next.js y Vercel"
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/middleware.ts b/middleware.ts
+new file mode 100644
+index 0000000..e17e5ed
+--- /dev/null
++++ b/middleware.ts
+@@ -0,0 +1,8 @@
++import createMiddleware from "next-intl/middleware"
++import { routing } from "./i18n/routing"
++
++export default createMiddleware(routing)
++
++export const config = {
++  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
++}
+diff --git a/next.config.ts b/next.config.ts
+index e9ffa30..8867237 100644
+--- a/next.config.ts
++++ b/next.config.ts
+@@ -1,7 +1,10 @@
+ import type { NextConfig } from "next";
++import createNextIntlPlugin from "next-intl/plugin";
++
++const withNextIntl = createNextIntlPlugin();
+ 
+ const nextConfig: NextConfig = {
+   /* config options here */
+ };
+ 
+-export default nextConfig;
++export default withNextIntl(nextConfig);
+diff --git a/package-lock.json b/package-lock.json
+index 806fa38..6de1f4f 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -22,6 +22,7 @@
+         "jspdf": "^4.2.1",
+         "lucide-react": "^1.14.0",
+         "next": "16.2.4",
++        "next-intl": "^4.13.4",
+         "react": "19.2.4",
+         "react-dom": "19.2.4",
+         "recharts": "^3.8.1",
+@@ -749,6 +750,36 @@
+       "integrity": "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==",
+       "license": "MIT"
+     },
++    "node_modules/@formatjs/fast-memoize": {
++      "version": "3.1.7",
++      "resolved": "https://registry.npmjs.org/@formatjs/fast-memoize/-/fast-memoize-3.1.7.tgz",
++      "integrity": "sha512-zXfhLpvA6T7+efdt9JLbBwZ00tT7NsBMDVnDu8rpHeNNv8KfRZAMo2gkG0k9lK/Nzc//3kJ9pImsfuJxk3KhUA==",
++      "license": "MIT"
++    },
++    "node_modules/@formatjs/icu-messageformat-parser": {
++      "version": "3.5.16",
++      "resolved": "https://registry.npmjs.org/@formatjs/icu-messageformat-parser/-/icu-messageformat-parser-3.5.16.tgz",
++      "integrity": "sha512-kl6b/4D56gjGZi4ZewSmvXbalHwjOUI5ogEHPZqw42goeXTTrL7/yuPzvdrvr0QigDtvaOeb+UeMf62jks43Yg==",
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/icu-skeleton-parser": "2.1.11"
++      }
++    },
++    "node_modules/@formatjs/icu-skeleton-parser": {
++      "version": "2.1.11",
++      "resolved": "https://registry.npmjs.org/@formatjs/icu-skeleton-parser/-/icu-skeleton-parser-2.1.11.tgz",
++      "integrity": "sha512-j8cUmOJzVgkHuS0QiQ6ga76UIoLOFSAMWhs7aZJztH3aAdCOAE6vpC8KVvFB4cU10ON0y2/5oOVmPJ43s2lTwA==",
++      "license": "MIT"
++    },
++    "node_modules/@formatjs/intl-localematcher": {
++      "version": "0.8.13",
++      "resolved": "https://registry.npmjs.org/@formatjs/intl-localematcher/-/intl-localematcher-0.8.13.tgz",
++      "integrity": "sha512-kHEAFOkeJSPNi7c5PaKaRjxcBrJwzzt81ifUu+8uve1EDW/VJl83KsxmqgqNZLzcFEhSliZGvx3+pk/RH0IOmg==",
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/fast-memoize": "3.1.7"
++      }
++    },
+     "node_modules/@humanfs/core": {
+       "version": "0.19.2",
+       "resolved": "https://registry.npmjs.org/@humanfs/core/-/core-0.19.2.tgz",
+@@ -1546,6 +1577,292 @@
+         "url": "https://github.com/sponsors/Boshen"
+       }
+     },
++    "node_modules/@parcel/watcher": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher/-/watcher-2.6.0.tgz",
++      "integrity": "sha512-7FNeNl8NCE7aINx7WXiKQrPYZWC/hvrTsmk6zmxbI7LTXE7hVek/n8AfVgpe2y82zl3w0HvCHN0bVKMBoJcC0w==",
++      "hasInstallScript": true,
++      "license": "MIT",
++      "dependencies": {
++        "detect-libc": "^2.0.3",
++        "is-glob": "^4.0.3",
++        "node-addon-api": "^7.0.0",
++        "picomatch": "^4.0.4"
++      },
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      },
++      "optionalDependencies": {
++        "@parcel/watcher-android-arm64": "2.6.0",
++        "@parcel/watcher-darwin-arm64": "2.6.0",
++        "@parcel/watcher-darwin-x64": "2.6.0",
++        "@parcel/watcher-freebsd-x64": "2.6.0",
++        "@parcel/watcher-linux-arm-glibc": "2.6.0",
++        "@parcel/watcher-linux-arm-musl": "2.6.0",
++        "@parcel/watcher-linux-arm64-glibc": "2.6.0",
++        "@parcel/watcher-linux-arm64-musl": "2.6.0",
++        "@parcel/watcher-linux-x64-glibc": "2.6.0",
++        "@parcel/watcher-linux-x64-musl": "2.6.0",
++        "@parcel/watcher-win32-arm64": "2.6.0",
++        "@parcel/watcher-win32-x64": "2.6.0"
++      }
++    },
++    "node_modules/@parcel/watcher-android-arm64": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-android-arm64/-/watcher-android-arm64-2.6.0.tgz",
++      "integrity": "sha512-trgpLSCKRC/huFjXX/Smh+0sWe4+YtKfktIToiMl59ghz7z+qkH6kMvNnUbLyRs9N11t8l4svSCs1+5B3rOAhA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-darwin-arm64": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-darwin-arm64/-/watcher-darwin-arm64-2.6.0.tgz",
++      "integrity": "sha512-Y3QV0gl7Q1zbfueunkWIERICbEojQFCgpyG7YqOGNFLsckXyI1xu9mAIUpKY9QBYzBtSkN8dBPwd3yiAO9ovMw==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-darwin-x64": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-darwin-x64/-/watcher-darwin-x64-2.6.0.tgz",
++      "integrity": "sha512-Ohv6OpzhUfKYD7Beb8kDvG0jbIxORCYY1JRdZnaBtnjjkJxgD7ZVL0nw2sCYd0yTMKTvz3nnTnOF3cDifK+kvw==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-freebsd-x64": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-freebsd-x64/-/watcher-freebsd-x64-2.6.0.tgz",
++      "integrity": "sha512-5HmXvDgs8VK+74jF9y9/2FE3/OnlcKmc56tjmSrEuZjpSZOGL+fvAu+HKJBdPs9uwoP2hE6TlSUpXZ/C5jUFmQ==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm-glibc": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm-glibc/-/watcher-linux-arm-glibc-2.6.0.tgz",
++      "integrity": "sha512-Ps/hui3A+vMbjdqlqAowK2ZL8+BO8dBjxeWXj6npTBs3jx4wWmbPpaLuqwrQrSqIVMCnpWo238bJ1U37GhQOYg==",
++      "cpu": [
++        "arm"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm-musl": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm-musl/-/watcher-linux-arm-musl-2.6.0.tgz",
++      "integrity": "sha512-9c6AUHgHoG+IY88MRIHupztQiQnrbqHYQjkM2btA+Bf/wQnQMuiD0Wfk1EVv3TlNT3x41uU71rn6E4xh/+zvkw==",
++      "cpu": [
++        "arm"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm64-glibc": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm64-glibc/-/watcher-linux-arm64-glibc-2.6.0.tgz",
++      "integrity": "sha512-yHRqS2owEXe6Hic9z6Mh1ECsCd+ODVOGvZDyciqRd21+v+o+DnXMOrw50DSpIG2sb8GPEaPPmfeCAWKPJdq46g==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm64-musl": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm64-musl/-/watcher-linux-arm64-musl-2.6.0.tgz",
++      "integrity": "sha512-WhB2e/V7rqdHHWZusBSPuy5Ei8S6lSz6FE5TKKQz5h3a0O+C+mhY7vxU9b/stqvMb8beLnPY82ZrFTLKs+SrKA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-x64-glibc": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-x64-glibc/-/watcher-linux-x64-glibc-2.6.0.tgz",
++      "integrity": "sha512-ulGE6x6Oz6iAwg75T8YQSoguBWasniIbX+QWpaYPcCnDOpdWX3k+4xbEYPZVLxOuoJI+svJJPD3sEj8G7lrQ3A==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-x64-musl": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-x64-musl/-/watcher-linux-x64-musl-2.6.0.tgz",
++      "integrity": "sha512-tkBYKt7YQrjIJWYDnto2YgO8MRkjlMTSNoRHzsXinBqbLdeOM3L32wPZJvIZxqaLMfSlS/4sUjH/6STVP/XDLw==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-win32-arm64": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-win32-arm64/-/watcher-win32-arm64-2.6.0.tgz",
++      "integrity": "sha512-gIZAP23jaHjGWasY/TY6yL7NHFClf0Ga7FN+iINvk+KN94rhm94lYZhFsbYFNcA04/onvGD9kKmiJLJB2HbNwQ==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-win32-x64": {
++      "version": "2.6.0",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-win32-x64/-/watcher-win32-x64-2.6.0.tgz",
++      "integrity": "sha512-cA+/pXV2YkfxlIcXOQ5fSWqAzzPyD78/x5qbK/I0vUkrlYHA8TIz+MXjAbGouguKVSI4bOmkTSJ1/poVSsgt+A==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher/node_modules/picomatch": {
++      "version": "4.0.5",
++      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.5.tgz",
++      "integrity": "sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=12"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/jonschlinkert"
++      }
++    },
+     "node_modules/@radix-ui/number": {
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/@radix-ui/number/-/number-1.1.1.tgz",
+@@ -2704,6 +3021,12 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/@schummar/icu-type-parser": {
++      "version": "1.21.5",
++      "resolved": "https://registry.npmjs.org/@schummar/icu-type-parser/-/icu-type-parser-1.21.5.tgz",
++      "integrity": "sha512-bXHSaW5jRTmke9Vd0h5P7BtWZG9Znqb8gSDxZnxaGSJnGwPLDPfS+3g0BKzeWqzgZPsIVZkM7m2tbo18cm5HBw==",
++      "license": "MIT"
++    },
+     "node_modules/@standard-schema/spec": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/@standard-schema/spec/-/spec-1.1.0.tgz",
+@@ -2716,6 +3039,204 @@
+       "integrity": "sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==",
+       "license": "MIT"
+     },
++    "node_modules/@swc/core-darwin-arm64": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-darwin-arm64/-/core-darwin-arm64-1.15.47.tgz",
++      "integrity": "sha512-GsoMtan3ojGGMGFbl31mmRu5ctZ56re8grGE8mO/OHJ8O+JRkzod02fe7X6ZQ8JvamA3imkEkx/h3u+vsOgPgA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-darwin-x64": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-darwin-x64/-/core-darwin-x64-1.15.47.tgz",
++      "integrity": "sha512-leTi7Rx3KF4zcC637iqWgk9SoV8VXAD8ppQYXsep63px5A/UftOcxLN1pmr8Z1si/YvX90ompP/rHgpYkgwXWg==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-arm-gnueabihf": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-arm-gnueabihf/-/core-linux-arm-gnueabihf-1.15.47.tgz",
++      "integrity": "sha512-hBqHuoWKKIsKmDBn9qVeWqj5GWZhtlcczVaqQmNRXsDfq+voR5CxKRfamA367QjJXtceYuliLFfEL8QsskRM2g==",
++      "cpu": [
++        "arm"
++      ],
++      "license": "Apache-2.0",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-arm64-gnu": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-arm64-gnu/-/core-linux-arm64-gnu-1.15.47.tgz",
++      "integrity": "sha512-TBxvRz+B4K205TWHHZxWVxkC2RFNP/Mz3PNcECBos5PsKwxjg3QSJzdoebr0VCf0Bfh8HOPldKxAP/8XkFe9gA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-arm64-musl": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-arm64-musl/-/core-linux-arm64-musl-1.15.47.tgz",
++      "integrity": "sha512-3Yu3Uq/VgytqsPjTMbkPU1ExADytbdWbruJYhA584E9jrpE2Ki+R6VVPoZCeAVk1Cb7QxcRTgblw6bSa6a/R+w==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-ppc64-gnu": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-ppc64-gnu/-/core-linux-ppc64-gnu-1.15.47.tgz",
++      "integrity": "sha512-wfdMi5IaOaNtmh2/6geRoxIdNfqylUZFdtzTKS655y1axWfIWyx7As74vv0wVdjeCIZ3WmCI9odDd4rUttXOSQ==",
++      "cpu": [
++        "ppc64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-s390x-gnu": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-s390x-gnu/-/core-linux-s390x-gnu-1.15.47.tgz",
++      "integrity": "sha512-3hHYBY0yx8Ez7GMRrkhXHQzMdR5IZA6Wq5Ee4svlgwvSECLpnAJ9+0AimEGUFDvuLwE7nV/2+PYe8+Nm4rvNcQ==",
++      "cpu": [
++        "s390x"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-x64-gnu": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-x64-gnu/-/core-linux-x64-gnu-1.15.47.tgz",
++      "integrity": "sha512-TjfhjgP/jGCfFHYC3JQPhJA1HwErbIJ9JfREDc1KNkvY6P0LodCgKVIlQ5deeTbkG7ih3bF5PHJLuLpaZjdRyQ==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-x64-musl": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-x64-musl/-/core-linux-x64-musl-1.15.47.tgz",
++      "integrity": "sha512-CQpS8Ge/avfjZd0UEwG/sds83Uu32deQXcV1Jo3jD0mmvQQqtYAjpsDZXugmheeAwmt+YIuoVtVHro8LMYHqsQ==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-win32-arm64-msvc": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-win32-arm64-msvc/-/core-win32-arm64-msvc-1.15.47.tgz",
++      "integrity": "sha512-0W8IKHsUTYiT7G2RqtOoVWk+89yzZikIiDUb/sCK6BmQDBhN91hQSfyUtW12jhEWLzYgcfmisfsZrmZE+84U1A==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-win32-ia32-msvc": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-win32-ia32-msvc/-/core-win32-ia32-msvc-1.15.47.tgz",
++      "integrity": "sha512-ZIp49d2Z4/ka2jO9otOg4hDvTdPmp86kVOgS2M5FCPI7eKKZ1W0boxWn+8XeZrfERtFGW0AlMRm4JhlJa7l3NA==",
++      "cpu": [
++        "ia32"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-win32-x64-msvc": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.15.47.tgz",
++      "integrity": "sha512-2h8Iek95vnixkBRCo+H8p09+Q5ll2NgSMFrWTy0iKt7+/t+8/T5mBpiT6c0ZxSS7wcWjwZ9sGZkK70tTSYHdDw==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/counter": {
++      "version": "0.1.3",
++      "resolved": "https://registry.npmjs.org/@swc/counter/-/counter-0.1.3.tgz",
++      "integrity": "sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==",
++      "license": "Apache-2.0"
++    },
+     "node_modules/@swc/helpers": {
+       "version": "0.5.15",
+       "resolved": "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.15.tgz",
+@@ -2725,6 +3246,15 @@
+         "tslib": "^2.8.0"
+       }
+     },
++    "node_modules/@swc/types": {
++      "version": "0.1.28",
++      "resolved": "https://registry.npmjs.org/@swc/types/-/types-0.1.28.tgz",
++      "integrity": "sha512-V6Mnml8v09QALx6K0elJ7o9K/MkVDtW3t6L+7Ou/JcWtb3xwId2AH4FeOceySd2JaO87IMw4+6vSZxLm34LPbw==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@swc/counter": "^0.1.3"
++      }
++    },
+     "node_modules/@tailwindcss/node": {
+       "version": "4.2.4",
+       "resolved": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.2.4.tgz",
+@@ -4931,7 +5461,6 @@
+       "version": "2.1.2",
+       "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz",
+       "integrity": "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==",
+-      "devOptional": true,
+       "license": "Apache-2.0",
+       "engines": {
+         "node": ">=8"
+@@ -6192,6 +6721,21 @@
+         "node": ">=8.0.0"
+       }
+     },
++    "node_modules/icu-minify": {
++      "version": "4.13.4",
++      "resolved": "https://registry.npmjs.org/icu-minify/-/icu-minify-4.13.4.tgz",
++      "integrity": "sha512-yK6HyPLGlQjqm8fTKtnBpM77z7vl7JdDBN2EXLvmgAu/b7XaOHWZb73M3ISl9ahBTehBv7RYeqqWSHfk1v2YcA==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/amannn"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/icu-messageformat-parser": "^3.4.0"
++      }
++    },
+     "node_modules/ignore": {
+       "version": "5.3.2",
+       "resolved": "https://registry.npmjs.org/ignore/-/ignore-5.3.2.tgz",
+@@ -6273,6 +6817,16 @@
+         "node": ">=12"
+       }
+     },
++    "node_modules/intl-messageformat": {
++      "version": "11.2.13",
++      "resolved": "https://registry.npmjs.org/intl-messageformat/-/intl-messageformat-11.2.13.tgz",
++      "integrity": "sha512-JaPaE6TIX+TAS5XLhDUh41geLw4QfBHX4s5pW8Km+L9fVC8HzB9yOuhbh4EMR/F1+8C6b9qk4763Cv+LdOG1kg==",
++      "license": "BSD-3-Clause",
++      "dependencies": {
++        "@formatjs/fast-memoize": "3.1.7",
++        "@formatjs/icu-messageformat-parser": "3.5.16"
++      }
++    },
+     "node_modules/iobuffer": {
+       "version": "5.4.0",
+       "resolved": "https://registry.npmjs.org/iobuffer/-/iobuffer-5.4.0.tgz",
+@@ -6441,7 +6995,6 @@
+       "version": "2.1.1",
+       "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
+       "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=0.10.0"
+@@ -6487,7 +7040,6 @@
+       "version": "4.0.3",
+       "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
+       "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "is-extglob": "^2.1.1"
+@@ -7397,6 +7949,15 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/negotiator": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/negotiator/-/negotiator-1.0.0.tgz",
++      "integrity": "sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
+     "node_modules/next": {
+       "version": "16.2.4",
+       "resolved": "https://registry.npmjs.org/next/-/next-16.2.4.tgz",
+@@ -7450,6 +8011,83 @@
+         }
+       }
+     },
++    "node_modules/next-intl": {
++      "version": "4.13.4",
++      "resolved": "https://registry.npmjs.org/next-intl/-/next-intl-4.13.4.tgz",
++      "integrity": "sha512-jhPAT0u0lahIK6E4gVdZAehugWCosBhLG8sV7xMzgSVoJpxHObP+Fiu+z2FfkEW0XPPtr7uEXoUlLEfhxhNMTg==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/amannn"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/intl-localematcher": "^0.8.1",
++        "@parcel/watcher": "^2.4.1",
++        "@swc/core": "^1.15.2",
++        "icu-minify": "^4.13.4",
++        "negotiator": "^1.0.0",
++        "next-intl-swc-plugin-extractor": "^4.13.4",
++        "po-parser": "^2.1.1",
++        "use-intl": "^4.13.4"
++      },
++      "peerDependencies": {
++        "next": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
++        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
++      },
++      "peerDependenciesMeta": {
++        "typescript": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/next-intl-swc-plugin-extractor": {
++      "version": "4.13.4",
++      "resolved": "https://registry.npmjs.org/next-intl-swc-plugin-extractor/-/next-intl-swc-plugin-extractor-4.13.4.tgz",
++      "integrity": "sha512-uN1+NMUYbG6YkO3q+rjc2bvAPX9nQ23owemvHJAyW0pRbQjVDwvNhmrV5qaak0oQc/9okbK17KLT49AoMGhVEQ==",
++      "license": "MIT"
++    },
++    "node_modules/next-intl/node_modules/@swc/core": {
++      "version": "1.15.47",
++      "resolved": "https://registry.npmjs.org/@swc/core/-/core-1.15.47.tgz",
++      "integrity": "sha512-FbsO5JcfOjfH38W/rohBRBweJeERsAuIP4f377lmkmxTcq9exjtx4SkRuZY5CdfhR2CBVwDIJegBpJDffwNsOg==",
++      "hasInstallScript": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@swc/counter": "^0.1.3",
++        "@swc/types": "^0.1.27"
++      },
++      "engines": {
++        "node": ">=10"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/swc"
++      },
++      "optionalDependencies": {
++        "@swc/core-darwin-arm64": "1.15.47",
++        "@swc/core-darwin-x64": "1.15.47",
++        "@swc/core-linux-arm-gnueabihf": "1.15.47",
++        "@swc/core-linux-arm64-gnu": "1.15.47",
++        "@swc/core-linux-arm64-musl": "1.15.47",
++        "@swc/core-linux-ppc64-gnu": "1.15.47",
++        "@swc/core-linux-s390x-gnu": "1.15.47",
++        "@swc/core-linux-x64-gnu": "1.15.47",
++        "@swc/core-linux-x64-musl": "1.15.47",
++        "@swc/core-win32-arm64-msvc": "1.15.47",
++        "@swc/core-win32-ia32-msvc": "1.15.47",
++        "@swc/core-win32-x64-msvc": "1.15.47"
++      },
++      "peerDependencies": {
++        "@swc/helpers": ">=0.5.17"
++      },
++      "peerDependenciesMeta": {
++        "@swc/helpers": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/next/node_modules/postcss": {
+       "version": "8.4.31",
+       "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.4.31.tgz",
+@@ -7478,6 +8116,12 @@
+         "node": "^10 || ^12 || >=14"
+       }
+     },
++    "node_modules/node-addon-api": {
++      "version": "7.1.1",
++      "resolved": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-7.1.1.tgz",
++      "integrity": "sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==",
++      "license": "MIT"
++    },
+     "node_modules/node-exports-info": {
+       "version": "1.6.0",
+       "resolved": "https://registry.npmjs.org/node-exports-info/-/node-exports-info-1.6.0.tgz",
+@@ -7798,6 +8442,12 @@
+         "url": "https://github.com/sponsors/jonschlinkert"
+       }
+     },
++    "node_modules/po-parser": {
++      "version": "2.1.1",
++      "resolved": "https://registry.npmjs.org/po-parser/-/po-parser-2.1.1.tgz",
++      "integrity": "sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==",
++      "license": "MIT"
++    },
+     "node_modules/possible-typed-array-names": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/possible-typed-array-names/-/possible-typed-array-names-1.1.0.tgz",
+@@ -9359,6 +10009,27 @@
+         }
+       }
+     },
++    "node_modules/use-intl": {
++      "version": "4.13.4",
++      "resolved": "https://registry.npmjs.org/use-intl/-/use-intl-4.13.4.tgz",
++      "integrity": "sha512-wRhU5zyPNgu845++EJ8ckQsi89b22QUop7NlGxNXpsnKSwEJr7WErAkdAYeVQgFTmDWsa8e2NI1e14XbWz9Ecw==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/amannn"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/fast-memoize": "^3.1.0",
++        "@schummar/icu-type-parser": "1.21.5",
++        "icu-minify": "^4.13.4",
++        "intl-messageformat": "^11.1.0"
++      },
++      "peerDependencies": {
++        "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
++      }
++    },
+     "node_modules/use-sidecar": {
+       "version": "1.1.3",
+       "resolved": "https://registry.npmjs.org/use-sidecar/-/use-sidecar-1.1.3.tgz",
+diff --git a/package.json b/package.json
+index c0b11a6..cece063 100644
+--- a/package.json
++++ b/package.json
+@@ -26,6 +26,7 @@
+     "jspdf": "^4.2.1",
+     "lucide-react": "^1.14.0",
+     "next": "16.2.4",
++    "next-intl": "^4.13.4",
+     "react": "19.2.4",
+     "react-dom": "19.2.4",
+     "recharts": "^3.8.1",
