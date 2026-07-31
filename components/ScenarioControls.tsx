@@ -1,10 +1,12 @@
 "use client"
 
+import { useState } from "react"
+import { encodeScenarioToHash } from "@/lib/share"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Copy, Plus, Trash2 } from "lucide-react"
+import { Copy, Plus, Trash2, Share2, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ExportPdfButton from "@/components/ExportPdfButton"
 
@@ -50,6 +52,25 @@ export default function ScenarioControls() {
   const addScenario = useTaktStore((s) => s.addScenario)
   const removeScenario = useTaktStore((s) => s.removeScenario)
 
+  const [copied, setCopied] = useState(false)
+
+  async function handleShare() {
+    if (!scenario) return
+    const hash = encodeScenarioToHash(scenario)
+    const url = `${window.location.origin}${window.location.pathname}#${hash}`
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch {
+      const textarea = document.createElement("textarea")
+      textarea.value = url
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand("copy")
+      document.body.removeChild(textarea)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
   if (!hydrated) return <ScenarioControlsSkeleton />
   if (!scenario) return null
 
@@ -184,7 +205,11 @@ export default function ScenarioControls() {
             </Button>
           )}
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleShare}>
+              {copied ? <Check className="mr-2 h-4 w-4" /> : <Share2 className="mr-2 h-4 w-4" />}
+              {copied ? "¡Enlace copiado!" : "Compartir"}
+            </Button>
             <ExportPdfButton />
           </div>
         </div>

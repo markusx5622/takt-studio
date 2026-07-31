@@ -8,11 +8,13 @@ import ImprovementPlan from "@/components/ImprovementPlan"
 import CostImpactPanel from "@/components/CostImpactPanel"
 import SensitivityLab from "@/components/SensitivityLab"
 import ConsultingBackground from "@/components/ConsultingBackground"
+import SharedScenarioLoader from "@/components/SharedScenarioLoader"
 
 export default function SimuladorPage() {
   return (
     <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
       <ConsultingBackground />
+      <SharedScenarioLoader />
       <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 pt-2 pb-8">
         <div className="page-header-rule pb-4 mb-2">
           <h1 className="text-2xl font-bold tracking-tight">Simulador</h1>
