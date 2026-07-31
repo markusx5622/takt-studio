@@ -83,7 +83,7 @@ export default function RoadmapSection() {
         </div>
         <Button
           size="lg"
-          className="group h-14 px-8 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95"
+          className="group h-14 px-8 rounded-2xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white shadow-2xl shadow-blue-600/20 transition-all hover:scale-105 active:scale-95"
         >
           <Link href="/simulador" className="flex items-center gap-3">
             {t("cta")}
