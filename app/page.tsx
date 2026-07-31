@@ -612,7 +612,7 @@ export default function Home() {
                 y detectan cuellos de botella en milisegundos ante cualquier cambio de parámetros.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">Next.js 14</span>
+                <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">Next.js 16</span>
                 <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">TypeScript</span>
               </div>
             </div>
