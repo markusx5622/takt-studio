@@ -38,8 +38,8 @@ export default function BrandLogo({
   // but next/image with unoptimized=true also works. 
   // Given we want styling flexibility with className and these are scalable SVGs,
   // a standard img tag is very robust for SVGs in Next.js without needing width/height props.
-  // eslint-disable-next-line @next/next/no-img-element
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={variantPaths[variant]}
       alt={alt}
