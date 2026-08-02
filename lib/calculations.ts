@@ -138,8 +138,9 @@ export function simulateScenario(
 
 function buildRecommendation(
   id: string,
-  title: string,
-  description: string,
+  titleKey: string,
+  titleValues: Record<string, string | number> | undefined,
+  descriptionKey: string,
   type: ImprovementType,
   baseKpis: KPIs,
   projected: KPIs,
@@ -147,7 +148,7 @@ function buildRecommendation(
   stationName: string | undefined,
   stationChanges: { originalStationId: string; updates: Partial<Omit<Station, "id">> }[] | undefined,
   scenarioChanges: Partial<Pick<Scenario, "shiftsPerDay">> | undefined,
-  badge?: string
+  badgeKey?: string
 ): ImprovementRecommendation {
   const throughputDelta = projected.throughputPerDay - baseKpis.throughputPerDay
   const balancingDelta = (projected.balancingEfficiency - baseKpis.balancingEfficiency) * 100
@@ -163,8 +164,10 @@ function buildRecommendation(
 
   return {
     id,
-    title,
-    description,
+    titleKey,
+    titleValues,
+    descriptionKey,
+    badgeKey,
     type,
     priority,
     baseKpis,
@@ -175,8 +178,6 @@ function buildRecommendation(
     meetsDemandAfter,
     stationId,
     stationName,
-    badge,
-    applyLabel: "Crear escenario con esta mejora",
     stationChanges,
     scenarioChanges,
   }
@@ -200,8 +201,9 @@ export function generateRecommendations(
     recommendations.push(
       buildRecommendation(
         "add-operator-bottleneck",
-        `Añadir 1 operario a ${bottleneck.name}`,
-        "Incrementar operarios en la estación que limita el throughput reduce su tiempo efectivo y aumenta la capacidad global de la línea.",
+        "addOperator",
+        { name: bottleneck.name },
+        "addOperator",
         "operators",
         baseKpis,
         projected,
@@ -209,7 +211,7 @@ export function generateRecommendations(
         bottleneck.name,
         [{ originalStationId: bottleneck.id, updates: { operators: bottleneck.operators + 1 } }],
         undefined,
-        !baseKpis.meetsDemand && projected.meetsDemand ? "Alto impacto" : "Implementación rápida"
+        !baseKpis.meetsDemand && projected.meetsDemand ? "highImpact" : "quickWin"
       )
     )
   }
@@ -225,8 +227,9 @@ export function generateRecommendations(
     recommendations.push(
       buildRecommendation(
         "reduce-failure",
-        `Reducir reproceso en ${problemStation.name}`,
-        "Disminuir la tasa de fallo elimina tiempo de retrabajo, reduce el ciclo efectivo y mejora la capacidad real de la estación.",
+        "reduceRework",
+        { name: problemStation.name },
+        "reduceRework",
         "failure-rate",
         baseKpis,
         projected,
@@ -234,7 +237,7 @@ export function generateRecommendations(
         problemStation.name,
         [{ originalStationId: problemStation.id, updates: { failureRate: 0.02 } }],
         undefined,
-        "Calidad / reproceso"
+        "qualityRework"
       )
     )
   }
@@ -249,8 +252,9 @@ export function generateRecommendations(
       recommendations.push(
         buildRecommendation(
           "optimize-method",
-          `Optimizar método en ${bottleneck.name}`,
-          "Una mejora de método o estandarización del proceso puede reducir el tiempo de ciclo sin necesidad de añadir mano de obra.",
+          "optimizeMethod",
+          { name: bottleneck.name },
+          "optimizeMethod",
           "cycle-time",
           baseKpis,
           projected,
@@ -258,7 +262,7 @@ export function generateRecommendations(
           bottleneck.name,
           [{ originalStationId: bottleneck.id, updates: { cycleTimeMin: newCycle } }],
           undefined,
-          "Mejora de método"
+          "methodImprovement"
         )
       )
     }
@@ -272,8 +276,9 @@ export function generateRecommendations(
     recommendations.push(
       buildRecommendation(
         "add-shift",
-        `Aumentar a ${scenario.shiftsPerDay + 1} turnos por día`,
-        "Extender el tiempo disponible diario aumenta el throughput total. Útil cuando la línea está cerca del objetivo pero no lo alcanza.",
+        "addShift",
+        { count: scenario.shiftsPerDay + 1 },
+        "addShift",
         "shifts",
         baseKpis,
         projected,
@@ -281,7 +286,7 @@ export function generateRecommendations(
         undefined,
         undefined,
         { shiftsPerDay: scenario.shiftsPerDay + 1 },
-        "Implementación rápida"
+        "quickWin"
       )
     )
   }

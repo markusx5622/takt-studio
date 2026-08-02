@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import type { Station } from "@/types"
 
@@ -18,10 +19,11 @@ export default function StationSelector({
   onSelectBaseBottleneck?: () => void
   isBaseBottleneckSelected?: boolean
 }) {
+  const t = useTranslations("simulator.lab")
   return (
     <div className="rounded-lg border bg-muted/10 p-3">
       <div className="flex items-center justify-between gap-2">
-        <label className="text-xs font-medium text-foreground/80">Estación objetivo</label>
+        <label className="text-xs font-medium text-foreground/80">{t("targetStation")}</label>
         {onSelectBaseBottleneck && (
           <button
             type="button"
@@ -34,7 +36,7 @@ export default function StationSelector({
                 : "text-primary hover:text-primary/80 hover:underline"
             )}
           >
-            Usar cuello de botella
+            {t("useBottleneck")}
           </button>
         )}
       </div>
@@ -45,14 +47,14 @@ export default function StationSelector({
       >
         {stations.map((s) => (
           <option key={s.id} value={s.id}>
-            {s.name}{s.id === baseBottleneckId ? " (cuello de botella)" : ""}
+            {s.name}{s.id === baseBottleneckId ? t("bottleneckSuffix") : ""}
           </option>
         ))}
       </select>
       <p className="mt-1 text-[10px] text-muted-foreground/60">
         {isBaseBottleneckSelected
-          ? "Estás trabajando sobre la estación crítica recomendada."
-          : "Puedes cambiar la estación manualmente o volver a la recomendada."}
+          ? t("onRecommended")
+          : t("notOnRecommended")}
       </p>
     </div>
   )

@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs, generateRecommendations, simulateScenario, calculateRecommendationEconomicImpact } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -21,21 +22,21 @@ import type { ImprovementRecommendation, ImprovementPriority } from "@/types"
 
 const PRIORITY_STYLES: Record<
   ImprovementPriority,
-  { badge: string; label: string; border: string }
+  { badge: string; labelKey: string; border: string }
 > = {
   high: {
     badge: "bg-red-100 text-red-800",
-    label: "Alta",
+    labelKey: "priorityHigh",
     border: "border-red-200/60",
   },
   medium: {
     badge: "bg-amber-100 text-amber-800",
-    label: "Media",
+    labelKey: "priorityMedium",
     border: "border-amber-200/60",
   },
   low: {
     badge: "bg-blue-100 text-blue-800",
-    label: "Baja",
+    labelKey: "priorityLow",
     border: "border-border",
   },
 }
@@ -51,7 +52,10 @@ function RecommendationCard({
   scenario: import("@/types").Scenario
   onApply: (rec: ImprovementRecommendation) => void
 }) {
+  const t = useTranslations("simulator.improvements")
+  const locale = useLocale()
   const styles = PRIORITY_STYLES[rec.priority]
+  const recTitle = t(`recs.${rec.titleKey}.title`, rec.titleValues)
 
   // Mini ROI
   const projectedScenario = useMemo(() => {
@@ -72,20 +76,20 @@ function RecommendationCard({
   const leadTimePositive = rec.leadTimeDelta < 0
 
   const throughputDeltaText = throughputPositive
-    ? `+${rec.throughputDelta} uds`
+    ? `+${rec.throughputDelta} ${t("unitsUds")}`
     : rec.throughputDelta < 0
-      ? `${rec.throughputDelta} uds`
-      : "Sin cambio"
+      ? `${rec.throughputDelta} ${t("unitsUds")}`
+      : t("noChange")
 
   const balancingDeltaText =
     Math.abs(rec.balancingDelta) >= 0.1
       ? `${rec.balancingDelta > 0 ? "+" : ""}${rec.balancingDelta.toFixed(1)} pp`
-      : "Sin cambio"
+      : t("noChange")
 
   const leadTimeDeltaText =
     Math.abs(rec.leadTimeDelta) >= 0.1
       ? `${rec.leadTimeDelta > 0 ? "+" : ""}${rec.leadTimeDelta.toFixed(1)} min`
-      : "Sin cambio"
+      : t("noChange")
 
   return (
     <div
@@ -98,25 +102,25 @@ function RecommendationCard({
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-1.5">
           <Wrench className="h-3.5 w-3.5 shrink-0 text-primary" />
-          <h4 className="text-sm font-semibold leading-tight">{rec.title}</h4>
+          <h4 className="text-sm font-semibold leading-tight">{recTitle}</h4>
         </div>
         <div className="flex shrink-0 gap-1">
           <Badge variant="outline" className={cn("text-[10px]", styles.badge)}>
-            {styles.label}
+            {t(styles.labelKey)}
           </Badge>
         </div>
       </div>
 
       {/* Description */}
       <p className="mt-1.5 text-xs leading-relaxed text-foreground/70 line-clamp-2">
-        {rec.description}
+        {t(`recs.${rec.descriptionKey}.description`)}
       </p>
 
       {/* Impact grid */}
       <div className="mt-2.5 grid grid-cols-2 gap-2 rounded-md border bg-muted/20 p-2">
         <div className="flex flex-col">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Throughput
+            {t("throughput")}
           </span>
           <span className="text-sm font-semibold">{rec.projectedKpis.throughputPerDay}</span>
           <span
@@ -130,18 +134,18 @@ function RecommendationCard({
         </div>
         <div className="flex flex-col">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Demanda
+            {t("demand")}
           </span>
           <span className="text-sm font-semibold">
-            {rec.meetsDemandAfter ? "Cumple" : "No cumple"}
+            {rec.meetsDemandAfter ? t("meets") : t("notMeets")}
           </span>
           {rec.meetsDemandAfter && !rec.baseKpis.meetsDemand && (
-            <span className="text-[10px] font-medium text-green-600">Pasa a cumplir</span>
+            <span className="text-[10px] font-medium text-green-600">{t("passesToMeet")}</span>
           )}
         </div>
         <div className="flex flex-col">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Balanceo
+            {t("balancing")}
           </span>
           <span className="text-sm font-semibold">
             {(rec.projectedKpis.balancingEfficiency * 100).toFixed(0)}%
@@ -157,7 +161,7 @@ function RecommendationCard({
         </div>
         <div className="flex flex-col">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Lead time
+            {t("leadTime")}
           </span>
           <span className="text-sm font-semibold">
             {rec.projectedKpis.leadTimeMin.toFixed(1)} min
@@ -177,7 +181,7 @@ function RecommendationCard({
       <div className="mt-2 flex items-center justify-between rounded-md border bg-muted/20 px-2.5 py-1.5">
         <div className="flex items-center gap-1.5">
           <Euro className="h-3 w-3 text-primary" />
-          <span className="text-[10px] font-medium text-muted-foreground">Impacto neto</span>
+          <span className="text-[10px] font-medium text-muted-foreground">{t("netImpact")}</span>
         </div>
         <div className="flex items-center gap-2">
           <span
@@ -191,21 +195,21 @@ function RecommendationCard({
             )}
           >
             {economicImpact.netImpactPerDay > 0 ? "+" : ""}
-            {new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(economicImpact.netImpactPerDay)} €/día
+            {new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(economicImpact.netImpactPerDay)} {t("perDay")}
           </span>
           {economicImpact.oneOffCost > 0 && economicImpact.paybackDays !== null && (
             <Badge variant="outline" className="text-[9px]">
-              Payback {economicImpact.paybackDays.toFixed(1)} d
+              {t("paybackDays", { days: economicImpact.paybackDays.toFixed(1) })}
             </Badge>
           )}
           {economicImpact.oneOffCost > 0 && economicImpact.paybackDays === null && (
             <Badge variant="outline" className="text-[9px] text-muted-foreground">
-              Payback no aplicable
+              {t("paybackNA")}
             </Badge>
           )}
           {economicImpact.oneOffCost === 0 && (
             <Badge variant="outline" className="text-[9px] text-muted-foreground">
-              Sin inversión inicial
+              {t("noInvestment")}
             </Badge>
           )}
         </div>
@@ -213,9 +217,9 @@ function RecommendationCard({
 
       {/* Badge + Action */}
       <div className="mt-auto flex items-center justify-between gap-2 pt-2.5">
-        {rec.badge && (
+        {rec.badgeKey && (
           <Badge variant="outline" className="text-[10px]">
-            {rec.badge}
+            {t(`badges.${rec.badgeKey}`)}
           </Badge>
         )}
         <Button
@@ -223,12 +227,12 @@ function RecommendationCard({
           size="sm"
           className={cn(
             "ml-auto gap-1.5 text-[11px] transition-all duration-200 hover:bg-muted hover:border-foreground/20",
-            !rec.badge && "w-full"
+            !rec.badgeKey && "w-full"
           )}
           onClick={() => onApply(rec)}
         >
           <ArrowRight className="h-3 w-3" />
-          Aplicar
+          {t("apply")}
         </Button>
       </div>
     </div>
@@ -261,6 +265,7 @@ function ImprovementPlanSkeleton() {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function ImprovementPlan() {
+  const t = useTranslations("simulator.improvements")
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
@@ -284,12 +289,12 @@ export default function ImprovementPlan() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
           <Lightbulb className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">Plan de mejora recomendado</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex min-h-[120px] flex-col items-center justify-center gap-2 text-center">
           <AlertTriangle className="h-8 w-8 text-muted-foreground/30" />
           <p className="text-sm text-muted-foreground">
-            Define la línea para obtener recomendaciones de mejora
+            {t("empty")}
           </p>
         </CardContent>
       </Card>
@@ -301,12 +306,12 @@ export default function ImprovementPlan() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
           <Lightbulb className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">Plan de mejora recomendado</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex min-h-[120px] flex-col items-center justify-center gap-2 text-center">
           <CheckCircle2 className="h-8 w-8 text-muted-foreground/30" />
           <p className="text-sm text-muted-foreground">
-            La línea actual está bien configurada o no se detectan mejoras automáticas claras.
+            {t("wellConfigured")}
           </p>
         </CardContent>
       </Card>
@@ -317,7 +322,7 @@ export default function ImprovementPlan() {
     if (!scenario) return
     createScenarioVariant(
       scenario.id,
-      `${scenario.name} — ${rec.title}`,
+      `${scenario.name} — ${t(`recs.${rec.titleKey}.title`, rec.titleValues)}`,
       rec.stationChanges,
       rec.scenarioChanges
     )
@@ -328,9 +333,9 @@ export default function ImprovementPlan() {
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
         <Lightbulb className="h-5 w-5 text-primary" aria-hidden />
         <div>
-          <CardTitle className="text-lg">Plan de mejora recomendado</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
           <CardDescription className="text-xs">
-            Acciones simuladas para mejorar capacidad, balanceo o cumplimiento de demanda
+            {t("description")}
           </CardDescription>
         </div>
       </CardHeader>

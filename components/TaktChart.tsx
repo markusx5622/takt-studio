@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
+import { useTranslations } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { getStationsWithEffective, calculateTaktTime } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -40,6 +41,7 @@ interface CustomTooltipProps {
 }
 
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
+  const t = useTranslations("simulator.chart")
   if (!active || !payload?.length) return null
   const s = payload[0]?.payload
   if (!s) return null
@@ -49,19 +51,23 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       <p className="mb-2 font-semibold">{s.name}</p>
       <div className="space-y-0.5 text-muted-foreground">
         <p>
-          Tiempo ciclo:{" "}
-          <span className="font-medium text-foreground">{s.cycleTimeMin} min</span>
+          {t("tooltipCycle")}{" "}
+          <span className="font-medium text-foreground">
+            {s.cycleTimeMin} {t("minUnit")}
+          </span>
         </p>
         <p>
-          Operarios:{" "}
+          {t("tooltipOperators")}{" "}
           <span className="font-medium text-foreground">{s.operators}</span>
         </p>
         <p>
-          Tiempo efectivo:{" "}
-          <span className="font-medium text-foreground">{s.effectiveCycleMin.toFixed(1)} min</span>
+          {t("tooltipEffective")}{" "}
+          <span className="font-medium text-foreground">
+            {s.effectiveCycleMin.toFixed(1)} {t("minUnit")}
+          </span>
         </p>
         <p>
-          Tasa fallo:{" "}
+          {t("tooltipFailure")}{" "}
           <span className="font-medium text-foreground">
             {(s.failureRate * 100).toFixed(0)}%
           </span>
@@ -94,6 +100,7 @@ interface TaktChartProps {
 }
 
 export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) {
+  const t = useTranslations("simulator.chart")
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === (scenarioId ?? state.activeScenarioId))
@@ -115,7 +122,7 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
     return (
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Tiempos de ciclo vs Takt Time</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent
           className="flex flex-col items-center justify-center gap-3 text-center"
@@ -123,7 +130,7 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
         >
           <BarChart3 className="h-10 w-10 text-muted-foreground/25" />
           <p className="text-sm text-muted-foreground">
-            Añade estaciones para ver el gráfico
+            {t("empty")}
           </p>
         </CardContent>
       </Card>
@@ -133,7 +140,7 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Tiempos de ciclo vs Takt Time</CardTitle>
+        <CardTitle className="text-lg">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="pr-2">
         <ResponsiveContainer width="100%" height={height}>
@@ -156,7 +163,7 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
             <YAxis
               tick={{ fontSize: 11, fill: "#6b7280" }}
               label={{
-                value: "Minutos/unidad",
+                value: t("axisMinPerUnit"),
                 angle: -90,
                 position: "insideLeft",
                 offset: 15,
@@ -177,7 +184,7 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
                 strokeDasharray="8 4"
                 strokeWidth={2}
                 label={{
-                  value: `TAKT: ${taktTimeMin.toFixed(1)} min`,
+                  value: t("taktLine", { value: taktTimeMin.toFixed(1) }),
                   position: "right",
                   fill: "#374151",
                   fontSize: 11,

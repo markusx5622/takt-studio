@@ -2,7 +2,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { useSyncExternalStore } from "react"
 import type { Station, Scenario, AppState, EconomicInputs, ScenarioSnapshot, ExportPayload } from "@/types"
-import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS } from "@/lib/presets"
+import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS, getPresetNames } from "@/lib/presets"
 import { buildScenarioExportPayload, buildSnapshotExportPayload, regenerateScenarioIds } from "@/lib/import-export"
 
 interface TaktStore extends AppState {
@@ -48,8 +48,9 @@ interface TaktStore extends AppState {
 }
 
 function createInitialState(): AppState {
-  const scenarioA = { ...createMonobathPreset(), name: "Escenario A — Monobath" }
-  const scenarioB = { ...createMonobathPreset(), name: "Escenario B — Monobath" }
+  const names = getPresetNames()
+  const scenarioA = { ...createMonobathPreset(names), name: names.scenarioAName }
+  const scenarioB = { ...createMonobathPreset(names), name: names.scenarioBName }
   return {
     scenarios: [scenarioA, scenarioB],
     activeScenarioId: scenarioA.id,

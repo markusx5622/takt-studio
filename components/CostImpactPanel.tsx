@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs, calculateEconomicKPIs, normalizeEconomics } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -144,6 +145,8 @@ function SecondaryRow({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function CostImpactPanel() {
+  const t = useTranslations("simulator.costs")
+  const locale = useLocale()
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
@@ -167,12 +170,12 @@ export default function CostImpactPanel() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
           <Euro className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">Coste e impacto estimado</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex min-h-[100px] flex-col items-center justify-center gap-2 text-center">
           <AlertTriangle className="h-7 w-7 text-muted-foreground/30" />
           <p className="text-sm text-muted-foreground">
-            Define la línea para ver estimaciones económicas
+            {t("empty")}
           </p>
         </CardContent>
       </Card>
@@ -189,7 +192,7 @@ export default function CostImpactPanel() {
   }
 
   const fmt = (n: number) =>
-    new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(n)
+    new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(n)
 
   const profitTone: "positive" | "negative" | "neutral" =
     (econKpis?.profitProxyPerDay ?? 0) > 0 ? "positive" : "negative"
@@ -198,11 +201,11 @@ export default function CostImpactPanel() {
   let summary = ""
   if (econKpis) {
     if (econKpis.demandShortfallUnitsPerDay > 0) {
-      summary = `La línea deja ${fmt(econKpis.opportunityGapValuePerDay)} €/día sin capturar por gap de demanda.`
+      summary = t("summaryGap", { value: fmt(econKpis.opportunityGapValuePerDay) })
     } else if (econKpis.profitProxyPerDay > 0) {
-      summary = `Operación con proxy de margen de ${fmt(econKpis.profitProxyPerDay)} €/día bajo los supuestos actuales.`
+      summary = t("summaryProfit", { value: fmt(econKpis.profitProxyPerDay) })
     } else {
-      summary = `Los costes operativos superan la contribución generada en los supuestos actuales.`
+      summary = t("summaryLoss")
     }
   }
 
@@ -211,9 +214,9 @@ export default function CostImpactPanel() {
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
         <Euro className="h-5 w-5 text-primary" aria-hidden />
         <div>
-          <CardTitle className="text-lg">Coste e impacto estimado</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
           <CardDescription className="text-xs">
-            Estimaciones basadas en supuestos configurables. No sustituyen validación financiera real.
+            {t("description")}
           </CardDescription>
         </div>
       </CardHeader>
@@ -221,48 +224,48 @@ export default function CostImpactPanel() {
         {/* ── Supuestos económicos ────────────────────────────────────────── */}
         <div>
           <h4 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
-            Supuestos del escenario
+            {t("assumptions")}
           </h4>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <EconInput
-              label="Coste laboral / hora"
+              label={t("laborCostHour")}
               value={economics.laborCostPerHour}
               onChange={(v) => updateEcon({ laborCostPerHour: v })}
               suffix="€"
               step={0.5}
             />
             <EconInput
-              label="Margen / unidad"
+              label={t("marginUnit")}
               value={economics.contributionMarginPerUnit}
               onChange={(v) => updateEcon({ contributionMarginPerUnit: v })}
               suffix="€"
             />
             <EconInput
-              label="Coste reproceso / unidad"
+              label={t("reworkCostUnit")}
               value={economics.reworkCostPerUnit}
               onChange={(v) => updateEcon({ reworkCostPerUnit: v })}
               suffix="€"
             />
             <EconInput
-              label="Coste fijo / turno y día"
+              label={t("shiftFixedCost")}
               value={economics.shiftFixedCostPerDay}
               onChange={(v) => updateEcon({ shiftFixedCostPerDay: v })}
               suffix="€"
             />
             <EconInput
-              label="Inversión mejora método"
+              label={t("methodInvestment")}
               value={economics.methodImprovementOneOffCost}
               onChange={(v) => updateEcon({ methodImprovementOneOffCost: v })}
               suffix="€"
             />
             <EconInput
-              label="Inversión mejora calidad"
+              label={t("qualityInvestment")}
               value={economics.qualityImprovementOneOffCost}
               onChange={(v) => updateEcon({ qualityImprovementOneOffCost: v })}
               suffix="€"
             />
             <EconInput
-              label="Días laborables / mes"
+              label={t("workingDays")}
               value={economics.workingDaysPerMonth}
               onChange={(v) => updateEcon({ workingDaysPerMonth: v })}
               suffix="d"
@@ -277,21 +280,21 @@ export default function CostImpactPanel() {
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <PrimaryMetric
                 icon={Wallet}
-                label="Proxy de margen / día"
+                label={t("profitProxyDay")}
                 value={fmt(econKpis.profitProxyPerDay)}
                 unit="€"
                 tone={profitTone}
               />
               <PrimaryMetric
                 icon={TrendingUp}
-                label="Contribución servida / día"
+                label={t("servedContribution")}
                 value={fmt(econKpis.fulfilledContributionPerDay)}
                 unit="€"
                 tone="neutral"
               />
               <PrimaryMetric
                 icon={Briefcase}
-                label="Coste operativo total / día"
+                label={t("totalOpCost")}
                 value={fmt(econKpis.totalOperatingCostPerDay)}
                 unit="€"
                 tone="neutral"
@@ -301,30 +304,30 @@ export default function CostImpactPanel() {
             {/* ── Métricas secundarias ────────────────────────────────────── */}
             <div className="space-y-1.5">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                Desglose operativo
+                {t("breakdown")}
               </span>
               <SecondaryRow
-                label="Coste laboral / día"
+                label={t("laborCostDay")}
                 value={fmt(econKpis.laborCostPerDay)}
                 unit="€"
               />
               <SecondaryRow
-                label="Coste reproceso / día"
+                label={t("reworkCostDay")}
                 value={fmt(econKpis.reworkCostPerDay)}
                 unit="€"
               />
               <SecondaryRow
-                label="Coste turnos / día"
+                label={t("shiftCostDay")}
                 value={fmt(econKpis.shiftCostPerDay)}
                 unit="€"
               />
               <SecondaryRow
-                label="Oportunidad perdida / día"
+                label={t("lostOpportunity")}
                 value={fmt(econKpis.opportunityGapValuePerDay)}
                 unit="€"
               />
               <SecondaryRow
-                label="Proxy de margen / mes"
+                label={t("profitProxyMonth")}
                 value={fmt(econKpis.profitProxyPerDay * economics.workingDaysPerMonth)}
                 unit="€"
               />

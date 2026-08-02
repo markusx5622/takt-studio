@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, Fragment } from "react"
+import { useTranslations } from "next-intl"
 import {
   ArrowRight,
   Users,
@@ -20,11 +21,12 @@ import type { StationWithEffective } from "@/types"
 // ─── ENTRADA ──────────────────────────────────────────────────────────────────
 
 function EntradaIndicator() {
+  const t = useTranslations("simulator.diagram")
   return (
     <div className="flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-muted-foreground/40 px-4 py-4">
       <Package className="h-5 w-5 text-muted-foreground" />
       <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-        Entrada
+        {t("input")}
       </span>
     </div>
   )
@@ -33,11 +35,12 @@ function EntradaIndicator() {
 // ─── SALIDA ───────────────────────────────────────────────────────────────────
 
 function SalidaIndicator() {
+  const t = useTranslations("simulator.diagram")
   return (
     <div className="flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-green-400 px-4 py-4">
       <PackageCheck className="h-5 w-5 text-green-600" />
       <span className="text-[10px] font-bold uppercase tracking-widest text-green-700">
-        Salida
+        {t("output")}
       </span>
     </div>
   )
@@ -56,6 +59,7 @@ function ArrowConnector() {
 // ─── Station card ─────────────────────────────────────────────────────────────
 
 function StationCard({ station, index }: { station: StationWithEffective; index: number }) {
+  const t = useTranslations("simulator.diagram")
   return (
     <div
       className={cn(
@@ -68,7 +72,7 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
       {station.isBottleneck && (
         <div className="bg-red-500 px-1 py-0.5 text-center">
           <span className="text-[9px] font-bold uppercase tracking-wide text-white">
-            Cuello de botella
+            {t("bottleneck")}
           </span>
         </div>
       )}
@@ -99,15 +103,15 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
         {station.failureRate > 0 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-amber-600">
             <AlertTriangle className="h-3 w-3 shrink-0" />
-            <span>Fallo: {(station.failureRate * 100).toFixed(0)}%</span>
+            <span>{t("failure", { pct: (station.failureRate * 100).toFixed(0) })}</span>
           </div>
         )}
 
         <div className="mt-2 flex justify-end">
           {station.exceedsTakt ? (
-            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-label="Excede takt time" />
+            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-label={t("exceedsTakt")} />
           ) : (
-            <CheckCircle className="h-3.5 w-3.5 text-green-500" aria-label="Dentro de takt time" />
+            <CheckCircle className="h-3.5 w-3.5 text-green-500" aria-label={t("withinTakt")} />
           )}
         </div>
       </div>
@@ -141,6 +145,7 @@ interface LineDiagramProps {
 }
 
 export default function LineDiagram({ scenarioId }: LineDiagramProps = {}) {
+  const t = useTranslations("simulator.diagram")
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === (scenarioId ?? state.activeScenarioId))
@@ -162,12 +167,12 @@ export default function LineDiagram({ scenarioId }: LineDiagramProps = {}) {
     return (
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Diagrama de línea</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex h-48 flex-col items-center justify-center gap-3 text-center">
           <GitBranch className="h-10 w-10 text-muted-foreground/25" />
           <p className="text-sm text-muted-foreground">
-            Añade estaciones para visualizar la línea
+            {t("empty")}
           </p>
         </CardContent>
       </Card>
@@ -177,7 +182,7 @@ export default function LineDiagram({ scenarioId }: LineDiagramProps = {}) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Diagrama de línea</CardTitle>
+        <CardTitle className="text-lg">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto pb-3 pt-1">

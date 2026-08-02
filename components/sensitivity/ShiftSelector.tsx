@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
 // ─── Shift selector (refined) ──────────────────────────────────────────────────
@@ -9,9 +10,10 @@ export default function ShiftSelector({
   value: number
   onChange: (v: number) => void
 }) {
+  const t = useTranslations("simulator.lab")
   return (
     <div className="rounded-lg border bg-muted/10 p-3">
-      <span className="text-xs font-medium text-foreground/80">Turnos por día</span>
+      <span className="text-xs font-medium text-foreground/80">{t("shiftsPerDay")}</span>
       <div className="mt-2 flex gap-1.5">
         {[1, 2, 3].map((n) => (
           <button

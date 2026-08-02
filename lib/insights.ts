@@ -3,10 +3,15 @@ import { getStationsWithEffective } from "@/lib/calculations"
 
 export type InsightType = "critical" | "warning" | "success" | "info"
 
+/**
+ * i18n: los insights no llevan texto, llevan la CLAVE del mensaje y los valores
+ * a interpolar. La UI (InsightsPanel) y el PDF los resuelven con next-intl
+ * bajo el namespace "simulator.insights.<key>.title|message".
+ */
 export type Insight = {
   type: InsightType
-  title: string
-  message: string
+  key: string
+  values?: Record<string, string | number>
 }
 
 export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
@@ -24,21 +29,24 @@ export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
   if (!kpis.meetsDemand) {
     insights.push({
       type: "critical",
-      title: "Producción insuficiente",
-      message:
-        `La línea produce ${kpis.throughputPerDay} uds/día pero la demanda es ` +
-        `${scenario.demandPerDay}. Déficit de ${Math.abs(kpis.demandDelta)} módulos diarios. ` +
-        `El cuello de botella en '${kpis.bottleneckStationName}' ` +
-        `(${kpis.bottleneckCycleMin.toFixed(1)} min) supera el takt time ` +
-        `(${kpis.taktTimeMin.toFixed(1)} min).`,
+      key: "demandNotMet",
+      values: {
+        throughput: kpis.throughputPerDay,
+        demand: scenario.demandPerDay,
+        deficit: Math.abs(kpis.demandDelta),
+        station: kpis.bottleneckStationName,
+        cycle: kpis.bottleneckCycleMin.toFixed(1),
+        takt: kpis.taktTimeMin.toFixed(1),
+      },
     })
   } else {
     insights.push({
       type: "success",
-      title: "Demanda cubierta",
-      message:
-        `La línea produce ${kpis.throughputPerDay} uds/día, por encima de la demanda de ` +
-        `${scenario.demandPerDay}.`,
+      key: "demandMet",
+      values: {
+        throughput: kpis.throughputPerDay,
+        demand: scenario.demandPerDay,
+      },
     })
   }
 
@@ -53,11 +61,11 @@ export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
         (1 + bottleneck.failureRate)
       insights.push({
         type: "warning",
-        title: "Cuello de botella dominante",
-        message:
-          `'${bottleneck.name}' es significativamente más lento que el resto. ` +
-          `Opciones: añadir 1 operario (reduciría a ${reducedTime.toFixed(1)} min) ` +
-          `o redistribuir tareas con estaciones adyacentes.`,
+        key: "dominantBottleneck",
+        values: {
+          name: bottleneck.name,
+          reduced: reducedTime.toFixed(1),
+        },
       })
     }
   }
@@ -67,19 +75,20 @@ export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
   if (effPct < 70) {
     insights.push({
       type: "warning",
-      title: `Línea desbalanceada (${effPct.toFixed(0)}%)`,
-      message:
-        `Hay mucha variación entre tiempos efectivos. Las estaciones más rápidas ` +
-        `('${fastest?.name ?? "—"}', ${fastest?.effectiveCycleMin.toFixed(1) ?? "—"} min) ` +
-        `esperan a las lentas ('${bottleneck?.name ?? "—"}', ` +
-        `${bottleneck?.effectiveCycleMin.toFixed(1) ?? "—"} min). ` +
-        `Considera redistribuir cargas.`,
+      key: "unbalanced",
+      values: {
+        pct: effPct.toFixed(0),
+        fastName: fastest?.name ?? "—",
+        fastMin: fastest?.effectiveCycleMin.toFixed(1) ?? "—",
+        slowName: bottleneck?.name ?? "—",
+        slowMin: bottleneck?.effectiveCycleMin.toFixed(1) ?? "—",
+      },
     })
   } else if (effPct >= 85) {
     insights.push({
       type: "success",
-      title: `Excelente balanceo (${effPct.toFixed(0)}%)`,
-      message: `Los tiempos efectivos están bien distribuidos. Poco margen de mejora por redistribución.`,
+      key: "wellBalanced",
+      values: { pct: effPct.toFixed(0) },
     })
   }
 
@@ -91,11 +100,12 @@ export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
     const savings = baseTime * (s.failureRate - 0.02)
     insights.push({
       type: "warning",
-      title: "Tasa de fallo elevada",
-      message:
-        `La estación '${s.name}' tiene una tasa de fallo del ` +
-        `${(s.failureRate * 100).toFixed(0)}%. Reducirla al 2% ahorraría ` +
-        `${savings.toFixed(1)} min/ud de tiempo efectivo.`,
+      key: "highFailure",
+      values: {
+        name: s.name,
+        rate: (s.failureRate * 100).toFixed(0),
+        savings: savings.toFixed(1),
+      },
     })
   }
 
@@ -104,11 +114,11 @@ export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
     const theoretical = Math.floor(kpis.availableTimeMin / secondSlowest.effectiveCycleMin)
     insights.push({
       type: "info",
-      title: "Capacidad teórica máxima",
-      message:
-        `Si se eliminara el cuello de botella, la capacidad máxima sería de ` +
-        `${theoretical} uds/día (limitado por la siguiente estación más lenta: ` +
-        `'${secondSlowest.name}').`,
+      key: "theoreticalMax",
+      values: {
+        capacity: theoretical,
+        name: secondSlowest.name,
+      },
     })
   }
 

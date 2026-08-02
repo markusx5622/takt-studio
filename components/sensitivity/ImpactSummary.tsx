@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import {
   TrendingUp,
@@ -9,6 +10,7 @@ import type { KPIs } from "@/types"
 // ─── Impact summary (refined) ──────────────────────────────────────────────────
 
 export default function ImpactSummary({ baseKpis, labKpis }: { baseKpis: KPIs; labKpis: KPIs }) {
+  const t = useTranslations("simulator.lab.impact")
   const throughputDelta = labKpis.throughputPerDay - baseKpis.throughputPerDay
   const passedToMeet = !baseKpis.meetsDemand && labKpis.meetsDemand
   const lostMeeting = baseKpis.meetsDemand && !labKpis.meetsDemand
@@ -42,27 +44,35 @@ export default function ImpactSummary({ baseKpis, labKpis }: { baseKpis: KPIs; l
   if (Math.abs(throughputDelta) >= 1) {
     parts.push(
       throughputDelta > 0
-        ? `proyecta +${throughputDelta} uds/día`
-        : `proyecta ${throughputDelta} uds/día`
+        ? t("throughputUp", { delta: throughputDelta })
+        : t("throughputDown", { delta: throughputDelta })
     )
   }
 
-  if (passedToMeet) parts.push("la línea pasa a cumplir la demanda")
-  if (lostMeeting) parts.push("la línea deja de cumplir la demanda")
+  if (passedToMeet) parts.push(t("passesToMeet"))
+  if (lostMeeting) parts.push(t("lostMeeting"))
 
   if (!passedToMeet && !lostMeeting && Math.abs(leadDelta) >= 2) {
-    parts.push(leadDelta < 0 ? `reduce el lead time en ${Math.abs(leadDelta).toFixed(1)} min` : `aumenta el lead time en ${leadDelta.toFixed(1)} min`)
+    parts.push(
+      leadDelta < 0
+        ? t("leadDown", { value: Math.abs(leadDelta).toFixed(1) })
+        : t("leadUp", { value: leadDelta.toFixed(1) })
+    )
   }
 
   if (!passedToMeet && !lostMeeting && Math.abs(balDelta) >= 3) {
-    parts.push(balDelta > 0 ? `mejora el balanceo en ${balDelta.toFixed(1)} pp` : `empeora el balanceo en ${Math.abs(balDelta).toFixed(1)} pp`)
+    parts.push(
+      balDelta > 0
+        ? t("balUp", { value: balDelta.toFixed(1) })
+        : t("balDown", { value: Math.abs(balDelta).toFixed(1) })
+    )
   }
 
   if (bnChanged) {
-    parts.push(`el bottleneck pasa a ser ${labKpis.bottleneckStationName}`)
+    parts.push(t("bnChanges", { name: labKpis.bottleneckStationName }))
   }
 
-  const sentence = parts.length > 0 ? `La simulación ${parts.join(", ")}.` : "La simulación no altera significativamente el sistema."
+  const sentence = parts.length > 0 ? `${t("prefix")} ${parts.join(", ")}.` : t("noChange")
 
   return (
     <div className={cn("mb-3 rounded-lg border px-3 py-2.5", bgClass)}>

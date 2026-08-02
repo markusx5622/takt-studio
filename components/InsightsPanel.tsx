@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
 import {
   AlertOctagon,
   AlertTriangle,
@@ -37,14 +38,19 @@ const STYLE_MAP: Record<InsightType, { wrap: string; icon: string }> = {
 // ─── Single insight block ─────────────────────────────────────────────────────
 
 function InsightBlock({ insight }: { insight: Insight }) {
+  const t = useTranslations("simulator.insights")
   const Icon = ICON_MAP[insight.type]
   const styles = STYLE_MAP[insight.type]
   return (
     <div className={cn("flex gap-3 rounded-lg border p-3", styles.wrap)}>
       <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", styles.icon)} aria-hidden />
       <div className="min-w-0">
-        <p className="text-sm font-semibold leading-tight">{insight.title}</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">{insight.message}</p>
+        <p className="text-sm font-semibold leading-tight">
+          {t(`${insight.key}.title`, insight.values)}
+        </p>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          {t(`${insight.key}.message`, insight.values)}
+        </p>
       </div>
     </div>
   )
@@ -75,6 +81,7 @@ function InsightsSkeleton() {
 const MAX_VISIBLE = 6
 
 export default function InsightsPanel() {
+  const t = useTranslations("simulator.insightsPanel")
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
@@ -94,14 +101,14 @@ export default function InsightsPanel() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
           <Lightbulb className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">Análisis automático</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex min-h-[120px] flex-col items-center justify-center gap-2 text-center">
           <p className="text-sm text-muted-foreground">
-            Los insights aparecerán cuando definas la línea.
+            {t("emptyTitle")}
           </p>
           <p className="text-xs text-muted-foreground/60">
-            Detectamos cuellos de botella, desbalances y oportunidades de mejora automáticamente.
+            {t("emptySubtitle")}
           </p>
         </CardContent>
       </Card>
@@ -115,7 +122,7 @@ export default function InsightsPanel() {
     <Card>
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
         <Lightbulb className="h-5 w-5 text-primary" aria-hidden />
-        <CardTitle className="text-lg">Análisis automático</CardTitle>
+        <CardTitle className="text-lg">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -135,12 +142,12 @@ export default function InsightsPanel() {
             {expanded ? (
               <>
                 <ChevronUp className="mr-1 h-3.5 w-3.5" />
-                Ver menos
+                {t("showLess")}
               </>
             ) : (
               <>
                 <ChevronDown className="mr-1 h-3.5 w-3.5" />
-                Ver {hiddenCount} más
+                {t("showMore", { count: hiddenCount })}
               </>
             )}
           </Button>

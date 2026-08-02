@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { runMonteCarlo } from "@/lib/monte-carlo"
 import { calculateThroughput } from "@/lib/calculations"
@@ -22,10 +23,10 @@ import type { MonteCarloResult } from "@/types"
 
 const RUNS = 2000
 const CV_OPTIONS = [
-  { value: 0.05, label: "Baja (5%)" },
-  { value: 0.1, label: "Media (10%)" },
-  { value: 0.2, label: "Alta (20%)" },
-]
+  { value: 0.05, labelKey: "cvLow" },
+  { value: 0.1, labelKey: "cvMedium" },
+  { value: 0.2, labelKey: "cvHigh" },
+] as const
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -51,13 +52,16 @@ interface HistogramTooltipProps {
 }
 
 function HistogramTooltip({ active, payload }: HistogramTooltipProps) {
+  const t = useTranslations("simulator.montecarlo")
   if (!active || !payload?.length) return null
   const d = payload[0]?.payload
   if (!d) return null
   return (
     <div className="rounded-md border bg-background p-3 text-xs shadow-md">
-      <p className="font-semibold">{d.range} uds/día</p>
-      <p className="text-muted-foreground">{d.count} ejecuciones</p>
+      <p className="font-semibold">
+        {d.range} {t("unitsPerDay")}
+      </p>
+      <p className="text-muted-foreground">{t("tooltipRuns", { count: d.count })}</p>
     </div>
   )
 }
@@ -65,6 +69,8 @@ function HistogramTooltip({ active, payload }: HistogramTooltipProps) {
 // ─── Panel principal ───────────────────────────────────────────────────────────
 
 export default function MonteCarloPanel() {
+  const t = useTranslations("simulator.montecarlo")
+  const locale = useLocale()
   const hydrated = useHydrated()
   const scenario = useTaktStore((s) =>
     s.scenarios.find((sc) => sc.id === s.activeScenarioId)
@@ -99,15 +105,14 @@ export default function MonteCarloPanel() {
           <div>
             <CardTitle className="flex items-center gap-2">
               <Gauge className="h-5 w-5 text-primary" />
-              Simulación Monte Carlo
+              {t("title")}
             </CardTitle>
             <CardDescription>
-              {RUNS.toLocaleString("es-ES")} ejecuciones · tiempos lognormales · reprocesos
-              Bernoulli · semilla {seed} (resultados reproducibles)
+              {t("description", { runs: RUNS.toLocaleString(locale), seed })}
             </CardDescription>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground">Variabilidad:</span>
+            <span className="text-xs text-muted-foreground">{t("variability")}</span>
             {CV_OPTIONS.map((opt) => (
               <Button
                 key={opt.value}
@@ -115,12 +120,12 @@ export default function MonteCarloPanel() {
                 size="sm"
                 onClick={() => setCv(opt.value)}
               >
-                {opt.label}
+                {t(opt.labelKey)}
               </Button>
             ))}
             <Button variant="outline" size="sm" onClick={() => setSeed((s) => s + 1)}>
               <Dices className="mr-2 h-4 w-4" />
-              Re-ejecutar
+              {t("rerun")}
             </Button>
           </div>
         </div>
@@ -130,7 +135,7 @@ export default function MonteCarloPanel() {
         <div className="flex flex-wrap items-center gap-6">
           <div>
             <p className="text-xs uppercase tracking-wider text-muted-foreground">
-              P(cumplir demanda)
+              {t("probLabel")}
             </p>
             <p className={cn("text-4xl font-bold", meets ? "text-emerald-600" : "text-red-600")}>
               {(prob * 100).toFixed(1)}%
@@ -143,16 +148,22 @@ export default function MonteCarloPanel() {
               <ShieldAlert className="h-5 w-5 shrink-0 text-red-600" />
             )}
             <p className="max-w-xs text-sm text-muted-foreground">
-              {meets
-                ? "La línea cubre la demanda diaria con alta confianza estadística."
-                : "Existe riesgo real de no cubrir la demanda diaria. Considera aplicar las mejoras propuestas."}
+              {meets ? t("confident") : t("atRisk")}
             </p>
           </div>
           <div className="ml-auto flex flex-wrap gap-2">
-            <Badge variant="secondary">p5: {result.throughput.p5.toFixed(0)} uds</Badge>
-            <Badge variant="secondary">p50: {result.throughput.median.toFixed(0)} uds</Badge>
-            <Badge variant="secondary">p95: {result.throughput.p95.toFixed(0)} uds</Badge>
-            <Badge variant="outline">Determinista: {deterministic} uds</Badge>
+            <Badge variant="secondary">
+              {t("p5Badge", { value: result.throughput.p5.toFixed(0) })}
+            </Badge>
+            <Badge variant="secondary">
+              {t("p50Badge", { value: result.throughput.median.toFixed(0) })}
+            </Badge>
+            <Badge variant="secondary">
+              {t("p95Badge", { value: result.throughput.p95.toFixed(0) })}
+            </Badge>
+            <Badge variant="outline">
+              {t("deterministicBadge", { value: deterministic })}
+            </Badge>
           </div>
         </div>
 
@@ -170,9 +181,7 @@ export default function MonteCarloPanel() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Demanda diaria: {result.demandPerDay} uds. El histograma muestra la distribución del
-          throughput diario simulado; el valor determinista corresponde al escenario base sin
-          variabilidad (mediana de la distribución, sin reprocesos aleatorios).
+          {t("footerNote", { demand: result.demandPerDay })}
         </p>
       </CardContent>
     </Card>

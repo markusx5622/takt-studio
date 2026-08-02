@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -73,6 +74,7 @@ function StationRow({
   onMoveDown,
   onDelete,
 }: RowProps) {
+  const t = useTranslations("simulator.stations")
   return (
     <tr className="border-b transition-colors hover:bg-muted/50">
       <td className="py-1 pl-4 text-sm text-muted-foreground">{index + 1}</td>
@@ -80,7 +82,7 @@ function StationRow({
         <Input
           className={cellInputCls}
           value={station.name}
-          placeholder="Nombre de estación"
+          placeholder={t("namePlaceholder")}
           onChange={(e) => onNameChange(station.id, e.target.value)}
         />
       </td>
@@ -124,7 +126,7 @@ function StationRow({
             className="h-7 w-7"
             disabled={isFirst}
             onClick={onMoveUp}
-            aria-label="Mover arriba"
+            aria-label={t("moveUp")}
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
@@ -134,7 +136,7 @@ function StationRow({
             className="h-7 w-7"
             disabled={isLast}
             onClick={onMoveDown}
-            aria-label="Mover abajo"
+            aria-label={t("moveDown")}
           >
             <ChevronDown className="h-4 w-4" />
           </Button>
@@ -143,7 +145,7 @@ function StationRow({
             size="icon"
             className="h-7 w-7 text-destructive hover:text-destructive"
             onClick={onDelete}
-            aria-label="Eliminar estación"
+            aria-label={t("deleteStation")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -168,6 +170,7 @@ function StationCard({
   onMoveDown,
   onDelete,
 }: RowProps) {
+  const t = useTranslations("simulator.stations")
   return (
     <div className="rounded-lg border p-3">
       <div className="mb-2 flex items-center justify-between">
@@ -179,7 +182,7 @@ function StationCard({
             className="h-7 w-7"
             disabled={isFirst}
             onClick={onMoveUp}
-            aria-label="Mover arriba"
+            aria-label={t("moveUp")}
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
@@ -189,7 +192,7 @@ function StationCard({
             className="h-7 w-7"
             disabled={isLast}
             onClick={onMoveDown}
-            aria-label="Mover abajo"
+            aria-label={t("moveDown")}
           >
             <ChevronDown className="h-4 w-4" />
           </Button>
@@ -198,7 +201,7 @@ function StationCard({
             size="icon"
             className="h-7 w-7 text-destructive hover:text-destructive"
             onClick={onDelete}
-            aria-label="Eliminar estación"
+            aria-label={t("deleteStation")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -209,14 +212,14 @@ function StationCard({
         <Input
           className="h-8 text-sm font-medium"
           value={station.name}
-          placeholder="Nombre de estación"
+          placeholder={t("namePlaceholder")}
           onChange={(e) => onNameChange(station.id, e.target.value)}
         />
       </div>
 
       <div className="grid grid-cols-3 gap-2">
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">Ciclo (min)</p>
+          <p className="mb-1 text-xs text-muted-foreground">{t("cycleMin")}</p>
           <Input
             className="h-8 text-sm"
             type="number"
@@ -227,7 +230,7 @@ function StationCard({
           />
         </div>
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">Operarios</p>
+          <p className="mb-1 text-xs text-muted-foreground">{t("operators")}</p>
           <Input
             className="h-8 text-sm"
             type="number"
@@ -239,7 +242,7 @@ function StationCard({
           />
         </div>
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">Fallo (%)</p>
+          <p className="mb-1 text-xs text-muted-foreground">{t("failurePct")}</p>
           <Input
             className="h-8 text-sm"
             type="number"
@@ -258,6 +261,7 @@ function StationCard({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function StationEditor() {
+  const t = useTranslations("simulator.stations")
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
@@ -272,11 +276,11 @@ export default function StationEditor() {
   const stations = scenario?.stations ?? []
 
   function handleAddStation() {
-    addStation({ name: "Nueva estación", cycleTimeMin: 30, operators: 1, failureRate: 0 })
+    addStation({ name: t("newStationName"), cycleTimeMin: 30, operators: 1, failureRate: 0 })
   }
 
   function handleDelete(stationId: string) {
-    if (confirm("¿Eliminar esta estación?")) {
+    if (confirm(t("deleteConfirm"))) {
       removeStation(stationId)
     }
   }
@@ -316,8 +320,8 @@ export default function StationEditor() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
-        <CardTitle className="text-lg">Estaciones de la línea</CardTitle>
-        <Badge variant="secondary">{stations.length} estaciones</Badge>
+        <CardTitle className="text-lg">{t("title")}</CardTitle>
+        <Badge variant="secondary">{t("countBadge", { count: stations.length })}</Badge>
       </CardHeader>
 
       <CardContent className="p-0">
@@ -327,14 +331,14 @@ export default function StationEditor() {
               <Plus className="h-6 w-6 text-muted-foreground/40" />
             </div>
             <div>
-              <p className="text-sm font-medium">Define tu primera estación</p>
+              <p className="text-sm font-medium">{t("emptyTitle")}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Cada estación representa una operación de la línea: nombre, tiempo de ciclo, operarios y tasa de fallo.
+                {t("emptyText")}
               </p>
             </div>
             <Button size="sm" onClick={handleAddStation}>
               <Plus className="mr-2 h-4 w-4" />
-              Añadir estación
+              {t("add")}
             </Button>
           </div>
         ) : (
@@ -348,19 +352,19 @@ export default function StationEditor() {
                       #
                     </th>
                     <th className="py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      Nombre
+                      {t("colName")}
                     </th>
                     <th className="w-32 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      Tiempo ciclo (min)
+                      {t("colCycle")}
                     </th>
                     <th className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      Operarios
+                      {t("colOperators")}
                     </th>
                     <th className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      Fallo (%)
+                      {t("colFailure")}
                     </th>
                     <th className="w-28 py-2 pl-2 pr-4 text-left text-xs font-medium text-muted-foreground">
-                      Acciones
+                      {t("colActions")}
                     </th>
                   </tr>
                 </thead>
@@ -396,7 +400,7 @@ export default function StationEditor() {
             <div className="border-t px-4 py-3">
               <Button variant="outline" size="sm" onClick={handleAddStation}>
                 <Plus className="mr-2 h-4 w-4" />
-                Añadir estación
+                {t("add")}
               </Button>
             </div>
           </>

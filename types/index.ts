@@ -149,8 +149,11 @@ export type ImprovementPriority = 'high' | 'medium' | 'low'
 
 export type ImprovementRecommendation = {
   id: string
-  title: string
-  description: string
+  // i18n: la capa lib devuelve claves + valores; la UI traduce con next-intl
+  titleKey: string
+  titleValues?: Record<string, string | number>
+  descriptionKey: string
+  badgeKey?: string
   type: ImprovementType
   priority: ImprovementPriority
   baseKpis: KPIs
@@ -161,8 +164,6 @@ export type ImprovementRecommendation = {
   meetsDemandAfter: boolean
   stationId?: string
   stationName?: string
-  badge?: string
-  applyLabel: string
   stationChanges?: { originalStationId: string; updates: Partial<Omit<Station, 'id'>> }[]
   scenarioChanges?: Partial<Pick<Scenario, 'shiftsPerDay'>>
 }

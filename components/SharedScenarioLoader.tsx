@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { useTaktStore } from "@/lib/store"
 import { decodeScenarioFromHash } from "@/lib/share"
 
@@ -10,6 +11,7 @@ import { decodeScenarioFromHash } from "@/lib/share"
  * No renderiza nada.
  */
 export default function SharedScenarioLoader() {
+  const t = useTranslations("simulator.shared")
   const importScenarioFromPayload = useTaktStore((s) => s.importScenarioFromPayload)
 
   useEffect(() => {
@@ -22,10 +24,10 @@ export default function SharedScenarioLoader() {
         appVersion: "shared-url",
         scenario,
       },
-      `${scenario.name} — compartido`
+      `${scenario.name} — ${t("suffix")}`
     )
     window.history.replaceState(null, "", window.location.pathname)
-  }, [importScenarioFromPayload])
+  }, [importScenarioFromPayload, t])
 
   return null
 }

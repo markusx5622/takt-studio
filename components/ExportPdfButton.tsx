@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { FileDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTaktStore, useHydrated } from "@/lib/store"
@@ -15,9 +16,22 @@ const CW = 180       // content width (mm)
 const PAGE_H = 297   // A4 height (mm)
 const FOOTER_Y = 289 // y where footer sits
 
+// ─── i18n ──────────────────────────────────────────────────────────────────────
+
+type PdfTranslator = (key: string, values?: Record<string, string | number>) => string
+
+interface PdfI18n {
+  /** namespace "simulator.pdf" */
+  t: PdfTranslator
+  /** namespace "simulator.insights" (resuelve títulos/mensajes de insights) */
+  tInsights: PdfTranslator
+  locale: string
+}
+
 // ─── PDF generation ────────────────────────────────────────────────────────────
 
-async function generatePdf(scenarioId: string): Promise<void> {
+async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
+  const { t, tInsights, locale } = i18n
   // Dynamic import — jsPDF is browser-only
   const { jsPDF } = await import("jspdf")
 
@@ -57,12 +71,8 @@ async function generatePdf(scenarioId: string): Promise<void> {
     setGray()
     doc.setFont("helvetica", "normal")
     doc.setFontSize(8)
-    doc.text(
-      "Generado por Takt Studio · Ingeniería de Organización Industrial",
-      LM,
-      FOOTER_Y + 5
-    )
-    doc.text("Pág. 1", RM, FOOTER_Y + 5, { align: "right" })
+    doc.text(t("footer"), LM, FOOTER_Y + 5)
+    doc.text(t("page"), RM, FOOTER_Y + 5, { align: "right" })
   }
 
   // ── HEADER ───────────────────────────────────────────────────────────────────
@@ -74,19 +84,21 @@ async function generatePdf(scenarioId: string): Promise<void> {
   setDark()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(18)
-  doc.text("TAKT STUDIO — Informe de Línea", LM, 22)
+  doc.text(t("reportTitle"), LM, 22)
 
   doc.setFont("helvetica", "normal")
   doc.setFontSize(14)
   doc.text(scenario.name, LM, 31)
 
   const now = new Date()
-  const dateStr = `${now.getDate().toString().padStart(2, "0")}/${(now.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}/${now.getFullYear()}`
+  const dateStr = new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(now)
   setGray()
   doc.setFontSize(10)
-  doc.text(`Generado el ${dateStr}`, LM, 38)
+  doc.text(t("generatedOn", { date: dateStr }), LM, 38)
 
   doc.setDrawColor(229, 231, 235)
   doc.setLineWidth(0.4)
@@ -95,15 +107,15 @@ async function generatePdf(scenarioId: string): Promise<void> {
   // ── SECTION 1: Parámetros ────────────────────────────────────────────────────
 
   let y = 50
-  sectionTitle("1. Parámetros", y)
+  sectionTitle(t("secParams"), y)
   y += 7
 
   const availMin = scenario.shiftHours * 60 * scenario.shiftsPerDay
   const paramCols = [
-    { label: "Demanda/día",         value: `${scenario.demandPerDay} uds` },
-    { label: "Turnos/día",          value: String(scenario.shiftsPerDay) },
-    { label: "Horas/turno",         value: `${scenario.shiftHours} h` },
-    { label: "Tiempo disponible",   value: `${availMin} min` },
+    { label: t("paramDemand"),     value: t("paramDemandValue", { value: scenario.demandPerDay }) },
+    { label: t("paramShifts"),     value: String(scenario.shiftsPerDay) },
+    { label: t("paramHours"),      value: t("paramHoursValue", { value: scenario.shiftHours }) },
+    { label: t("paramAvailable"),  value: t("paramAvailableValue", { value: availMin }) },
   ]
   const colW = CW / 4
 
@@ -136,7 +148,7 @@ async function generatePdf(scenarioId: string): Promise<void> {
   // ── SECTION 2: KPIs principales ──────────────────────────────────────────────
 
   y += 8
-  sectionTitle("2. KPIs Principales", y)
+  sectionTitle(t("secKpis"), y)
   y += 7
 
   const boxW = (CW - 4) / 2  // 2 columns with 4mm gap
@@ -173,37 +185,37 @@ async function generatePdf(scenarioId: string): Promise<void> {
     doc.text(sub, bx + 4, by + 18)
   }
 
-  const taktSub = `Ritmo necesario: ${kpis.availableTimeMin} min ÷ ${scenario.demandPerDay} uds`
-  drawKpiBox(LM, y, "Takt Time", `${kpis.taktTimeMin.toFixed(1)} min/ud`, taktSub)
+  const taktSub = t("taktSub", { available: kpis.availableTimeMin, demand: scenario.demandPerDay })
+  drawKpiBox(LM, y, "Takt Time", `${kpis.taktTimeMin.toFixed(1)} ${t("minPerUnit")}`, taktSub)
 
   const throughputSub = kpis.meetsDemand
-    ? `✓ Cumple demanda (+${kpis.demandDelta} extra)`
-    : `✗ Déficit de ${Math.abs(kpis.demandDelta)} uds/día`
+    ? t("meetsDemand", { delta: kpis.demandDelta })
+    : t("missesDemand", { delta: Math.abs(kpis.demandDelta) })
   drawKpiBox(
     LM + boxW + 4,
     y,
     "Throughput",
-    `${kpis.throughputPerDay} uds/día`,
+    t("throughputValue", { value: kpis.throughputPerDay }),
     throughputSub,
     kpis.meetsDemand ? "green" : "red"
   )
   y += boxH + 3
 
-  const bnSub = `Tiempo efectivo: ${kpis.bottleneckCycleMin.toFixed(1)} min/ud`
+  const bnSub = t("bottleneckSub", { value: kpis.bottleneckCycleMin.toFixed(1) })
   const bnHighlight = kpis.bottleneckCycleMin > kpis.taktTimeMin ? "red" : undefined
-  drawKpiBox(LM, y, "Cuello de botella", kpis.bottleneckStationName || "—", bnSub, bnHighlight)
+  drawKpiBox(LM, y, t("bottleneck"), kpis.bottleneckStationName || "—", bnSub, bnHighlight)
 
   const effPct = (kpis.balancingEfficiency * 100).toFixed(0)
   const effSub =
     kpis.balancingEfficiency >= 0.85
-      ? "Excelente balanceo"
+      ? t("effExcellent")
       : kpis.balancingEfficiency >= 0.70
-      ? "Buen balanceo"
-      : "Línea desbalanceada"
+      ? t("effGood")
+      : t("effBad")
   drawKpiBox(
     LM + boxW + 4,
     y,
-    "Eficiencia de balanceo",
+    t("balancing"),
     `${effPct}%`,
     effSub,
     kpis.balancingEfficiency >= 0.70 ? "green" : "red"
@@ -213,17 +225,17 @@ async function generatePdf(scenarioId: string): Promise<void> {
   // ── SECTION 3: Estaciones ─────────────────────────────────────────────────────
 
   y += 5
-  sectionTitle("3. Estaciones", y)
+  sectionTitle(t("secStations"), y)
   y += 7
 
   // Column definitions: x, width, label, alignment
   const tCols: Array<{ x: number; w: number; label: string; align: "left" | "center" | "right" }> = [
-    { x: LM,       w: 10, label: "#",          align: "center" },
-    { x: LM + 10,  w: 65, label: "Nombre",     align: "left"   },
-    { x: LM + 75,  w: 26, label: "T. Ciclo",   align: "right"  },
-    { x: LM + 101, w: 24, label: "Operarios",  align: "center" },
-    { x: LM + 125, w: 22, label: "Fallo %",    align: "center" },
-    { x: LM + 147, w: 33, label: "T. Efectivo",align: "right"  },
+    { x: LM,       w: 10, label: "#",              align: "center" },
+    { x: LM + 10,  w: 65, label: t("colName"),     align: "left"   },
+    { x: LM + 75,  w: 26, label: t("colCycle"),    align: "right"  },
+    { x: LM + 101, w: 24, label: t("colOperators"),align: "center" },
+    { x: LM + 125, w: 22, label: t("colFailure"),  align: "center" },
+    { x: LM + 147, w: 33, label: t("colEffective"),align: "right"  },
   ]
 
   // Table header
@@ -265,10 +277,10 @@ async function generatePdf(scenarioId: string): Promise<void> {
     const cells = [
       { col: tCols[0], val: String(i + 1) },
       { col: tCols[1], val: st.name.length > 28 ? st.name.substring(0, 27) + "…" : st.name },
-      { col: tCols[2], val: `${st.cycleTimeMin} min` },
+      { col: tCols[2], val: `${st.cycleTimeMin} ${t("minUnit")}` },
       { col: tCols[3], val: String(st.operators) },
       { col: tCols[4], val: `${(st.failureRate * 100).toFixed(0)}%` },
-      { col: tCols[5], val: `${st.effectiveCycleMin.toFixed(1)} min` },
+      { col: tCols[5], val: `${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}` },
     ]
     for (const { col, val } of cells) {
       const tx = col.align === "right" ? col.x + col.w - 1 : col.align === "center" ? col.x + col.w / 2 : col.x + 1.5
@@ -287,7 +299,7 @@ async function generatePdf(scenarioId: string): Promise<void> {
     y = 20
   }
 
-  sectionTitle("4. Análisis Automático", y)
+  sectionTitle(t("secAnalysis"), y)
   y += 7
 
   const bulletSymbols: Record<string, string> = {
@@ -309,7 +321,7 @@ async function generatePdf(scenarioId: string): Promise<void> {
     doc.setFont("helvetica", "bold")
     doc.setFontSize(9)
     doc.text(
-      `${bulletSymbols[insight.type]}  ${insight.title}`,
+      `${bulletSymbols[insight.type]}  ${tInsights(`${insight.key}.title`, insight.values)}`,
       LM,
       y
     )
@@ -318,7 +330,10 @@ async function generatePdf(scenarioId: string): Promise<void> {
     setGray()
     doc.setFont("helvetica", "normal")
     doc.setFontSize(8)
-    const lines = doc.splitTextToSize(insight.message, CW - 6) as string[]
+    const lines = doc.splitTextToSize(
+      tInsights(`${insight.key}.message`, insight.values),
+      CW - 6
+    ) as string[]
     doc.text(lines, LM + 5, y)
     y += lines.length * 4 + 4
   }
@@ -340,6 +355,9 @@ async function generatePdf(scenarioId: string): Promise<void> {
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export default function ExportPdfButton() {
+  const t = useTranslations("simulator.pdf")
+  const tInsights = useTranslations("simulator.insights")
+  const locale = useLocale()
   const hydrated = useHydrated()
   const scenarioId = useTaktStore((s) => s.activeScenarioId)
   const hasStations = useTaktStore(
@@ -353,7 +371,7 @@ export default function ExportPdfButton() {
     if (!scenarioId || loading) return
     setLoading(true)
     try {
-      await generatePdf(scenarioId)
+      await generatePdf(scenarioId, { t, tInsights, locale })
     } finally {
       setLoading(false)
     }
@@ -367,7 +385,7 @@ export default function ExportPdfButton() {
       disabled={loading || !hasStations}
     >
       <FileDown className="mr-2 h-4 w-4" />
-      {loading ? "Generando…" : "Exportar PDF"}
+      {loading ? t("generating") : t("button")}
     </Button>
   )
 }

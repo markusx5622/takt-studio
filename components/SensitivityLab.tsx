@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs, findBottleneck } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -41,6 +42,7 @@ function cloneScenario(scenario: Scenario): Scenario {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function SensitivityLab() {
+  const t = useTranslations("simulator.lab")
   const hydrated = useHydrated()
   const activeScenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
@@ -116,20 +118,27 @@ export default function SensitivityLab() {
       scenarioChanges.shiftsPerDay = labScenario.shiftsPerDay
 
     const diffs: string[] = []
-    if (scenarioChanges.demandPerDay !== undefined) diffs.push(`demanda ${labScenario.demandPerDay}`)
-    if (scenarioChanges.shiftHours !== undefined) diffs.push(`horas ${labScenario.shiftHours}h`)
+    if (scenarioChanges.demandPerDay !== undefined)
+      diffs.push(t("diffDemand", { value: labScenario.demandPerDay }))
+    if (scenarioChanges.shiftHours !== undefined)
+      diffs.push(t("diffHours", { value: labScenario.shiftHours }))
     if (scenarioChanges.shiftsPerDay !== undefined)
-      diffs.push(`${labScenario.shiftsPerDay} turnos`)
+      diffs.push(t("diffShifts", { count: labScenario.shiftsPerDay }))
     if (stationChanges.some((c) => c.updates.operators !== undefined)) {
       const st = targetStation?.name ?? "bottleneck"
-      diffs.push(`+operarios en ${st}`)
+      diffs.push(t("diffOperators", { name: st }))
     }
     if (stationChanges.some((c) => c.updates.failureRate !== undefined)) {
       const st = targetStation?.name ?? "bottleneck"
-      diffs.push(`fallo ${(labScenario.stations.find((s) => s.id === targetStationId)?.failureRate ?? 0) * 100}% en ${st}`)
+      diffs.push(
+        t("diffFailure", {
+          pct: (labScenario.stations.find((s) => s.id === targetStationId)?.failureRate ?? 0) * 100,
+          name: st,
+        })
+      )
     }
 
-    const suffix = diffs.length > 0 ? ` — ${diffs.join(", ")}` : " — laboratorio"
+    const suffix = diffs.length > 0 ? ` — ${diffs.join(", ")}` : t("saveSuffix")
 
     createScenarioVariant(
       activeScenario.id,
@@ -137,7 +146,7 @@ export default function SensitivityLab() {
       stationChanges.length > 0 ? stationChanges : undefined,
       Object.keys(scenarioChanges).length > 0 ? scenarioChanges : undefined
     )
-  }, [activeScenario, labScenario, targetStation, targetStationId, createScenarioVariant])
+  }, [activeScenario, labScenario, targetStation, targetStationId, createScenarioVariant, t])
 
   if (!hydrated) return <SensitivityLabSkeleton />
 
@@ -146,15 +155,15 @@ export default function SensitivityLab() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
           <FlaskConical className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">Laboratorio de sensibilidad</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex min-h-[120px] flex-col items-center justify-center gap-2 text-center">
           <AlertTriangle className="h-8 w-8 text-muted-foreground/30" />
           <p className="text-sm text-muted-foreground">
-            Define la línea para explorar sensibilidad
+            {t("emptyTitle")}
           </p>
           <p className="text-xs text-muted-foreground/60">
-            Añade estaciones y parámetros para probar diferentes configuraciones sin alterar el escenario actual.
+            {t("emptySubtitle")}
           </p>
         </CardContent>
       </Card>
@@ -170,9 +179,9 @@ export default function SensitivityLab() {
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-4">
         <FlaskConical className="h-5 w-5 text-primary" aria-hidden />
         <div>
-          <CardTitle className="text-lg">Laboratorio de sensibilidad</CardTitle>
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
           <CardDescription className="text-xs">
-            Explora cómo responde la línea al variar demanda, turnos y capacidad crítica sin alterar el escenario actual
+            {t("description")}
           </CardDescription>
         </div>
       </CardHeader>
@@ -181,24 +190,24 @@ export default function SensitivityLab() {
           {/* ── Controls ────────────────────────────────────────────────────── */}
           <div className="space-y-3 md:col-span-2">
             <LabControl
-              label="Demanda diaria"
+              label={t("dailyDemand")}
               value={labScenario.demandPerDay}
               min={1}
               max={demandMax}
               step={1}
-              unit="uds"
+              unit={t("unitsUds")}
               onChange={(v) =>
                 setLabScenario((prev) => (prev ? { ...prev, demandPerDay: v } : prev))
               }
             />
 
             <LabControl
-              label="Horas por turno"
+              label={t("hoursPerShift")}
               value={labScenario.shiftHours}
               min={1}
               max={12}
               step={0.5}
-              unit="h"
+              unit={t("unitsH")}
               onChange={(v) =>
                 setLabScenario((prev) => (prev ? { ...prev, shiftHours: v } : prev))
               }
@@ -226,7 +235,7 @@ export default function SensitivityLab() {
 
             {targetStation && (
               <LabControl
-                label={`Operarios en ${targetStation.name}`}
+                label={t("operatorsIn", { name: targetStation.name })}
                 value={
                   labScenario.stations.find((s) => s.id === targetStationId)?.operators ??
                   targetStation.operators
@@ -250,7 +259,7 @@ export default function SensitivityLab() {
 
             {targetStation && (
               <LabControl
-                label={`Tasa de fallo en ${targetStation.name}`}
+                label={t("failureIn", { name: targetStation.name })}
                 value={Math.round(
                   (labScenario.stations.find((s) => s.id === targetStationId)?.failureRate ??
                     targetStation.failureRate) * 100
@@ -282,7 +291,7 @@ export default function SensitivityLab() {
                 onClick={handleReset}
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                Restablecer
+                {t("reset")}
               </Button>
               <Button
                 size="sm"
@@ -290,7 +299,7 @@ export default function SensitivityLab() {
                 onClick={handleSave}
               >
                 <Save className="h-3.5 w-3.5" />
-                Guardar como escenario
+                {t("save")}
               </Button>
             </div>
           </div>
@@ -303,10 +312,10 @@ export default function SensitivityLab() {
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               <PrimaryKpi
                 icon={TrendingUp}
-                label="Throughput"
+                label={t("throughput")}
                 current={baseKpis.throughputPerDay}
                 projected={labKpis.throughputPerDay}
-                unit="uds/día"
+                unit={t("unitsPerDay")}
                 format={(v) => String(Math.round(v))}
                 better="higher"
               />
@@ -314,7 +323,7 @@ export default function SensitivityLab() {
                 <div className="mb-1.5 flex items-center gap-1.5">
                   <Gauge className="h-3.5 w-3.5 text-primary" />
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Demanda
+                    {t("demand")}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-1.5">
@@ -329,21 +338,21 @@ export default function SensitivityLab() {
                       labKpis.meetsDemand ? "text-green-700" : "text-red-700"
                     )}
                   >
-                    {labKpis.meetsDemand ? "Cumple" : "No cumple"}
+                    {labKpis.meetsDemand ? t("meets") : t("notMeets")}
                   </span>
                 </div>
                 <div className="mt-0.5 flex items-center gap-1">
                   <span className="text-[10px] text-muted-foreground">
-                    {baseKpis.meetsDemand ? "Cumple" : "No cumple"} actual
+                    {baseKpis.meetsDemand ? t("meets") : t("notMeets")} {t("currentSuffix")}
                   </span>
                   {labKpis.meetsDemand && !baseKpis.meetsDemand && (
                     <Badge variant="outline" className="bg-green-50 text-[9px] text-green-700">
-                      +cumple
+                      {t("nowMeets")}
                     </Badge>
                   )}
                   {!labKpis.meetsDemand && baseKpis.meetsDemand && (
                     <Badge variant="outline" className="bg-red-50 text-[9px] text-red-700">
-                      -cumple
+                      {t("lostMeets")}
                     </Badge>
                   )}
                 </div>
@@ -352,7 +361,7 @@ export default function SensitivityLab() {
                 <div className="mb-1.5 flex items-center gap-1.5">
                   <AlertTriangle className="h-3.5 w-3.5 text-primary" />
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Bottleneck
+                    {t("bottleneck")}
                   </span>
                 </div>
                 <span className="truncate text-sm font-bold" title={labKpis.bottleneckStationName}>
@@ -360,11 +369,11 @@ export default function SensitivityLab() {
                 </span>
                 <div className="mt-0.5 flex items-center gap-1.5">
                   <span className="text-[10px] text-muted-foreground">
-                    {labKpis.bottleneckCycleMin.toFixed(1)} min
+                    {labKpis.bottleneckCycleMin.toFixed(1)} {t("minUnit")}
                   </span>
                   {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId && (
                     <Badge variant="outline" className="text-[9px]">
-                      Cambia
+                      {t("changes")}
                     </Badge>
                   )}
                 </div>
@@ -374,28 +383,28 @@ export default function SensitivityLab() {
             {/* Secondary KPIs */}
             <div className="space-y-1.5 pt-1">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                Métricas secundarias
+                {t("secondaryMetrics")}
               </span>
               <SecondaryDelta
-                label="Takt time"
+                label={t("taktTime")}
                 current={baseKpis.taktTimeMin}
                 projected={labKpis.taktTimeMin}
-                unit="min/ud"
+                unit={t("minPerUnit")}
                 invert
                 decimals={1}
               />
               <SecondaryDelta
-                label="Eficiencia de balanceo"
+                label={t("balancingEfficiency")}
                 current={baseKpis.balancingEfficiency * 100}
                 projected={labKpis.balancingEfficiency * 100}
                 unit="%"
                 decimals={1}
               />
               <SecondaryDelta
-                label="Lead time"
+                label={t("leadTime")}
                 current={baseKpis.leadTimeMin}
                 projected={labKpis.leadTimeMin}
-                unit="min"
+                unit={t("minUnit")}
                 invert
                 decimals={1}
               />
@@ -407,7 +416,7 @@ export default function SensitivityLab() {
                 onClick={() => setShowDetail((v) => !v)}
                 className="flex w-full items-center justify-between rounded-md border bg-muted/20 px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/40"
               >
-                <span>{showDetail ? "Ocultar detalle técnico" : "Ver detalle técnico completo"}</span>
+                <span>{showDetail ? t("hideDetail") : t("showDetail")}</span>
                 {showDetail ? (
                   <ChevronUp className="h-3.5 w-3.5" />
                 ) : (
@@ -417,58 +426,58 @@ export default function SensitivityLab() {
               {showDetail && (
                 <div className="mt-1.5 rounded-md border bg-background px-2 py-1">
                   <DetailRow
-                    label="Takt time"
+                    label={t("taktTime")}
                     current={baseKpis.taktTimeMin}
                     projected={labKpis.taktTimeMin}
-                    unit="min/ud"
+                    unit={t("minPerUnit")}
                     invert
                     decimals={1}
                   />
                   <DetailRow
-                    label="Throughput"
+                    label={t("throughput")}
                     current={baseKpis.throughputPerDay}
                     projected={labKpis.throughputPerDay}
-                    unit="uds/día"
+                    unit={t("unitsPerDay")}
                     decimals={0}
                   />
                   <DetailRow
-                    label="Tiempo disponible"
+                    label={t("availableTime")}
                     current={baseKpis.availableTimeMin}
                     projected={labKpis.availableTimeMin}
-                    unit="min/día"
+                    unit={t("minPerDay")}
                     decimals={0}
                   />
                   <DetailRow
-                    label="Eficiencia de balanceo"
+                    label={t("balancingEfficiency")}
                     current={baseKpis.balancingEfficiency * 100}
                     projected={labKpis.balancingEfficiency * 100}
                     unit="%"
                     decimals={1}
                   />
                   <DetailRow
-                    label="Lead time"
+                    label={t("leadTime")}
                     current={baseKpis.leadTimeMin}
                     projected={labKpis.leadTimeMin}
-                    unit="min"
+                    unit={t("minUnit")}
                     invert
                     decimals={1}
                   />
                   <div className="flex items-center justify-between border-b border-border/40 px-2 py-1 last:border-0">
-                    <span className="text-[11px] text-muted-foreground">Cuello de botella</span>
+                    <span className="text-[11px] text-muted-foreground">{t("bottleneckLabel")}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] text-muted-foreground/70">{baseKpis.bottleneckStationName}</span>
                       <span className="text-[10px] text-muted-foreground/30">→</span>
                       <span className="text-[11px] font-semibold">{labKpis.bottleneckStationName}</span>
                       {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId && (
-                        <span className="text-[10px] font-medium text-amber-600">cambia</span>
+                        <span className="text-[10px] font-medium text-amber-600">{t("changesLower")}</span>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center justify-between border-b border-border/40 px-2 py-1 last:border-0">
-                    <span className="text-[11px] text-muted-foreground">Cumple demanda</span>
+                    <span className="text-[11px] text-muted-foreground">{t("meetsDemandLabel")}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] text-muted-foreground/70">
-                        {baseKpis.meetsDemand ? "Sí" : "No"}
+                        {baseKpis.meetsDemand ? t("yes") : t("no")}
                       </span>
                       <span className="text-[10px] text-muted-foreground/30">→</span>
                       <span
@@ -477,15 +486,15 @@ export default function SensitivityLab() {
                           labKpis.meetsDemand ? "text-green-600" : "text-red-600"
                         )}
                       >
-                        {labKpis.meetsDemand ? "Sí" : "No"}
+                        {labKpis.meetsDemand ? t("yes") : t("no")}
                       </span>
                     </div>
                   </div>
                   <DetailRow
-                    label="Delta de demanda"
+                    label={t("demandDelta")}
                     current={baseKpis.demandDelta}
                     projected={labKpis.demandDelta}
-                    unit="uds"
+                    unit={t("unitsUds")}
                     decimals={0}
                   />
                 </div>

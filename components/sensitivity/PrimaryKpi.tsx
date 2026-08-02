@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import {
   ArrowUpRight,
@@ -23,6 +24,7 @@ export default function PrimaryKpi({
   format: (v: number) => string
   better: "higher" | "lower" | "none"
 }) {
+  const t = useTranslations("simulator.lab")
   const delta = projected - current
   const hasChange = Math.abs(delta) >= 0.01
   const isBetter =
@@ -43,7 +45,9 @@ export default function PrimaryKpi({
         {unit && <span className="text-[10px] text-muted-foreground">{unit}</span>}
       </div>
       <div className="mt-0.5 flex items-center gap-1.5">
-        <span className="text-[10px] text-muted-foreground">{format(current)} actual</span>
+        <span className="text-[10px] text-muted-foreground">
+          {format(current)} {t("currentSuffix")}
+        </span>
         {hasChange && (
           <span
             className={cn(

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { encodeScenarioToHash } from "@/lib/share"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -40,6 +41,7 @@ function ScenarioControlsSkeleton() {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ScenarioControls() {
+  const t = useTranslations("simulator.controls")
   const hydrated = useHydrated()
   const scenarios = useTaktStore((s) => s.scenarios)
   const activeScenarioId = useTaktStore((s) => s.activeScenarioId)
@@ -85,7 +87,7 @@ export default function ScenarioControls() {
   }
 
   function handleDelete() {
-    if (confirm(`¿Eliminar el escenario "${scenario!.name}"? Esta acción no se puede deshacer.`)) {
+    if (confirm(t("deleteConfirm", { name: scenario!.name }))) {
       removeScenario(scenario!.id)
     }
   }
@@ -93,7 +95,7 @@ export default function ScenarioControls() {
   return (
     <Card>
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg">Parámetros del escenario</CardTitle>
+        <CardTitle className="text-lg">{t("title")}</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -101,18 +103,18 @@ export default function ScenarioControls() {
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Nombre */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-name" className="text-sm font-medium">Nombre del escenario</label>
+            <label htmlFor="sc-name" className="text-sm font-medium">{t("nameLabel")}</label>
             <Input
               id="sc-name"
               value={scenario.name}
-              placeholder="Nombre del escenario"
+              placeholder={t("namePlaceholder")}
               onChange={(e) => updateScenario(scenario.id, { name: e.target.value })}
             />
           </div>
 
           {/* Demanda */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-demand" className="text-sm font-medium">Demanda diaria (uds/día)</label>
+            <label htmlFor="sc-demand" className="text-sm font-medium">{t("demandLabel")}</label>
             <Input
               id="sc-demand"
               type="number"
@@ -125,7 +127,7 @@ export default function ScenarioControls() {
 
           {/* Horas por turno */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-hours" className="text-sm font-medium">Horas por turno</label>
+            <label htmlFor="sc-hours" className="text-sm font-medium">{t("hoursLabel")}</label>
             <Input
               id="sc-hours"
               type="number"
@@ -139,7 +141,7 @@ export default function ScenarioControls() {
 
           {/* Turnos por día — segmented control */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium" id="sc-shifts-label">Turnos por día</label>
+            <label className="text-sm font-medium" id="sc-shifts-label">{t("shiftsLabel")}</label>
             <div className="flex gap-2" role="group" aria-labelledby="sc-shifts-label">
               {([1, 2, 3] as const).map((n) => (
                 <Button
@@ -178,19 +180,19 @@ export default function ScenarioControls() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => duplicateScenario(scenario.id, `${scenario.name} (copia)`)}
+            onClick={() => duplicateScenario(scenario.id, `${scenario.name} ${t("copySuffix")}`)}
           >
             <Copy className="mr-2 h-4 w-4" />
-            Duplicar
+            {t("duplicate")}
           </Button>
 
           <Button
             variant="outline"
             size="sm"
-            onClick={() => addScenario("Nuevo escenario")}
+            onClick={() => addScenario(t("newScenarioName"))}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Nuevo escenario
+            {t("new")}
           </Button>
 
           {scenarios.length > 1 && (
@@ -201,14 +203,14 @@ export default function ScenarioControls() {
               onClick={handleDelete}
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar
+              {t("delete")}
             </Button>
           )}
 
           <div className="ml-auto flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleShare}>
               {copied ? <Check className="mr-2 h-4 w-4" /> : <Share2 className="mr-2 h-4 w-4" />}
-              {copied ? "¡Enlace copiado!" : "Compartir"}
+              {copied ? t("copied") : t("share")}
             </Button>
             <ExportPdfButton />
           </div>

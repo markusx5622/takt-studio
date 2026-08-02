@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
+import { useTranslations } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs } from "@/lib/calculations"
 import { Card, CardContent } from "@/components/ui/card"
@@ -46,6 +47,7 @@ function KpiPanelSkeleton() {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function KpiPanel() {
+  const t = useTranslations("simulator.kpi")
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
@@ -64,7 +66,7 @@ export default function KpiPanel() {
         <CardContent className="flex min-h-[200px] flex-col items-center justify-center gap-3 p-6">
           <BarChart3 className="h-10 w-10 text-muted-foreground/30" />
           <p className="text-center text-sm text-muted-foreground">
-            Añade estaciones para ver los KPIs
+            {t("empty")}
           </p>
         </CardContent>
       </Card>
@@ -84,10 +86,10 @@ export default function KpiPanel() {
     effPct >= 85 ? "bg-green-600" : effPct >= 70 ? "bg-amber-500" : "bg-red-600"
   const effLabel =
     effPct >= 85
-      ? "Excelente balanceo"
+      ? t("effExcellent")
       : effPct >= 70
-        ? "Buen balanceo, margen de mejora"
-        : "Línea desbalanceada — redistribuir cargas"
+        ? t("effGood")
+        : t("effBad")
 
   return (
     <div className="space-y-4">
@@ -103,23 +105,25 @@ export default function KpiPanel() {
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="cursor-help" aria-label="Cómo se calcula el takt time">
+                  <span className="cursor-help" aria-label={t("taktAria")}>
                     <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left">
                   <p>
-                    Tiempo disponible ({kpis.availableTimeMin.toFixed(0)} min) ÷{" "}
-                    Demanda ({scenario.demandPerDay} uds)
+                    {t("taktTooltip", {
+                      available: kpis.availableTimeMin.toFixed(0),
+                      demand: scenario.demandPerDay,
+                    })}
                   </p>
                 </TooltipContent>
               </Tooltip>
             </div>
             <div className="mt-2">
               <span className="text-2xl font-bold">{kpis.taktTimeMin.toFixed(1)}</span>
-              <span className="ml-1 text-xs text-muted-foreground">min/ud</span>
+              <span className="ml-1 text-xs text-muted-foreground">{t("minPerUnit")}</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">Ritmo necesario de producción</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t("taktSub")}</p>
           </CardContent>
         </Card>
 
@@ -133,7 +137,7 @@ export default function KpiPanel() {
                   bottleneckExceedsTakt ? "text-destructive" : "text-amber-500"
                 )}
               />
-              Cuello de botella
+              {t("bottleneck")}
             </div>
             <div
               className="mt-2 truncate text-lg font-bold leading-tight"
@@ -142,13 +146,13 @@ export default function KpiPanel() {
               {kpis.bottleneckStationName || "—"}
             </div>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {kpis.bottleneckCycleMin.toFixed(1)} min/ud efectivos
+              {t("bottleneckEffective", { value: kpis.bottleneckCycleMin.toFixed(1) })}
             </p>
             <div className="mt-2">
               {bottleneckExceedsTakt ? (
-                <Badge variant="destructive" className="text-xs">Excede Takt</Badge>
+                <Badge variant="destructive" className="text-xs">{t("exceedsTakt")}</Badge>
               ) : (
-                <Badge variant="success" className="text-xs">Dentro de Takt</Badge>
+                <Badge variant="success" className="text-xs">{t("withinTakt")}</Badge>
               )}
             </div>
           </CardContent>
@@ -170,12 +174,12 @@ export default function KpiPanel() {
               >
                 {kpis.throughputPerDay}
               </span>
-              <span className="ml-1 text-xs text-muted-foreground">uds/día</span>
+              <span className="ml-1 text-xs text-muted-foreground">{t("unitsPerDay")}</span>
             </div>
             <p className="mt-0.5 text-xs text-muted-foreground">
               {kpis.meetsDemand
-                ? `✓ Cumple demanda (+${kpis.demandDelta} extra)`
-                : `✗ Déficit de ${Math.abs(kpis.demandDelta)} uds/día`}
+                ? t("meetsDemand", { delta: kpis.demandDelta })
+                : t("missesDemand", { delta: Math.abs(kpis.demandDelta) })}
             </p>
             <ProgressBar value={throughputPct} colorClass={throughputColorClass} />
           </CardContent>
@@ -186,7 +190,7 @@ export default function KpiPanel() {
           <CardContent className="pt-5">
             <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
               <BarChart3 className="h-3.5 w-3.5 text-primary" />
-              Balanceo
+              {t("balancing")}
             </div>
             <div className="mt-2">
               <span className="text-2xl font-bold">
@@ -202,15 +206,19 @@ export default function KpiPanel() {
 
       {/* Secondary stats */}
       <p className="text-xs text-muted-foreground">
-        Lead time:{" "}
-        <span className="font-medium text-foreground">{kpis.leadTimeMin.toFixed(1)} min/ud</span>
-        {" · "}
-        Tiempo total ciclo:{" "}
-        <span className="font-medium text-foreground">{kpis.totalCycleMin.toFixed(1)} min</span>
-        {" · "}
-        Tiempo disponible:{" "}
+        {t("leadTime")}{" "}
         <span className="font-medium text-foreground">
-          {kpis.availableTimeMin.toFixed(0)} min/día
+          {kpis.leadTimeMin.toFixed(1)} {t("minPerUnit")}
+        </span>
+        {" · "}
+        {t("totalCycle")}{" "}
+        <span className="font-medium text-foreground">
+          {kpis.totalCycleMin.toFixed(1)} {t("minUnit")}
+        </span>
+        {" · "}
+        {t("availableTime")}{" "}
+        <span className="font-medium text-foreground">
+          {kpis.availableTimeMin.toFixed(0)} {t("minPerDay")}
         </span>
       </p>
     </div>
