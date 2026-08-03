@@ -20,7 +20,7 @@ jobs:
           node-version: 20
           cache: npm
       - name: Use latest npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
 
       - name: Install dependencies
@@ -55,7 +55,7 @@ jobs:
           node-version: 20
           cache: npm
       - name: Use latest npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
 
       - name: Install dependencies
