@@ -1,14 +1,16 @@
 <svg width="720" height="160" viewBox="0 0 720 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Takt Studio">
+  
   <g transform="translate(24, 20) scale(0.234375)">
-  <rect width="512" height="512" rx="112" fill="#2563EB"/>
-  <path d="M128 170H384" stroke="white" stroke-width="38" stroke-linecap="round"/>
-  <path d="M256 170V334" stroke="white" stroke-width="38" stroke-linecap="round"/>
-  <path d="M140 300C184 252 218 252 256 300C294 348 336 348 376 300" stroke="#06B6D4" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="140" cy="300" r="16.5" fill="white"/>
-  <circle cx="256" cy="300" r="18" fill="white"/>
-  <circle cx="376" cy="300" r="16.5" fill="white"/>
-  <circle cx="256" cy="300" r="10.5" fill="#22C55E"/>
+    <rect width="512" height="512" rx="112" fill="#2563EB"/>
+    <path d="M128 170H384" stroke="white" stroke-width="38" stroke-linecap="round"/>
+    <path d="M256 170V334" stroke="white" stroke-width="38" stroke-linecap="round"/>
+    <path d="M140 300C184 252 218 252 256 300C294 348 336 348 376 300" stroke="#06B6D4" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="140" cy="300" r="16.5" fill="white"/>
+    <circle cx="256" cy="300" r="18" fill="white"/>
+    <circle cx="376" cy="300" r="16.5" fill="white"/>
+    <circle cx="256" cy="300" r="10.5" fill="#22C55E"/>
   </g>
+ <!-- 120x120 icon (scale 0.234) -->
   <text x="168" y="105" font-size="64" font-weight="800" letter-spacing="-2" font-family="Inter, Geist, Arial, sans-serif" fill="#0F172A">Takt</text>
   <text x="315" y="105" font-size="64" font-weight="800" letter-spacing="-2" font-family="Inter, Geist, Arial, sans-serif" fill="#2563EB">Studio</text>
 </svg>

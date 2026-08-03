@@ -48,7 +48,7 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: "/og-image.png",
+          url: "/takt-studio-social-share.png",
           width: 1200,
           height: 630,
           alt: t("ogImageAlt"),
@@ -59,7 +59,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t("ogTitle"),
       description: t("twitterDescription"),
-      images: ["/og-image.png"],
+      images: ["/takt-studio-social-share.png"],
     },
     icons: {
       icon: [

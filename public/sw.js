@@ -20,6 +20,7 @@ const PRECACHE_URLS = [
   "/icon-512.png",
   "/maskable-icon-512.png",
   "/favicon.svg",
+  "/favicon.png",
 ]
 
 // Variantes de URL bajo las que el middleware puede haber servido una ruta:
