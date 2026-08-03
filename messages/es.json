@@ -962,5 +962,18 @@
     "comparisonSuffixA": " (comparación A)",
     "comparisonSuffixB": " (comparación B)",
     "importedSuffix": " — importado"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o ha cambiado de dirección.",
+    "backHome": "Volver al inicio",
+    "report": "¿Crees que es un error? Repórtalo en GitHub Issues"
+  },
+  "errorPage": {
+    "title": "Algo ha ido mal",
+    "description": "Ha ocurrido un error inesperado. Tus datos están a salvo en tu navegador.",
+    "retry": "Reintentar",
+    "backHome": "Volver al inicio",
+    "report": "Si el problema persiste, repórtalo en GitHub Issues"
   }
 }
