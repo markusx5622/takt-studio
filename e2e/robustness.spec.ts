@@ -59,16 +59,18 @@ test.describe("ES (locale por defecto)", () => {
 test.describe("EN (/en)", () => {
   test.use({ locale: "en-US" })
 
-  test("404 de locale devuelve 404 y muestra la 404 temática", async ({
+  test("404 bajo /en devuelve 404 y muestra la página bilingüe raíz", async ({
     page,
   }) => {
+    // Next.js sirve la not-found raíz para cualquier ruta desconocida,
+    // también bajo /en (la de [locale] solo actúa ante notFound() interno).
     const res = await page.goto("/en/ruta-que-no-existe")
     expect(res!.status()).toBe(404)
     await expect(
-      page.getByRole("heading", { name: /^Page not found$/ })
+      page.getByText(/Página no encontrada · Page not found/)
     ).toBeVisible()
     await expect(
-      page.getByRole("link", { name: /Back to home/ })
+      page.getByRole("link", { name: /Volver al inicio · Back to home/ })
     ).toBeVisible()
   })
 
