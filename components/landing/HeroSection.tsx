@@ -62,17 +62,17 @@ export default function HeroSection() {
     </div>
 
     {/* Metadata strip */}
-    <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-foreground/50">
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-foreground/60">
       <span className="inline-flex items-center gap-1.5">
         <CheckCircle2 className="h-3 w-3" />
         {badges[0]}
       </span>
-      <span className="hidden h-px w-4 bg-border sm:block" />
+      <span aria-hidden="true" className="hidden h-px w-4 bg-border sm:block" />
       <span className="inline-flex items-center gap-1.5">
         <CheckCircle2 className="h-3 w-3" />
         {badges[1]}
       </span>
-      <span className="hidden h-px w-4 bg-border sm:block" />
+      <span aria-hidden="true" className="hidden h-px w-4 bg-border sm:block" />
       <span className="inline-flex items-center gap-1.5">
         <CheckCircle2 className="h-3 w-3" />
         {badges[2]}

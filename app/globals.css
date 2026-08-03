@@ -95,16 +95,15 @@
 
 .reveal {
   opacity: 0;
-  transform: translateY(60px) scale(0.96);
-  transition: 
-    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), 
-    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
+  transform: translateY(24px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
 /* Premium micro-interactions */
@@ -133,22 +132,39 @@
 }
 
 @keyframes cta-pulse {
-  0% {
-    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  0%, 100% {
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 0 10px hsl(var(--primary) / 0);
     transform: scale(1.02);
-  }
-  100% {
-    box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
-    transform: scale(1);
   }
 }
 
 .animate-cta-pulse {
   animation: cta-pulse 2s infinite ease-in-out;
+}
+
+/* ─── Reduced motion: no reveal/loop animations for sensitive users ────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .reveal-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-cta-pulse,
+  .animate-pulse-soft,
+  .animate-fade-up,
+  .animate-fade-in,
+  .shimmer-text {
+    animation: none;
+  }
 }
 
 /* ─── Technical surface patterns ───────────────────────────────────────────── */

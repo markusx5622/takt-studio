@@ -46,13 +46,13 @@ export default function RoadmapSection() {
             >
               <div className="mb-5 flex items-center justify-between">
                 <span className={cn(
-                  "rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white",
+                  "rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-white",
                   meta.color,
                   meta.shadow
                 )}>
                   {item.phase}
                 </span>
-                <span className="text-[9px] font-bold text-muted-foreground/60 uppercase">{item.status}</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">{item.status}</span>
               </div>
 
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/5 border border-primary/10 transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
@@ -67,7 +67,7 @@ export default function RoadmapSection() {
                   <div className="flex-1 h-1 bg-primary/10 rounded-full overflow-hidden">
                     <div className="h-full bg-primary w-2/3 animate-shimmer" />
                   </div>
-                  <span className="text-[8px] font-bold text-primary">65%</span>
+                  <span className="text-[10px] font-bold text-primary">65%</span>
                 </div>
               )}
             </div>
@@ -76,10 +76,10 @@ export default function RoadmapSection() {
       </div>
 
       <div className="mt-16 flex flex-col items-center justify-center space-y-6">
-        <div className="flex items-center gap-4 text-xs font-bold text-foreground/40 uppercase tracking-[0.2em]">
-          <div className="h-px w-8 bg-border" />
+        <div className="flex items-center gap-4 whitespace-nowrap text-[11px] font-bold text-foreground/60 uppercase tracking-[0.15em] sm:text-xs sm:tracking-[0.2em]">
+          <div aria-hidden="true" className="hidden h-px w-8 bg-border sm:block" />
           {t("tagline")}
-          <div className="h-px w-8 bg-border" />
+          <div aria-hidden="true" className="hidden h-px w-8 bg-border sm:block" />
         </div>
         <Button
           size="lg"

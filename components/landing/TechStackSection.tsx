@@ -41,7 +41,7 @@ export default function TechStackSection() {
               </p>
               <div className="flex flex-wrap gap-2">
                 {CARD_TAGS[i].map((tag) => (
-                  <span key={tag} className="rounded-md bg-muted px-2 py-1 text-[10px] font-bold text-foreground/50 uppercase">{tag}</span>
+                  <span key={tag} className="rounded-md bg-muted px-2 py-1 text-xs font-bold text-foreground/60 uppercase">{tag}</span>
                 ))}
               </div>
             </div>

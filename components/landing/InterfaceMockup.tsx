@@ -27,7 +27,7 @@ export default function InterfaceMockup() {
   const stations = t.raw("stations") as { name: string; h: number; bottleneck: boolean }[]
 
   return (
-    <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-background/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] backdrop-blur-xl transition-all duration-700 hover:scale-[1.015] hover:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18)]">
+    <div aria-hidden="true" className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-background/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] backdrop-blur-xl transition-all duration-700 hover:scale-[1.015] hover:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18)]">
       {/* Window chrome / Top bar */}
       <div className="flex items-center gap-4 border-b bg-muted/40 px-4 py-3">
         <div className="flex gap-2">
@@ -58,9 +58,9 @@ export default function InterfaceMockup() {
           <div className="rounded-xl bg-primary p-2 shadow-lg shadow-primary/20">
             <BarChart3 className="h-5 w-5 text-white" />
           </div>
-          <GitCompare className="h-5 w-5 text-muted-foreground/50 hover:text-primary transition-colors cursor-pointer" />
-          <Layers className="h-5 w-5 text-muted-foreground/50 hover:text-primary transition-colors cursor-pointer" />
-          <History className="h-5 w-5 text-muted-foreground/50 hover:text-primary transition-colors cursor-pointer" />
+          <GitCompare className="h-5 w-5 text-muted-foreground/50" />
+          <Layers className="h-5 w-5 text-muted-foreground/50" />
+          <History className="h-5 w-5 text-muted-foreground/50" />
           <div className="mt-auto">
             <Zap className="h-5 w-5 text-amber-400" />
           </div>

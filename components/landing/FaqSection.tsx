@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl"
 import {
   HelpCircle,
+  ChevronDown,
 } from "lucide-react"
 
 export default function FaqSection() {
@@ -20,20 +21,19 @@ export default function FaqSection() {
 
       <div className="grid gap-4">
         {items.map((faq, i) => (
-          <div
+          <details
             key={i}
-            className="group rounded-2xl border bg-background/40 p-6 backdrop-blur-xl transition-all hover:bg-background/60 hover:shadow-md"
+            className="group rounded-2xl border bg-background/40 p-6 backdrop-blur-xl transition-all open:bg-background/60 open:shadow-md hover:bg-background/60"
           >
-            <div className="flex gap-4">
-              <div className="mt-1 shrink-0">
+            <summary className="flex cursor-pointer list-none items-center gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <div className="shrink-0">
                 <HelpCircle className="h-5 w-5 text-primary/60" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-bold tracking-tight text-foreground/90">{faq.q}</h3>
-                <p className="text-xs leading-relaxed text-foreground/60">{faq.a}</p>
-              </div>
-            </div>
-          </div>
+              <h3 className="flex-1 text-sm font-bold tracking-tight text-foreground/90">{faq.q}</h3>
+              <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:rotate-180" />
+            </summary>
+            <p className="mt-3 pl-9 text-xs leading-relaxed text-foreground/60">{faq.a}</p>
+          </details>
         ))}
       </div>
     </div>
