@@ -116,7 +116,7 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
             Takt Time
           </div>
           <p className="mt-1 text-xl font-bold">{kpis.taktTimeMin.toFixed(1)}</p>
-          <p className="text-[10px] text-muted-foreground">{t("minPerUnit")}</p>
+          <p className="text-xs text-muted-foreground">{t("minPerUnit")}</p>
         </CardContent>
       </Card>
 
@@ -134,7 +134,7 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
           >
             {kpis.throughputPerDay}
           </p>
-          <p className="text-[10px] text-muted-foreground">{t("unitsPerDay")}</p>
+          <p className="text-xs text-muted-foreground">{t("unitsPerDay")}</p>
         </CardContent>
       </Card>
 

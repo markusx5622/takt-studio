@@ -346,12 +346,12 @@ export default function SensitivityLab() {
                     {baseKpis.meetsDemand ? t("meets") : t("notMeets")} {t("currentSuffix")}
                   </span>
                   {labKpis.meetsDemand && !baseKpis.meetsDemand && (
-                    <Badge variant="outline" className="bg-green-50 text-[9px] text-green-700">
+                    <Badge variant="outline" className="bg-green-50 text-[10px] text-green-700">
                       {t("nowMeets")}
                     </Badge>
                   )}
                   {!labKpis.meetsDemand && baseKpis.meetsDemand && (
-                    <Badge variant="outline" className="bg-red-50 text-[9px] text-red-700">
+                    <Badge variant="outline" className="bg-red-50 text-[10px] text-red-700">
                       {t("lostMeets")}
                     </Badge>
                   )}
@@ -372,7 +372,7 @@ export default function SensitivityLab() {
                     {labKpis.bottleneckCycleMin.toFixed(1)} {t("minUnit")}
                   </span>
                   {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId && (
-                    <Badge variant="outline" className="text-[9px]">
+                    <Badge variant="outline" className="text-[10px]">
                       {t("changes")}
                     </Badge>
                   )}
@@ -469,7 +469,7 @@ export default function SensitivityLab() {
                       <span className="text-[10px] text-muted-foreground/30">→</span>
                       <span className="text-[11px] font-semibold">{labKpis.bottleneckStationName}</span>
                       {labKpis.bottleneckStationId !== baseKpis.bottleneckStationId && (
-                        <span className="text-[10px] font-medium text-amber-600">{t("changesLower")}</span>
+                        <span className="text-[10px] font-medium text-amber-700">{t("changesLower")}</span>
                       )}
                     </div>
                   </div>

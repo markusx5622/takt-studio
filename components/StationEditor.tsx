@@ -77,12 +77,13 @@ function StationRow({
   const t = useTranslations("simulator.stations")
   return (
     <tr className="border-b transition-colors hover:bg-muted/50">
-      <td className="py-1 pl-4 text-sm text-muted-foreground">{index + 1}</td>
+      <td className="py-1 pl-4 text-sm text-foreground/60">{index + 1}</td>
       <td className="py-1 pl-2">
         <Input
           className={cellInputCls}
           value={station.name}
           placeholder={t("namePlaceholder")}
+          aria-label={t("colName")}
           onChange={(e) => onNameChange(station.id, e.target.value)}
         />
       </td>
@@ -93,6 +94,7 @@ function StationRow({
           min={1}
           step={1}
           value={station.cycleTimeMin}
+          aria-label={t("colCycle")}
           onChange={(e) => onCycleChange(station.id, e.target.value)}
         />
       </td>
@@ -104,6 +106,7 @@ function StationRow({
           max={20}
           step={1}
           value={station.operators}
+          aria-label={t("colOperators")}
           onChange={(e) => onOperatorsChange(station.id, e.target.value)}
         />
       </td>
@@ -115,6 +118,7 @@ function StationRow({
           max={100}
           step={1}
           value={Math.round(station.failureRate * 100)}
+          aria-label={t("colFailure")}
           onChange={(e) => onFailureChange(station.id, e.target.value)}
         />
       </td>
@@ -213,6 +217,7 @@ function StationCard({
           className="h-8 text-sm font-medium"
           value={station.name}
           placeholder={t("namePlaceholder")}
+          aria-label={t("colName")}
           onChange={(e) => onNameChange(station.id, e.target.value)}
         />
       </div>
@@ -226,6 +231,7 @@ function StationCard({
             min={1}
             step={1}
             value={station.cycleTimeMin}
+            aria-label={t("cycleMin")}
             onChange={(e) => onCycleChange(station.id, e.target.value)}
           />
         </div>
@@ -238,6 +244,7 @@ function StationCard({
             max={20}
             step={1}
             value={station.operators}
+            aria-label={t("operators")}
             onChange={(e) => onOperatorsChange(station.id, e.target.value)}
           />
         </div>
@@ -250,6 +257,7 @@ function StationCard({
             max={100}
             step={1}
             value={Math.round(station.failureRate * 100)}
+            aria-label={t("failurePct")}
             onChange={(e) => onFailureChange(station.id, e.target.value)}
           />
         </div>
@@ -348,22 +356,22 @@ export default function StationEditor() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="w-8 py-2 pl-4 text-left text-xs font-medium text-muted-foreground">
+                    <th scope="col" className="w-8 py-2 pl-4 text-left text-xs font-medium text-muted-foreground">
                       #
                     </th>
-                    <th className="py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
+                    <th scope="col" className="py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
                       {t("colName")}
                     </th>
-                    <th className="w-32 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
+                    <th scope="col" className="w-32 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
                       {t("colCycle")}
                     </th>
-                    <th className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
+                    <th scope="col" className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
                       {t("colOperators")}
                     </th>
-                    <th className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
+                    <th scope="col" className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
                       {t("colFailure")}
                     </th>
-                    <th className="w-28 py-2 pl-2 pr-4 text-left text-xs font-medium text-muted-foreground">
+                    <th scope="col" className="w-28 py-2 pl-2 pr-4 text-left text-xs font-medium text-muted-foreground">
                       {t("colActions")}
                     </th>
                   </tr>

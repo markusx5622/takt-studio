@@ -33,7 +33,7 @@ export default function Header() {
     <Link
       href={pathname}
       locale={otherLocale}
-      className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+      className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       aria-label={t("switchLocale", { locale: otherLocale.toUpperCase() })}
     >
       <Languages className="h-3.5 w-3.5" />
@@ -62,8 +62,9 @@ export default function Header() {
                 <Link
                   key={href}
                   href={href}
+                  aria-current={pathname === href ? "page" : undefined}
                   className={cn(
-                    "relative flex items-center justify-center rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-all",
+                    "relative flex items-center justify-center rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     pathname === href
                       ? "bg-primary text-white shadow-md shadow-primary/20 scale-105"
                       : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
@@ -100,11 +101,12 @@ export default function Header() {
             <Link
               key={href}
               href={href}
+              aria-current={pathname === href ? "page" : undefined}
               className={cn(
-                "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all",
+                "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
                 pathname === href
                   ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]"
-                  : "text-slate-400"
+                  : "text-slate-500"
               )}
             >
               <Icon className="h-5 w-5" />

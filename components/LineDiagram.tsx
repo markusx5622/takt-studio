@@ -71,7 +71,7 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
     >
       {station.isBottleneck && (
         <div className="bg-red-500 px-1 py-0.5 text-center">
-          <span className="text-[9px] font-bold uppercase tracking-wide text-white">
+          <span className="text-[10px] font-bold uppercase tracking-wide text-white">
             {t("bottleneck")}
           </span>
         </div>
@@ -109,9 +109,9 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
 
         <div className="mt-2 flex justify-end">
           {station.exceedsTakt ? (
-            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-label={t("exceedsTakt")} />
+            <AlertTriangle className="h-3.5 w-3.5 text-amber-600" aria-label={t("exceedsTakt")} />
           ) : (
-            <CheckCircle className="h-3.5 w-3.5 text-green-500" aria-label={t("withinTakt")} />
+            <CheckCircle className="h-3.5 w-3.5 text-green-600" aria-label={t("withinTakt")} />
           )}
         </div>
       </div>

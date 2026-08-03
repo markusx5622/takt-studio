@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useId } from "react"
 import { useTranslations, useLocale } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs, calculateEconomicKPIs, normalizeEconomics } from "@/lib/calculations"
@@ -54,11 +54,13 @@ function EconInput({
   min?: number
   step?: number
 }) {
+  const inputId = useId()
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-medium text-muted-foreground">{label}</label>
+      <label htmlFor={inputId} className="text-xs font-medium text-muted-foreground">{label}</label>
       <div className="relative">
         <Input
+          id={inputId}
           type="number"
           min={min}
           step={step}

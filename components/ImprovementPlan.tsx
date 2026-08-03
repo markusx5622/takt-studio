@@ -119,32 +119,32 @@ function RecommendationCard({
       {/* Impact grid */}
       <div className="mt-2.5 grid grid-cols-2 gap-2 rounded-md border bg-muted/20 p-2">
         <div className="flex flex-col">
-          <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
             {t("throughput")}
           </span>
           <span className="text-sm font-semibold">{rec.projectedKpis.throughputPerDay}</span>
           <span
             className={cn(
               "text-[10px] font-medium",
-              throughputPositive ? "text-green-600" : "text-muted-foreground"
+              throughputPositive ? "text-green-700" : "text-muted-foreground"
             )}
           >
             {throughputDeltaText}
           </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
             {t("demand")}
           </span>
           <span className="text-sm font-semibold">
             {rec.meetsDemandAfter ? t("meets") : t("notMeets")}
           </span>
           {rec.meetsDemandAfter && !rec.baseKpis.meetsDemand && (
-            <span className="text-[10px] font-medium text-green-600">{t("passesToMeet")}</span>
+            <span className="text-[10px] font-medium text-green-700">{t("passesToMeet")}</span>
           )}
         </div>
         <div className="flex flex-col">
-          <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
             {t("balancing")}
           </span>
           <span className="text-sm font-semibold">
@@ -153,14 +153,14 @@ function RecommendationCard({
           <span
             className={cn(
               "text-[10px] font-medium",
-              balancingPositive ? "text-green-600" : "text-muted-foreground"
+              balancingPositive ? "text-green-700" : "text-muted-foreground"
             )}
           >
             {balancingDeltaText}
           </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
             {t("leadTime")}
           </span>
           <span className="text-sm font-semibold">
@@ -169,7 +169,7 @@ function RecommendationCard({
           <span
             className={cn(
               "text-[10px] font-medium",
-              leadTimePositive ? "text-green-600" : "text-muted-foreground"
+              leadTimePositive ? "text-green-700" : "text-muted-foreground"
             )}
           >
             {leadTimeDeltaText}
@@ -188,7 +188,7 @@ function RecommendationCard({
             className={cn(
               "text-[11px] font-bold",
               economicImpact.netImpactPerDay > 0
-                ? "text-green-600"
+                ? "text-green-700"
                 : economicImpact.netImpactPerDay < 0
                   ? "text-red-600"
                   : "text-muted-foreground"
@@ -198,17 +198,17 @@ function RecommendationCard({
             {new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(economicImpact.netImpactPerDay)} {t("perDay")}
           </span>
           {economicImpact.oneOffCost > 0 && economicImpact.paybackDays !== null && (
-            <Badge variant="outline" className="text-[9px]">
+            <Badge variant="outline" className="text-[10px]">
               {t("paybackDays", { days: economicImpact.paybackDays.toFixed(1) })}
             </Badge>
           )}
           {economicImpact.oneOffCost > 0 && economicImpact.paybackDays === null && (
-            <Badge variant="outline" className="text-[9px] text-muted-foreground">
+            <Badge variant="outline" className="text-[10px] text-muted-foreground">
               {t("paybackNA")}
             </Badge>
           )}
           {economicImpact.oneOffCost === 0 && (
-            <Badge variant="outline" className="text-[9px] text-muted-foreground">
+            <Badge variant="outline" className="text-[10px] text-muted-foreground">
               {t("noInvestment")}
             </Badge>
           )}
