@@ -27,7 +27,7 @@ $svgContent
     $fileUri = "file:///" + ($htmlFile -replace '\\', '/')
     
     Write-Host "Rendering $PngFile at ${Size}x${Size}..."
-    Start-Process -FilePath $edgePath -ArgumentList "--headless", "--disable-gpu", "--force-device-scale-factor=1", "--window-size=$Size,$Size", "--hide-scrollbars", "--screenshot=`"$pngPath`"", "`"$fileUri`"" -Wait -NoNewWindow
+    Start-Process -FilePath $edgePath -ArgumentList "--headless", "--disable-gpu", "--default-background-color=00000000", "--force-device-scale-factor=1", "--window-size=$Size,$Size", "--hide-scrollbars", "--screenshot=`"$pngPath`"", "`"$fileUri`"" -Wait -NoNewWindow
     
     Remove-Item $htmlFile
     Write-Host "Saved $PngFile"

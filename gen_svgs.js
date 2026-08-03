@@ -30,7 +30,7 @@ const textStyle = `font-family="Inter, Geist, Arial, sans-serif"`;
 // 1. favicon.svg
 write('favicon.svg', `
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" fill="#2563EB"/>
+  <rect width="512" height="512" rx="112" fill="#2563EB"/>
   <path d="M128 170H384" stroke="white" stroke-width="38" stroke-linecap="round"/>
   <path d="M256 170V334" stroke="white" stroke-width="38" stroke-linecap="round"/>
   <path d="M140 300C184 252 218 252 256 300C294 348 336 348 376 300" stroke="#06B6D4" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
@@ -176,7 +176,7 @@ write('maskable-icon.svg', `
 // 12. apple-touch-icon-source.svg
 write('apple-touch-icon-source.svg', `
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" fill="#2563EB"/>
+  <rect width="512" height="512" rx="96" fill="#2563EB"/>
   ${maskableInner}
 </svg>
 `);

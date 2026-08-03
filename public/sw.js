@@ -9,7 +9,7 @@
 //  - Resto de estáticos same-origin (public/): stale-while-revalidate.
 // Versionar CACHE_VERSION al cambiar el shell precacheado o esta lógica.
 
-const CACHE_VERSION = "v2"
+const CACHE_VERSION = "v3"
 const PRECACHE = `takt-precache-${CACHE_VERSION}`
 const RUNTIME = `takt-runtime-${CACHE_VERSION}`
 
