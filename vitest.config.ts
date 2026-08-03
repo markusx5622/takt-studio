@@ -7,18 +7,17 @@ export default defineConfig({
     exclude: ['e2e/**', 'node_modules/**'],
     coverage: {
       provider: 'v8',
-      include: ['lib/**/*.ts', 'types/**/*.ts'],
+      include: ['lib/**/*.ts'],
       exclude: ['lib/**/*.test.ts'],
       reporter: ['text', 'lcov'],
       thresholds: {
-        // Suelo actual del repo (calibrado en P3): statements 49, branches 47,
-        // functions 34, lines 53. Los umbrales van ~4 puntos por debajo como
-        // ratchet anti-regresión; subirlos requiere tests nuevos de
-        // store.ts / insights.ts / store-names.ts (pendiente).
-        statements: 45,
-        branches: 40,
-        functions: 30,
-        lines: 50,
+        // Suelo actual del repo (calibrado en P3.5): statements 83, branches 74,
+        // functions 88, lines 85. Ratchet anti-regresión ~4 puntos por debajo.
+        // store.ts queda por cubrir: migrate() de persist (líneas 362-387).
+        statements: 78,
+        branches: 68,
+        functions: 82,
+        lines: 79,
       },
     },
   },
