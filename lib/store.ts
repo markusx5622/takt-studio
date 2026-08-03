@@ -2,7 +2,8 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { useSyncExternalStore } from "react"
 import type { Station, Scenario, AppState, EconomicInputs, ScenarioSnapshot, ExportPayload } from "@/types"
-import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS, getPresetNames } from "@/lib/presets"
+import { createMonobathPreset, createEmptyScenario, DEFAULT_ECONOMICS, getPresetNames, detectLocale } from "@/lib/presets"
+import { getStoreNames } from "@/lib/store-names"
 import { buildScenarioExportPayload, buildSnapshotExportPayload, regenerateScenarioIds } from "@/lib/import-export"
 
 interface TaktStore extends AppState {
@@ -235,12 +236,15 @@ export const useTaktStore = create<TaktStore>()(
           scenarioId,
           name:
             name ??
-            `${scenario.name} — snapshot ${new Date().toLocaleString("es-ES", {
-              day: "2-digit",
-              month: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}`,
+            `${scenario.name} — ${getStoreNames().snapshotTag} ${new Date().toLocaleString(
+              detectLocale(),
+              {
+                day: "2-digit",
+                month: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              }
+            )}`,
           createdAt: new Date().toISOString(),
           isBaseline: false,
           scenarioData: JSON.parse(JSON.stringify(scenario)),
@@ -275,7 +279,7 @@ export const useTaktStore = create<TaktStore>()(
         const restored: Scenario = {
           ...snapshot.scenarioData,
           id: crypto.randomUUID(),
-          name: newName ?? `${snapshot.name} — restaurado`,
+          name: newName ?? `${snapshot.name}${getStoreNames().restoredSuffix}`,
           stations: snapshot.scenarioData.stations.map((st) => ({
             ...st,
             id: crypto.randomUUID(),
@@ -295,13 +299,13 @@ export const useTaktStore = create<TaktStore>()(
         const scenarioA: Scenario = {
           ...snapA.scenarioData,
           id: crypto.randomUUID(),
-          name: `${snapA.name} (comparación A)`,
+          name: `${snapA.name}${getStoreNames().comparisonSuffixA}`,
           stations: snapA.scenarioData.stations.map((st) => ({ ...st, id: crypto.randomUUID() })),
         }
         const scenarioB: Scenario = {
           ...snapB.scenarioData,
           id: crypto.randomUUID(),
-          name: `${snapB.name} (comparación B)`,
+          name: `${snapB.name}${getStoreNames().comparisonSuffixB}`,
           stations: snapB.scenarioData.stations.map((st) => ({ ...st, id: crypto.randomUUID() })),
         }
 
@@ -344,7 +348,7 @@ export const useTaktStore = create<TaktStore>()(
         const snapshot = payload.exportType === "snapshot" ? payload.snapshot : null
         if (!snapshot) return
         const scenario = regenerateScenarioIds(snapshot.scenarioData)
-        scenario.name = importedName?.trim() || `${snapshot.name} — importado`
+        scenario.name = importedName?.trim() || `${snapshot.name}${getStoreNames().importedSuffix}`
         set((state) => ({
           scenarios: [...state.scenarios, scenario],
           activeScenarioId: scenario.id,

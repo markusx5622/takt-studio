@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic"
 import { Link } from "@/i18n/navigation"
+import { useTranslations } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs } from "@/lib/calculations"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -70,11 +71,12 @@ function DeltaBadge({
   higherIsBetter: boolean
   fmt: (v: number) => string
 }) {
+  const t = useTranslations("compare")
   if (Math.abs(delta) < 0.01) {
     return (
       <span className="inline-flex items-center gap-0.5 text-xs text-muted-foreground">
         <Minus className="h-3 w-3" />
-        Sin cambio
+        {t("noChange")}
       </span>
     )
   }
@@ -101,6 +103,7 @@ function DeltaBadge({
 // ─── Mini KPIs ─────────────────────────────────────────────────────────────────
 
 function MiniKpis({ kpis }: { kpis: KPIs }) {
+  const t = useTranslations("compare")
   const effPct = kpis.balancingEfficiency * 100
   const bottleneckExceedsTakt = kpis.bottleneckCycleMin > kpis.taktTimeMin
 
@@ -113,7 +116,7 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
             Takt Time
           </div>
           <p className="mt-1 text-xl font-bold">{kpis.taktTimeMin.toFixed(1)}</p>
-          <p className="text-[10px] text-muted-foreground">min/ud</p>
+          <p className="text-[10px] text-muted-foreground">{t("minPerUnit")}</p>
         </CardContent>
       </Card>
 
@@ -131,7 +134,7 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
           >
             {kpis.throughputPerDay}
           </p>
-          <p className="text-[10px] text-muted-foreground">uds/día</p>
+          <p className="text-[10px] text-muted-foreground">{t("unitsPerDay")}</p>
         </CardContent>
       </Card>
 
@@ -139,7 +142,7 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
         <CardContent className="pt-4 pb-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <AlertTriangle className="h-3 w-3" />
-            Cuello de botella
+            {t("bottleneck")}
           </div>
           <p className="mt-1 truncate text-sm font-bold" title={kpis.bottleneckStationName}>
             {kpis.bottleneckStationName || "—"}
@@ -147,11 +150,11 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
           <div className="mt-1">
             {bottleneckExceedsTakt ? (
               <Badge variant="destructive" className="text-[10px]">
-                Excede Takt
+                {t("exceedsTakt")}
               </Badge>
             ) : (
               <Badge variant="success" className="text-[10px]">
-                OK
+                {t("withinTaktOk")}
               </Badge>
             )}
           </div>
@@ -162,7 +165,7 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
         <CardContent className="pt-4 pb-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <BarChart3 className="h-3 w-3" />
-            Balanceo
+            {t("balancing")}
           </div>
           <p className="mt-1 text-xl font-bold">{effPct.toFixed(0)}</p>
           <p className="text-[10px] text-muted-foreground">%</p>
@@ -183,55 +186,55 @@ interface TableRow {
   fmtDelta: (v: number) => string
 }
 
-function buildRows(kpisA: KPIs, kpisB: KPIs): TableRow[] {
+function buildRows(kpisA: KPIs, kpisB: KPIs, t: (key: string) => string): TableRow[] {
   return [
     {
-      label: "Takt Time (min/ud)",
+      label: t("rowTakt"),
       a: kpisA.taktTimeMin.toFixed(2),
       b: kpisB.taktTimeMin.toFixed(2),
       delta: kpisB.taktTimeMin - kpisA.taktTimeMin,
       higherIsBetter: false,
-      fmtDelta: (v) => `${Math.abs(v).toFixed(2)} min`,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(2)} ${t("minUnit")}`,
     },
     {
-      label: "Throughput (uds/día)",
+      label: t("rowThroughput"),
       a: String(kpisA.throughputPerDay),
       b: String(kpisB.throughputPerDay),
       delta: kpisB.throughputPerDay - kpisA.throughputPerDay,
       higherIsBetter: true,
-      fmtDelta: (v) => `${Math.abs(Math.round(v))} uds`,
+      fmtDelta: (v) => `${Math.abs(Math.round(v))} ${t("unitsUds")}`,
     },
     {
-      label: "Cuello de botella (min/ud)",
+      label: t("rowBottleneck"),
       a: kpisA.bottleneckCycleMin.toFixed(2),
       b: kpisB.bottleneckCycleMin.toFixed(2),
       delta: kpisB.bottleneckCycleMin - kpisA.bottleneckCycleMin,
       higherIsBetter: false,
-      fmtDelta: (v) => `${Math.abs(v).toFixed(2)} min`,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(2)} ${t("minUnit")}`,
     },
     {
-      label: "Lead Time (min)",
+      label: t("rowLeadTime"),
       a: kpisA.leadTimeMin.toFixed(1),
       b: kpisB.leadTimeMin.toFixed(1),
       delta: kpisB.leadTimeMin - kpisA.leadTimeMin,
       higherIsBetter: false,
-      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} min`,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("minUnit")}`,
     },
     {
-      label: "Eficiencia de balanceo",
+      label: t("rowBalancing"),
       a: `${(kpisA.balancingEfficiency * 100).toFixed(1)}%`,
       b: `${(kpisB.balancingEfficiency * 100).toFixed(1)}%`,
       delta: (kpisB.balancingEfficiency - kpisA.balancingEfficiency) * 100,
       higherIsBetter: true,
-      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} pp`,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("ppUnit")}`,
     },
     {
-      label: "Tiempo total ciclo (min)",
+      label: t("rowTotalCycle"),
       a: kpisA.totalCycleMin.toFixed(1),
       b: kpisB.totalCycleMin.toFixed(1),
       delta: kpisB.totalCycleMin - kpisA.totalCycleMin,
       higherIsBetter: false,
-      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} min`,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("minUnit")}`,
     },
   ]
 }
@@ -243,12 +246,13 @@ function ComparisonTable({
   kpisA: KPIs
   kpisB: KPIs
 }) {
-  const rows = buildRows(kpisA, kpisB)
+  const t = useTranslations("compare")
+  const rows = buildRows(kpisA, kpisB, t)
 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Tabla comparativa</CardTitle>
+        <CardTitle className="text-lg">{t("tableTitle")}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -256,16 +260,16 @@ function ComparisonTable({
             <thead>
               <tr className="border-b bg-muted/40">
                 <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
-                  Métrica
+                  {t("colMetric")}
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  A
+                  {t("colA")}
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  B
+                  {t("colB")}
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  Δ (B − A)
+                  {t("colDelta")}
                 </th>
               </tr>
             </thead>
@@ -298,6 +302,8 @@ function ComparisonTable({
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function CompararPage() {
+  const t = useTranslations("compare")
+  const tControls = useTranslations("simulator.controls")
   const hydrated = useHydrated()
   const scenarios = useTaktStore((state) => state.scenarios)
   const compareAId = useTaktStore((state) => state.compareScenarioAId)
@@ -311,8 +317,8 @@ export default function CompararPage() {
         <ConsultingBackground />
         <div className="relative z-10 mx-auto max-w-6xl px-4 pt-2 pb-8">
           <div className="page-header-rule pb-4 mb-2">
-            <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
-            <p className="text-sm text-muted-foreground">Compara dos configuraciones lado a lado.</p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("subtitleShort")}</p>
           </div>
           <div className="h-8 w-48 animate-pulse rounded bg-muted" />
           <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -331,17 +337,17 @@ export default function CompararPage() {
         <ConsultingBackground />
         <div className="relative z-10 mx-auto max-w-6xl px-4 pt-2 pb-8">
           <div className="page-header-rule pb-4 mb-2">
-            <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
-            <p className="text-sm text-muted-foreground">Compara dos configuraciones lado a lado.</p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("subtitleShort")}</p>
           </div>
           <Card className="mt-6">
           <CardContent className="flex flex-col items-center gap-4 py-12">
             <AlertCircle className="h-10 w-10 text-muted-foreground" />
             <p className="text-center text-sm text-muted-foreground">
-              Necesitas al menos 2 escenarios para comparar.
+              {t("emptyText")}
             </p>
             <Button asChild>
-              <Link href="/simulador">Ir al simulador</Link>
+              <Link href="/simulador">{t("goToSimulator")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -361,7 +367,7 @@ export default function CompararPage() {
     const store = useTaktStore.getState()
     const original = store.scenarios.find((s) => s.id === compareAId)
     if (!original) return
-    store.duplicateScenario(compareAId, `${original.name} (copia)`)
+    store.duplicateScenario(compareAId, `${original.name} ${tControls("copySuffix")}`)
     const newId = useTaktStore.getState().activeScenarioId
     useTaktStore.getState().setCompareB(newId)
   }
@@ -371,9 +377,9 @@ export default function CompararPage() {
       <ConsultingBackground />
       <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 pt-2 pb-8">
         <div className="page-header-rule pb-4 mb-2">
-          <h1 className="text-2xl font-bold tracking-tight">Comparar escenarios</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Compara métricas, gráficos y diagramas entre dos escenarios en paralelo.
+            {t("subtitleFull")}
           </p>
         </div>
 
@@ -383,7 +389,7 @@ export default function CompararPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
             <div className="flex-1">
               <ScenarioSelect
-                label="Escenario A"
+                label={t("scenarioA")}
                 value={scenarioA.id}
                 onChange={setCompareA}
                 scenarios={scenarios}
@@ -398,13 +404,13 @@ export default function CompararPage() {
                 className="gap-2"
               >
                 <Copy className="h-3.5 w-3.5" />
-                Duplicar A en B
+                {t("duplicateAtoB")}
               </Button>
             </div>
 
             <div className="flex-1">
               <ScenarioSelect
-                label="Escenario B"
+                label={t("scenarioB")}
                 value={scenarioB.id}
                 onChange={setCompareB}
                 scenarios={scenarios}
@@ -415,8 +421,7 @@ export default function CompararPage() {
           {sameScenario && (
             <div className="mt-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-              Estás comparando el mismo escenario consigo mismo. Selecciona dos escenarios
-              distintos o usa &ldquo;Duplicar A en B&rdquo;.
+              {t("sameScenarioWarning")}
             </div>
           )}
         </CardContent>

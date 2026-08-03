@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useRef, useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -12,6 +13,7 @@ import {
   validateExportPayload,
   downloadJsonFile,
 } from "@/lib/import-export"
+import type { ValidationError } from "@/lib/import-export"
 import type { ExportPayload } from "@/types"
 import {
   ArrowRight,
@@ -29,15 +31,28 @@ import ConsultingBackground from "@/components/ConsultingBackground"
 
 // ─── Format helpers ────────────────────────────────────────────────────────────
 
-function fmtDate(iso: string) {
+function fmtDate(iso: string, locale: string) {
   const d = new Date(iso)
-  return d.toLocaleString("es-ES", {
+  return d.toLocaleString(locale, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   })
+}
+
+// ─── Error translation ─────────────────────────────────────────────────────────
+
+function translateError(
+  t: (key: string, values?: Record<string, string | number>) => string,
+  error: ValidationError
+): string {
+  const values: Record<string, string | number> = { ...(error.values ?? {}) }
+  if (error.inner) {
+    values.reason = translateError(t, error.inner)
+  }
+  return t(error.code, values)
 }
 
 // ─── Skeleton ──────────────────────────────────────────────────────────────────
@@ -63,14 +78,17 @@ function ImportExportSkeleton() {
 // ─── Import preview card ───────────────────────────────────────────────────────
 
 function ImportPreview({ payload }: { payload: ExportPayload }) {
+  const t = useTranslations("importExport")
+  const locale = useLocale()
+
   return (
     <div className="rounded-lg border bg-muted/20 p-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline" className="text-[10px]">
-          {payload.exportType === "scenario" ? "Escenario" : "Snapshot"}
+          {payload.exportType === "scenario" ? t("previewTypeScenario") : t("previewTypeSnapshot")}
         </Badge>
         <span className="text-[11px] text-muted-foreground">
-          v{payload.appVersion} · {fmtDate(payload.exportedAt)}
+          v{payload.appVersion} · {fmtDate(payload.exportedAt, locale)}
         </span>
       </div>
       <p className="mt-2 text-sm font-semibold">
@@ -80,13 +98,17 @@ function ImportPreview({ payload }: { payload: ExportPayload }) {
       </p>
       {payload.exportType === "scenario" && (
         <p className="mt-1 text-xs text-muted-foreground">
-          {payload.scenario.stations.length} estaciones · Demanda {payload.scenario.demandPerDay} uds/día
+          {t("previewScenarioSummary", {
+            stations: payload.scenario.stations.length,
+            demand: payload.scenario.demandPerDay,
+          })}
         </p>
       )}
       {payload.exportType === "snapshot" && (
         <p className="mt-1 text-xs text-muted-foreground">
-          {payload.snapshot.scenarioData.stations.length} estaciones · Baseline:{" "}
-          {payload.snapshot.isBaseline ? "Sí" : "No"}
+          {t("previewSnapshotStations", { count: payload.snapshot.scenarioData.stations.length })} ·{" "}
+          {t("baselineTag")}:{" "}
+          {payload.snapshot.isBaseline ? t("baselineYes") : t("baselineNo")}
         </p>
       )}
     </div>
@@ -96,6 +118,8 @@ function ImportPreview({ payload }: { payload: ExportPayload }) {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function ImportExportPage() {
+  const t = useTranslations("importExport")
+  const locale = useLocale()
   const hydrated = useHydrated()
 
   const scenarios = useTaktStore((s) => s.scenarios)
@@ -113,7 +137,7 @@ export default function ImportExportPage() {
     | { type: "idle" }
     | { type: "validating" }
     | { type: "valid"; payload: ExportPayload }
-    | { type: "invalid"; error: string }
+    | { type: "invalid"; error: ValidationError }
     | { type: "success"; scenarioName: string }
   >({ type: "idle" })
 
@@ -161,11 +185,11 @@ export default function ImportExportPage() {
           setImportStatus({ type: "invalid", error: result.error })
         }
       } catch {
-        setImportStatus({ type: "invalid", error: "El archivo no es un JSON válido" })
+        setImportStatus({ type: "invalid", error: { code: "invalidJson" } })
       }
     }
     reader.onerror = () => {
-      setImportStatus({ type: "invalid", error: "No se pudo leer el archivo" })
+      setImportStatus({ type: "invalid", error: { code: "readError" } })
     }
     reader.readAsText(file)
   }
@@ -180,7 +204,7 @@ export default function ImportExportPage() {
       setImportStatus({ type: "success", scenarioName: name || payload.scenario.name })
     } else {
       importSnapshotAsScenario(payload, name)
-      setImportStatus({ type: "success", scenarioName: name || `${payload.snapshot.name} — importado` })
+      setImportStatus({ type: "success", scenarioName: name || `${payload.snapshot.name}${t("importedSuffix")}` })
     }
 
     setImportName("")
@@ -204,9 +228,9 @@ export default function ImportExportPage() {
       <ConsultingBackground />
       <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 pt-2 pb-8">
         <div className="page-header-rule pb-4 mb-2">
-          <h1 className="text-2xl font-bold tracking-tight">Importar y exportar</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Mueve y reutiliza configuraciones del modelo entre sesiones, dispositivos o compañeros de equipo.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -217,21 +241,21 @@ export default function ImportExportPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <FolderOutput className="h-4 w-4 text-primary" />
-              Exportar escenario
+              {t("exportScenarioTitle")}
             </CardTitle>
             <CardDescription className="text-xs">
-              Descarga un escenario completo como archivo JSON.
+              {t("exportScenarioDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Escenario</label>
+              <label className="text-xs font-medium text-muted-foreground">{t("scenarioLabel")}</label>
               <select
                 value={selectedScenarioId}
                 onChange={(e) => setSelectedScenarioId(e.target.value)}
                 className="h-9 w-full rounded-md border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="">Selecciona un escenario…</option>
+                <option value="">{t("selectScenario")}</option>
                 {scenarios.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -242,8 +266,12 @@ export default function ImportExportPage() {
             {activeScenario && (
               <div className="rounded-md border bg-muted/20 px-3 py-2">
                 <p className="text-xs text-muted-foreground">
-                  {activeScenario.stations.length} estaciones · Demanda {activeScenario.demandPerDay} uds/día ·{" "}
-                  {activeScenario.shiftHours}h × {activeScenario.shiftsPerDay} turno(s)
+                  {t("scenarioSummary", {
+                    stations: activeScenario.stations.length,
+                    demand: activeScenario.demandPerDay,
+                    hours: activeScenario.shiftHours,
+                    shifts: activeScenario.shiftsPerDay,
+                  })}
                 </p>
               </div>
             )}
@@ -254,7 +282,7 @@ export default function ImportExportPage() {
               onClick={handleExportScenario}
             >
               <Download className="h-4 w-4" />
-              Exportar escenario
+              {t("exportScenarioTitle")}
             </Button>
           </CardContent>
         </Card>
@@ -264,24 +292,24 @@ export default function ImportExportPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <FolderOutput className="h-4 w-4 text-primary" />
-              Exportar snapshot
+              {t("exportSnapshotTitle")}
             </CardTitle>
             <CardDescription className="text-xs">
-              Descarga un snapshot del historial como archivo JSON.
+              {t("exportSnapshotDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Snapshot</label>
+              <label className="text-xs font-medium text-muted-foreground">{t("snapshotLabel")}</label>
               <select
                 value={selectedSnapshotId}
                 onChange={(e) => setSelectedSnapshotId(e.target.value)}
                 className="h-9 w-full rounded-md border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="">Selecciona un snapshot…</option>
+                <option value="">{t("selectSnapshot")}</option>
                 {snapshots.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name} {s.isBaseline ? "(baseline)" : ""}
+                    {s.name} {s.isBaseline ? t("baselineSuffix") : ""}
                   </option>
                 ))}
               </select>
@@ -289,9 +317,9 @@ export default function ImportExportPage() {
             {activeSnapshot && (
               <div className="rounded-md border bg-muted/20 px-3 py-2">
                 <p className="text-xs text-muted-foreground">
-                  {activeSnapshot.scenarioData.stations.length} estaciones ·{" "}
-                  {fmtDate(activeSnapshot.createdAt)}
-                  {activeSnapshot.isBaseline && " · Baseline"}
+                  {t("snapshotSummaryStations", { count: activeSnapshot.scenarioData.stations.length })} ·{" "}
+                  {fmtDate(activeSnapshot.createdAt, locale)}
+                  {activeSnapshot.isBaseline && ` · ${t("baselineTag")}`}
                 </p>
               </div>
             )}
@@ -302,7 +330,7 @@ export default function ImportExportPage() {
               onClick={handleExportSnapshot}
             >
               <Download className="h-4 w-4" />
-              Exportar snapshot
+              {t("exportSnapshotTitle")}
             </Button>
           </CardContent>
         </Card>
@@ -313,10 +341,10 @@ export default function ImportExportPage() {
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <FolderInput className="h-4 w-4 text-primary" />
-            Importar configuración
+            {t("importTitle")}
           </CardTitle>
           <CardDescription className="text-xs">
-            Sube un archivo JSON exportado desde Takt Studio para crear un nuevo escenario.
+            {t("importDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -334,12 +362,12 @@ export default function ImportExportPage() {
             <FileJson className="h-8 w-8 text-muted-foreground/40" />
             <p className="text-sm font-medium text-muted-foreground">
               {importStatus.type === "validating"
-                ? "Validando archivo…"
+                ? t("dropValidating")
                 : importStatus.type === "valid"
-                ? "Archivo válido"
+                ? t("dropValid")
                 : importStatus.type === "invalid"
-                ? "Archivo no válido"
-                : "Arrastra un archivo JSON o haz clic para seleccionar"}
+                ? t("dropInvalid")
+                : t("dropIdle")}
             </p>
             <input
               ref={fileInputRef}
@@ -356,7 +384,7 @@ export default function ImportExportPage() {
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="h-4 w-4" />
-                Seleccionar archivo
+                {t("selectFile")}
               </Button>
             )}
           </div>
@@ -365,7 +393,9 @@ export default function ImportExportPage() {
           {importStatus.type === "invalid" && (
             <div className="flex items-center gap-2 rounded-md border border-red-200/60 bg-red-50/40 px-3 py-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
-              <p className="text-xs text-red-800/80">{importStatus.error}</p>
+              <p className="text-xs text-red-800/80">
+                {translateError((key, values) => t(`errors.${key}`, values), importStatus.error)}
+              </p>
             </div>
           )}
 
@@ -373,17 +403,17 @@ export default function ImportExportPage() {
             <>
               <div className="flex items-center gap-2 rounded-md border border-green-200/60 bg-green-50/40 px-3 py-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <p className="text-xs text-green-800/80">Archivo válido listo para importar.</p>
+                <p className="text-xs text-green-800/80">{t("validReady")}</p>
               </div>
 
               <ImportPreview payload={importStatus.payload} />
 
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">
-                  Nombre del escenario importado (opcional)
+                  {t("importNameLabel")}
                 </label>
                 <Input
-                  placeholder="Dejar en blanco para usar el nombre original"
+                  placeholder={t("importNamePlaceholder")}
                   value={importName}
                   onChange={(e) => setImportName(e.target.value)}
                   className="h-9 text-sm"
@@ -393,10 +423,10 @@ export default function ImportExportPage() {
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" className="gap-1.5" onClick={handleImport}>
                   <ArrowLeftRight className="h-4 w-4" />
-                  Importar como nuevo escenario
+                  {t("importButton")}
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleResetImport}>
-                  Cancelar
+                  {t("cancel")}
                 </Button>
               </div>
             </>
@@ -407,24 +437,24 @@ export default function ImportExportPage() {
               <div className="flex items-center gap-2 rounded-md border border-green-200/60 bg-green-50/40 px-3 py-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
                 <p className="text-xs text-green-800/80">
-                  Escenario &quot;{importStatus.scenarioName}&quot; importado correctamente.
+                  {t("successMessage", { name: importStatus.scenarioName })}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" className="gap-1.5" asChild>
                   <Link href="/simulador">
-                    Ir al simulador
+                    {t("goToSimulator")}
                     <ArrowRight className="h-3 w-3" />
                   </Link>
                 </Button>
                 <Button variant="outline" size="sm" className="gap-1.5" asChild>
                   <Link href="/comparar">
-                    Ir al comparador
+                    {t("goToCompare")}
                     <ArrowRight className="h-3 w-3" />
                   </Link>
                 </Button>
                 <Button variant="ghost" size="sm" onClick={handleResetImport}>
-                  Importar otro
+                  {t("importAnother")}
                 </Button>
               </div>
             </div>
@@ -437,12 +467,9 @@ export default function ImportExportPage() {
         <div className="flex items-start gap-3">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
           <div className="space-y-1">
-            <p className="text-sm font-medium">¿Cómo funciona?</p>
+            <p className="text-sm font-medium">{t("helpTitle")}</p>
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Los archivos JSON te permiten mover configuraciones entre sesiones, navegadores o dispositivos.
-              Al importar, se generan nuevos identificadores automáticamente: el escenario importado es
-              independiente y nunca sobrescribe los existentes. Puedes importar el mismo archivo tantas
-              veces como necesites, creando una copia nueva en cada ocasión.
+              {t("helpText")}
             </p>
           </div>
         </div>

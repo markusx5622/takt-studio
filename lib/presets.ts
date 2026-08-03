@@ -26,7 +26,7 @@ export type PresetNames = {
   stationNames: string[]
 }
 
-function detectLocale(): "es" | "en" {
+export function detectLocale(): "es" | "en" {
   if (typeof document !== "undefined" && document.documentElement.lang === "en") {
     return "en"
   }

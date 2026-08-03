@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs } from "@/lib/calculations"
@@ -25,9 +26,9 @@ import ConsultingBackground from "@/components/ConsultingBackground"
 
 // ─── Format helpers ────────────────────────────────────────────────────────────
 
-function fmtDate(iso: string) {
+function fmtDate(iso: string, locale: string) {
   const d = new Date(iso)
-  return d.toLocaleString("es-ES", {
+  return d.toLocaleString(locale, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -69,6 +70,8 @@ function SnapshotCard({
   onRestore: () => void
   onDelete: () => void
 }) {
+  const t = useTranslations("history")
+  const locale = useLocale()
   const meta = useSnapshotMeta(snapshot)
 
   return (
@@ -86,39 +89,39 @@ function SnapshotCard({
           className="absolute right-3 top-3 border-primary/30 bg-primary/10 text-[10px] text-primary"
         >
           <Flag className="mr-1 h-2.5 w-2.5" />
-          Baseline
+          {t("baseline")}
         </Badge>
       )}
 
       {/* Header */}
       <div className="pr-16">
         <h3 className="text-sm font-semibold leading-tight">{snapshot.name}</h3>
-        <p className="mt-0.5 text-[11px] text-muted-foreground">{fmtDate(snapshot.createdAt)}</p>
+        <p className="mt-0.5 text-[11px] text-muted-foreground">{fmtDate(snapshot.createdAt, locale)}</p>
       </div>
 
       {/* Metadata */}
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div className="rounded-md border bg-muted/20 px-2 py-1.5">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Estaciones
+            {t("metaStations")}
           </span>
           <p className="text-xs font-semibold">{meta.stationsCount}</p>
         </div>
         <div className="rounded-md border bg-muted/20 px-2 py-1.5">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Demanda
+            {t("metaDemand")}
           </span>
-          <p className="text-xs font-semibold">{meta.demand} uds</p>
+          <p className="text-xs font-semibold">{meta.demand} {t("unitsUds")}</p>
         </div>
         <div className="rounded-md border bg-muted/20 px-2 py-1.5">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Throughput
+            {t("metaThroughput")}
           </span>
-          <p className="text-xs font-semibold">{meta.throughput} uds</p>
+          <p className="text-xs font-semibold">{meta.throughput} {t("unitsUds")}</p>
         </div>
         <div className="rounded-md border bg-muted/20 px-2 py-1.5">
           <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
-            Bottleneck
+            {t("metaBottleneck")}
           </span>
           <p className="truncate text-xs font-semibold" title={meta.bottleneck}>
             {meta.bottleneck}
@@ -131,12 +134,12 @@ function SnapshotCard({
         {meta.meetsDemand ? (
           <span className="inline-flex items-center gap-1 text-[10px] font-medium text-green-600">
             <CheckCircle2 className="h-3 w-3" />
-            Cumple demanda
+            {t("meetsDemand")}
           </span>
         ) : (
           <span className="inline-flex items-center gap-1 text-[10px] font-medium text-red-600">
             <AlertTriangle className="h-3 w-3" />
-            No cumple demanda
+            {t("missesDemand")}
           </span>
         )}
       </div>
@@ -150,7 +153,7 @@ function SnapshotCard({
           onClick={onBaseline}
         >
           <Flag className="h-3 w-3" />
-          {snapshot.isBaseline ? "Quitar baseline" : "Baseline"}
+          {snapshot.isBaseline ? t("removeBaseline") : t("baseline")}
         </Button>
         <Button
           variant="ghost"
@@ -159,7 +162,7 @@ function SnapshotCard({
           onClick={onRestore}
         >
           <RotateCcw className="h-3 w-3" />
-          Restaurar
+          {t("restore")}
         </Button>
         <Button
           variant="ghost"
@@ -171,7 +174,7 @@ function SnapshotCard({
           onClick={onToggleSelect}
         >
           <GitCompare className="h-3 w-3" />
-          {isSelected ? "Seleccionado" : "Comparar"}
+          {isSelected ? t("selected") : t("compare")}
         </Button>
         <Button
           variant="ghost"
@@ -210,6 +213,8 @@ function HistorialSkeleton() {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function HistorialPage() {
+  const t = useTranslations("history")
+  const locale = useLocale()
   const hydrated = useHydrated()
   const scenarios = useTaktStore((s) => s.scenarios)
   const activeScenarioId = useTaktStore((s) => s.activeScenarioId)
@@ -245,9 +250,9 @@ export default function HistorialPage() {
       <ConsultingBackground />
       <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 pt-2 pb-8">
         <div className="page-header-rule pb-4 mb-2">
-          <h1 className="text-2xl font-bold tracking-tight">Historial de escenarios</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Guarda snapshots, establece referencias base y restaura versiones anteriores.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -256,7 +261,7 @@ export default function HistorialPage() {
         <CardContent className="pt-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Escenario activo</label>
+              <label className="text-xs font-medium text-muted-foreground">{t("activeScenario")}</label>
               <div className="flex items-center gap-2">
                 <select
                   value={activeScenarioId}
@@ -273,7 +278,7 @@ export default function HistorialPage() {
                   href="/simulador"
                   className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                 >
-                  Ir al simulador
+                  {t("goToSimulator")}
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -282,7 +287,7 @@ export default function HistorialPage() {
             {activeScenario && activeScenario.stations.length > 0 && (
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
                 <Input
-                  placeholder="Nombre del snapshot (opcional)"
+                  placeholder={t("snapshotNamePlaceholder")}
                   value={snapshotName}
                   onChange={(e) => setSnapshotName(e.target.value)}
                   className="h-9 text-sm sm:w-64"
@@ -300,7 +305,7 @@ export default function HistorialPage() {
                   }}
                 >
                   <Camera className="h-4 w-4" />
-                  Guardar snapshot
+                  {t("saveSnapshot")}
                 </Button>
               </div>
             )}
@@ -310,7 +315,7 @@ export default function HistorialPage() {
             <div className="mt-3 flex items-center gap-2 rounded-md border border-amber-200/60 bg-amber-50/40 px-3 py-2">
               <AlertTriangle className="h-4 w-4 text-amber-600" />
               <p className="text-xs text-amber-800/80">
-                El escenario activo no tiene estaciones definidas. Ve al simulador para configurar la línea antes de guardar snapshots.
+                {t("noStationsWarning")}
               </p>
             </div>
           )}
@@ -323,7 +328,7 @@ export default function HistorialPage() {
           <div className="flex items-center gap-2">
             <GitCompare className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium">
-              Snapshot seleccionado para comparar
+              {t("selectedForCompare")}
             </span>
             <Badge variant="outline" className="text-[10px]">
               {snapshots.find((s) => s.id === selectedSnapshotId)?.name}
@@ -335,7 +340,7 @@ export default function HistorialPage() {
             className="gap-1.5 text-xs"
             onClick={() => setSelectedSnapshotId(null)}
           >
-            Cancelar
+            {t("cancel")}
           </Button>
         </div>
       )}
@@ -345,13 +350,13 @@ export default function HistorialPage() {
         <Card className="border-primary/20 bg-primary/[0.02]">
           <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-2">
             <Flag className="h-4 w-4 text-primary" />
-            <CardTitle className="text-sm">Baseline de referencia</CardTitle>
+            <CardTitle className="text-sm">{t("baselineTitle")}</CardTitle>
           </CardHeader>
           <CardContent className="pb-4 pt-0">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold">{baselineSnapshot.name}</p>
-                <p className="text-xs text-muted-foreground">{fmtDate(baselineSnapshot.createdAt)}</p>
+                <p className="text-xs text-muted-foreground">{fmtDate(baselineSnapshot.createdAt, locale)}</p>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -361,7 +366,7 @@ export default function HistorialPage() {
                   onClick={() => restoreSnapshotAsScenario(baselineSnapshot.id)}
                 >
                   <RotateCcw className="h-3 w-3" />
-                  Restaurar
+                  {t("restore")}
                 </Button>
               </div>
             </div>
@@ -374,9 +379,9 @@ export default function HistorialPage() {
         <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border bg-muted/20 text-center">
           <History className="h-10 w-10 text-muted-foreground/30" />
           <div>
-            <p className="text-sm font-medium text-muted-foreground">Sin snapshots</p>
+            <p className="text-sm font-medium text-muted-foreground">{t("emptyTitle")}</p>
             <p className="text-xs text-muted-foreground/70">
-              Guarda un snapshot del escenario activo para empezar a construir el historial.
+              {t("emptyText")}
             </p>
           </div>
         </div>
@@ -401,7 +406,7 @@ export default function HistorialPage() {
               onBaseline={() => setBaselineSnapshot(snapshot.id)}
               onRestore={() => restoreSnapshotAsScenario(snapshot.id)}
               onDelete={() => {
-                if (confirm(`¿Eliminar el snapshot "${snapshot.name}"?`)) {
+                if (confirm(t("deleteConfirm", { name: snapshot.name }))) {
                   removeSnapshot(snapshot.id)
                   if (selectedSnapshotId === snapshot.id) setSelectedSnapshotId(null)
                 }

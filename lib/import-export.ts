@@ -4,10 +4,18 @@ import { normalizeEconomics } from "@/lib/calculations"
 const APP_VERSION = "0.1.0"
 
 // ─── Result type for validation ────────────────────────────────────────────────
+// i18n: la capa lib devuelve CÓDIGOS de error (+ valores opcionales), no texto.
+// La UI traduce con el namespace "importExport.errors".
+
+export type ValidationError = {
+  code: string
+  values?: Record<string, string | number>
+  inner?: ValidationError
+}
 
 type ValidationResult =
   | { success: true; payload: ExportPayload }
-  | { success: false; error: string }
+  | { success: false; error: ValidationError }
 
 // ─── Guard helpers ─────────────────────────────────────────────────────────────
 
@@ -33,24 +41,24 @@ function isArray(value: unknown): value is unknown[] {
 
 // ─── Station validation ────────────────────────────────────────────────────────
 
-function validateStation(raw: unknown): { valid: true; station: Station } | { valid: false; reason: string } {
+function validateStation(raw: unknown): { valid: true; station: Station } | { valid: false; reason: ValidationError } {
   if (!isObject(raw)) {
-    return { valid: false, reason: "Una estación no es un objeto válido" }
+    return { valid: false, reason: { code: "stationNotObject" } }
   }
 
   const name = raw.name
   if (!isString(name) || name.trim().length === 0) {
-    return { valid: false, reason: "Una estación no tiene nombre válido" }
+    return { valid: false, reason: { code: "stationInvalidName" } }
   }
 
   const cycleTimeMin = raw.cycleTimeMin
   if (!isNumber(cycleTimeMin) || cycleTimeMin < 0) {
-    return { valid: false, reason: `La estación "${name}" no tiene un tiempo de ciclo válido` }
+    return { valid: false, reason: { code: "stationInvalidCycle", values: { name } } }
   }
 
   const operators = raw.operators
   if (!isNumber(operators) || operators < 1 || !Number.isInteger(operators)) {
-    return { valid: false, reason: `La estación "${name}" no tiene un número de operarios válido` }
+    return { valid: false, reason: { code: "stationInvalidOperators", values: { name } } }
   }
 
   const station: Station = {
@@ -66,19 +74,19 @@ function validateStation(raw: unknown): { valid: true; station: Station } | { va
 
 // ─── Scenario validation ───────────────────────────────────────────────────────
 
-function validateScenarioData(raw: unknown): { valid: true; scenario: Scenario } | { valid: false; reason: string } {
+function validateScenarioData(raw: unknown): { valid: true; scenario: Scenario } | { valid: false; reason: ValidationError } {
   if (!isObject(raw)) {
-    return { valid: false, reason: "El escenario no es un objeto válido" }
+    return { valid: false, reason: { code: "scenarioNotObject" } }
   }
 
   const name = raw.name
   if (!isString(name) || name.trim().length === 0) {
-    return { valid: false, reason: "El escenario no tiene un nombre válido" }
+    return { valid: false, reason: { code: "scenarioInvalidName" } }
   }
 
   const stationsRaw = raw.stations
   if (!isArray(stationsRaw)) {
-    return { valid: false, reason: "El escenario no contiene un array de estaciones" }
+    return { valid: false, reason: { code: "scenarioNoStationsArray" } }
   }
 
   const stations: Station[] = []
@@ -112,15 +120,15 @@ function validateScenarioData(raw: unknown): { valid: true; scenario: Scenario }
 
 // ─── Snapshot validation ───────────────────────────────────────────────────────
 
-function validateSnapshotData(raw: unknown): { valid: true; snapshot: ScenarioSnapshot } | { valid: false; reason: string } {
+function validateSnapshotData(raw: unknown): { valid: true; snapshot: ScenarioSnapshot } | { valid: false; reason: ValidationError } {
   if (!isObject(raw)) {
-    return { valid: false, reason: "El snapshot no es un objeto válido" }
+    return { valid: false, reason: { code: "snapshotNotObject" } }
   }
 
   const scenarioDataRaw = raw.scenarioData
   const scenarioResult = validateScenarioData(scenarioDataRaw)
   if (!scenarioResult.valid) {
-    return { valid: false, reason: `Datos de escenario dentro del snapshot inválidos: ${scenarioResult.reason}` }
+    return { valid: false, reason: { code: "snapshotInvalidScenarioData", inner: scenarioResult.reason } }
   }
 
   const name = isString(raw.name) && raw.name.trim().length > 0 ? raw.name.trim() : scenarioResult.scenario.name
@@ -145,12 +153,12 @@ function validateSnapshotData(raw: unknown): { valid: true; snapshot: ScenarioSn
 
 export function validateExportPayload(raw: unknown): ValidationResult {
   if (!isObject(raw)) {
-    return { success: false, error: "El archivo no contiene un objeto JSON válido" }
+    return { success: false, error: { code: "notJsonObject" } }
   }
 
   const exportType = raw.exportType
   if (exportType !== "scenario" && exportType !== "snapshot") {
-    return { success: false, error: "Tipo de exportación desconocido. Se esperaba 'scenario' o 'snapshot'." }
+    return { success: false, error: { code: "unknownExportType" } }
   }
 
   const exportedAt = isString(raw.exportedAt) ? raw.exportedAt : new Date().toISOString()

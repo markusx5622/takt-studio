@@ -101,7 +101,7 @@ describe("validateExportPayload", () => {
     const result = validateExportPayload("not an object")
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error).toContain("no contiene un objeto JSON válido")
+      expect(result.error.code).toBe("notJsonObject")
     }
   })
 
@@ -109,7 +109,7 @@ describe("validateExportPayload", () => {
     const result = validateExportPayload({ scenario: makeValidScenario() })
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error).toContain("Tipo de exportación desconocido")
+      expect(result.error.code).toBe("unknownExportType")
     }
   })
 
@@ -122,7 +122,7 @@ describe("validateExportPayload", () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error).toContain("no contiene un array de estaciones")
+      expect(result.error.code).toBe("scenarioNoStationsArray")
     }
   })
 
@@ -141,7 +141,7 @@ describe("validateExportPayload", () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error).toContain("no tiene nombre válido")
+      expect(result.error.code).toBe("stationInvalidName")
     }
   })
 
@@ -160,7 +160,8 @@ describe("validateExportPayload", () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error).toContain("no tiene un tiempo de ciclo válido")
+      expect(result.error.code).toBe("stationInvalidCycle")
+      expect(result.error.values?.name).toBe("Estación A")
     }
   })
 
@@ -179,7 +180,8 @@ describe("validateExportPayload", () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error).toContain("no tiene un número de operarios válido")
+      expect(result.error.code).toBe("stationInvalidOperators")
+      expect(result.error.values?.name).toBe("Estación A")
     }
   })
 
@@ -258,7 +260,8 @@ describe("validateExportPayload", () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error).toContain("inválidos")
+      expect(result.error.code).toBe("snapshotInvalidScenarioData")
+      expect(result.error.inner?.code).toBe("scenarioNoStationsArray")
     }
   })
 })
