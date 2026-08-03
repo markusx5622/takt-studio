@@ -9,7 +9,7 @@
 //  - Resto de estáticos same-origin (public/): stale-while-revalidate.
 // Versionar CACHE_VERSION al cambiar el shell precacheado o esta lógica.
 
-const CACHE_VERSION = "v1"
+const CACHE_VERSION = "v2"
 const PRECACHE = `takt-precache-${CACHE_VERSION}`
 const RUNTIME = `takt-runtime-${CACHE_VERSION}`
 
@@ -21,6 +21,7 @@ const PRECACHE_URLS = [
   "/maskable-icon-512.png",
   "/favicon.svg",
   "/favicon.png",
+  "/apple-touch-icon.png",
 ]
 
 // Variantes de URL bajo las que el middleware puede haber servido una ruta:
