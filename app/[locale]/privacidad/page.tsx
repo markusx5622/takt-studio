@@ -31,6 +31,7 @@ export default async function PrivacyPage({
 
   const t = await getTranslations("privacidad")
   const cards = t.raw("cards") as { title: string; text: string }[]
+  const sections = t.raw("sections") as { t: string; p: string[] }[]
 
   return (
     <div className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-20 overflow-hidden">
@@ -40,7 +41,7 @@ export default async function PrivacyPage({
       <ConsultingBackground />
 
       {/* Glow effects */}
-      <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 bg-hero-glow z-0" />
+      <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-hero-glow z-0" />
 
       <div className="relative z-10 w-full max-w-4xl space-y-12">
         <div className="flex flex-col items-center text-center space-y-4">
@@ -51,6 +52,7 @@ export default async function PrivacyPage({
           <p className="text-lg text-muted-foreground max-w-2xl">
             {t("subtitle")}
           </p>
+          <p className="text-xs text-foreground/50">{t("updated")}</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -74,14 +76,16 @@ export default async function PrivacyPage({
             {t("treatmentTitle")}
           </h2>
           <div className="space-y-6 text-sm text-foreground/70 leading-relaxed">
-            <section>
-              <h3 className="font-bold text-foreground mb-2">{t("sec1Title")}</h3>
-              <p>{t("sec1Text")}</p>
-            </section>
-            <section>
-              <h3 className="font-bold text-foreground mb-2">{t("sec2Title")}</h3>
-              <p>{t("sec2Text")}</p>
-            </section>
+            {sections.map((section, i) => (
+              <section key={i}>
+                <h3 className="font-bold text-foreground mb-2">{section.t}</h3>
+                {section.p.map((paragraph, j) => (
+                  <p key={j} className={j > 0 ? "mt-3" : undefined}>
+                    {paragraph}
+                  </p>
+                ))}
+              </section>
+            ))}
           </div>
         </div>
 

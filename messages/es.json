@@ -282,27 +282,37 @@
   },
   "legal": {
     "metaTitle": "Aviso Legal | Takt Studio",
-    "metaDescription": "Información legal y términos de uso de Takt Studio.",
+    "metaDescription": "Información legal, términos de uso, propiedad intelectual y jurisdicción de Takt Studio.",
     "title": "Aviso Legal",
     "subtitle": "Términos de uso, responsabilidad y cumplimiento normativo de Takt Studio.",
-    "s1Title": "Información General",
+    "updated": "Última actualización: 3 de agosto de 2026",
+    "s1Title": "1. Información General",
     "s1p1": "Takt Studio es una plataforma de simulación industrial desarrollada como herramienta de apoyo a la ingeniería de organización industrial.",
     "s1holder": "Titular:",
     "s1location": "Ubicación:",
     "s1contact": "Contacto:",
-    "s2Title": "Uso de la Herramienta",
-    "s2p1": "Takt Studio es un prototipo con fines educativos y profesionales de simulación. Los resultados son estimaciones basadas en modelos matemáticos de producción.",
-    "s2p2": "La herramienta se proporciona \"tal cual\", sin garantías de que los resultados se trasladen idénticamente a la producción física real.",
-    "s3Title": "Propiedad Intelectual",
+    "s2Title": "2. Objeto y Condiciones de Uso",
+    "s2p1": "Takt Studio es una herramienta de simulación y análisis de líneas de producción con fines educativos y profesionales. Los resultados son estimaciones basadas en modelos matemáticos estándar de organización industrial.",
+    "s2p2": "La herramienta se proporciona \"tal cual\", sin garantía alguna de que los resultados se trasladen idénticamente a la producción física real. Las decisiones de ingeniería e inversión basadas en estas simulaciones son responsabilidad exclusiva del usuario: Takt Studio es una ayuda a la toma de decisiones, no un sustituto del juicio profesional.",
+    "s2p3": "El uso de la aplicación es gratuito y no requiere registro. El usuario se compromete a hacer un uso lícito de la herramienta y a no intentar comprometer la seguridad o la disponibilidad del servicio.",
+    "s3Title": "3. Propiedad Intelectual",
     "s3p1": "El código fuente, diseño de interfaz y algoritmos de simulación son propiedad de Takt Studio y su desarrollador. Queda prohibida la reproducción total o parcial sin autorización expresa.",
     "s3p2": "Takt Studio utiliza tecnologías de código abierto (Next.js, Tailwind CSS, Lucide) bajo sus respectivas licencias MIT y Apache 2.0.",
+    "s4Title": "4. Independencia Institucional y Marcas de Terceros",
+    "s4p1": "Takt Studio es un proyecto académico personal desarrollado por su titular en el ámbito formativo de la Ingeniería de Organización Industrial de la Universidad Europea de Valencia. No es un producto ni un servicio oficial de la Universidad Europea ni de Porcelanosa, y ninguna de ambas entidades respalda, patrocina o se responsabiliza de esta herramienta.",
+    "s4p2": "Las denominaciones de terceros que puedan aparecer (incluidas las referencias a la línea \"Monobath\" como caso de estudio) se utilizan con fines estrictamente nominativos y descriptivos. Todas las marcas mencionadas pertenecen a sus respectivos titulares.",
+    "s5Title": "5. Enlaces Externos",
+    "s5p1": "Esta aplicación contiene enlaces a sitios web de terceros (GitHub, LinkedIn, Universidad Europea de Valencia, Porcelanosa). El titular no controla ni se responsabiliza de sus contenidos, políticas o prácticas.",
+    "s6Title": "6. Legislación Aplicable y Jurisdicción",
+    "s6p1": "El presente aviso legal se rige por la legislación española. Para cualquier controversia derivada del acceso o del uso de esta aplicación, las partes se someten a los juzgados y tribunales de Valencia (España), salvo que la normativa aplicable establezca imperativamente otro fuero.",
     "back": "Volver al inicio"
   },
   "privacidad": {
     "metaTitle": "Política de Privacidad | Takt Studio",
-    "metaDescription": "Cómo tratamos tus datos en Takt Studio.",
+    "metaDescription": "Cómo tratamos tus datos en Takt Studio: almacenamiento local, cookie de idioma, Vercel y tus derechos RGPD.",
     "title": "Privacidad",
     "subtitle": "Tus datos de ingeniería son tuyos. Transparencia total sobre el tratamiento de información.",
+    "updated": "Última actualización: 3 de agosto de 2026",
     "cards": [
       {
         "title": "Privacidad por Diseño",
@@ -317,11 +327,76 @@
         "text": "La persistencia de datos utiliza el almacenamiento local de tu navegador (localStorage)."
       }
     ],
-    "treatmentTitle": "Tratamiento de Datos",
-    "sec1Title": "1. Datos Recopilados",
-    "sec1Text": "Takt Studio no recopila datos personales identificables. Los datos técnicos introducidos en el simulador (tiempos de ciclo, nombres de estaciones) permanecen exclusivamente en el dispositivo del usuario.",
-    "sec2Title": "2. Analítica de Uso",
-    "sec2Text": "Podemos utilizar herramientas de analítica anónima para entender el rendimiento técnico de la aplicación y mejorar la experiencia de usuario, sin vincular nunca esta información a personas físicas.",
+    "treatmentTitle": "Información sobre el Tratamiento de Datos (RGPD)",
+    "sections": [
+      {
+        "t": "1. Responsable del tratamiento",
+        "p": [
+          "El responsable del tratamiento de los datos es Marc Cubero Cantavella, con residencia en Valencia (España), titular y desarrollador de Takt Studio.",
+          "El canal de contacto para cualquier cuestión de privacidad es el gestor de incidencias (Issues) del repositorio público del proyecto en GitHub. Dada la naturaleza personal y sin ánimo de lucro del proyecto, no se ha designado delegado de protección de datos."
+        ]
+      },
+      {
+        "t": "2. Qué datos se tratan y dónde se almacenan",
+        "p": [
+          "Takt Studio no recopila ni recibe datos personales identificables. Todos los datos que introduces en el simulador (nombres de estaciones, tiempos de ciclo, operarios, tasas de fallo, parámetros económicos, escenarios, snapshots y preferencias de configuración) se almacenan exclusivamente en el almacenamiento local (localStorage) de tu navegador, en tu propio dispositivo.",
+          "Estos datos nunca se transmiten al titular ni a terceros: toda la computación ocurre en tu navegador. Si compartes un escenario mediante enlace, la configuración viaja codificada dentro de la propia URL y solo la recibe la persona a quien tú decidas enviársela.",
+          "Puedes eliminar todos tus datos en cualquier momento usando la opción de restablecimiento de la propia aplicación o borrando los datos del sitio desde la configuración de tu navegador."
+        ]
+      },
+      {
+        "t": "3. Cookie técnica de idioma",
+        "p": [
+          "La aplicación utiliza una única cookie, NEXT_LOCALE, que recuerda tu preferencia de idioma (español o inglés) durante un máximo de un año. Es una cookie estrictamente necesaria para prestar el servicio solicitado, por lo que está exenta de consentimiento conforme al artículo 22.2 de la Ley 34/2002 (LSSI-CE).",
+          "No se utilizan cookies de publicidad, de seguimiento ni de terceros."
+        ]
+      },
+      {
+        "t": "4. Service Worker y caché local",
+        "p": [
+          "Para funcionar sin conexión, la aplicación instala un Service Worker que guarda copias temporales de las páginas y los recursos en la caché de tu dispositivo. Esta caché no contiene más información que la propia aplicación y tus datos locales, y puedes eliminarla en cualquier momento borrando los datos del sitio en tu navegador."
+        ]
+      },
+      {
+        "t": "5. Alojamiento: Vercel (encargado del tratamiento)",
+        "p": [
+          "La aplicación se sirve desde la plataforma Vercel (Vercel Inc., Estados Unidos). Al visitar cualquier página, sus servidores procesan de forma automática datos técnicos de conexión —dirección IP, agente de usuario, fecha y hora, URL solicitada— en registros (logs) con fines de seguridad, rendimiento y operación del servicio, conforme a la política de privacidad de Vercel.",
+          "Vercel actúa como encargado del tratamiento y las eventuales transferencias internacionales de datos se amparan en el Marco de Privacidad de Datos UE-EE.UU. (EU-U.S. Data Privacy Framework) y/o en cláusulas contractuales tipo aprobadas por la Comisión Europea."
+        ]
+      },
+      {
+        "t": "6. Analítica de uso: Vercel Analytics",
+        "p": [
+          "Utilizamos Vercel Analytics y Speed Insights para obtener métricas agregadas de uso (páginas vistas, referentes) y de rendimiento (Web Vitals). Estas herramientas no utilizan cookies, no recopilan datos personales identificables ni generan perfiles individuales: toda la información es anónima y agregada.",
+          "Al no emplearse cookies ni identificadores personales, esta analítica no requiere banner de consentimiento."
+        ]
+      },
+      {
+        "t": "7. Base jurídica del tratamiento",
+        "p": [
+          "La base jurídica del tratamiento de los datos técnicos de conexión y de la analítica agregada es el interés legítimo (art. 6.1.f del RGPD) en operar, proteger y mejorar la aplicación. Los datos de tus simulaciones no son objeto de tratamiento por el titular, ya que nunca abandonan tu dispositivo."
+        ]
+      },
+      {
+        "t": "8. Tus derechos",
+        "p": [
+          "Tienes derecho de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad (arts. 15 a 22 del RGPD). En la práctica, dado que tus datos de simulación residen únicamente en tu dispositivo, puedes ejercer la mayoría de estos derechos directamente borrándolos desde tu navegador.",
+          "Para cualquier solicitud o consulta puedes abrir una incidencia en el repositorio del proyecto en GitHub. También tienes derecho a reclamar ante la Agencia Española de Protección de Datos (www.aepd.es) si consideras que el tratamiento no se ajusta a la normativa."
+        ]
+      },
+      {
+        "t": "9. Enlaces a sitios de terceros",
+        "p": [
+          "La aplicación enlaza a sitios de terceros (GitHub, LinkedIn, Universidad Europea de Valencia y Porcelanosa) que disponen de sus propias políticas de privacidad. El titular no se responsabiliza de las prácticas de tratamiento de datos de dichos sitios."
+        ]
+      },
+      {
+        "t": "10. Cambios en esta política",
+        "p": [
+          "Esta política puede actualizarse para reflejar cambios en la aplicación o en la normativa. La versión vigente, con su fecha de última actualización, estará siempre disponible en esta página, y los cambios relevantes se anunciarán en el repositorio del proyecto."
+        ]
+      }
+    ],
     "back": "Volver al inicio"
   },
   "metodologia": {

@@ -282,27 +282,37 @@
   },
   "legal": {
     "metaTitle": "Legal Notice | Takt Studio",
-    "metaDescription": "Legal information and terms of use of Takt Studio.",
+    "metaDescription": "Legal information, terms of use, intellectual property and jurisdiction of Takt Studio.",
     "title": "Legal Notice",
     "subtitle": "Terms of use, liability and regulatory compliance of Takt Studio.",
-    "s1Title": "General Information",
+    "updated": "Last updated: August 3, 2026",
+    "s1Title": "1. General Information",
     "s1p1": "Takt Studio is an industrial simulation platform developed as a support tool for industrial organization engineering.",
     "s1holder": "Owner:",
     "s1location": "Location:",
     "s1contact": "Contact:",
-    "s2Title": "Use of the Tool",
-    "s2p1": "Takt Studio is a prototype for educational and professional simulation purposes. Results are estimates based on mathematical production models.",
-    "s2p2": "The tool is provided \"as is\", with no guarantee that results will translate identically to real physical production.",
-    "s3Title": "Intellectual Property",
+    "s2Title": "2. Purpose and Terms of Use",
+    "s2p1": "Takt Studio is a production line simulation and analysis tool for educational and professional purposes. Results are estimates based on standard mathematical models of industrial organization.",
+    "s2p2": "The tool is provided \"as is\", with no guarantee that results will translate identically to real physical production. Engineering and investment decisions based on these simulations are the sole responsibility of the user: Takt Studio is a decision-support tool, not a substitute for professional judgment.",
+    "s2p3": "Use of the application is free of charge and requires no registration. The user agrees to make lawful use of the tool and not to attempt to compromise the security or availability of the service.",
+    "s3Title": "3. Intellectual Property",
     "s3p1": "The source code, interface design and simulation algorithms are the property of Takt Studio and its developer. Total or partial reproduction without express authorization is prohibited.",
     "s3p2": "Takt Studio uses open-source technologies (Next.js, Tailwind CSS, Lucide) under their respective MIT and Apache 2.0 licenses.",
+    "s4Title": "4. Institutional Independence and Third-Party Trademarks",
+    "s4p1": "Takt Studio is a personal academic project developed by its owner within the educational context of Industrial Organization Engineering at Universidad Europea de Valencia. It is not an official product or service of Universidad Europea or Porcelanosa, and neither entity endorses, sponsors or is responsible for this tool.",
+    "s4p2": "Any third-party names that may appear (including references to the \"Monobath\" line as a case study) are used strictly for nominative and descriptive purposes. All mentioned trademarks belong to their respective owners.",
+    "s5Title": "5. External Links",
+    "s5p1": "This application contains links to third-party websites (GitHub, LinkedIn, Universidad Europea de Valencia, Porcelanosa). The owner does not control and is not responsible for their content, policies or practices.",
+    "s6Title": "6. Applicable Law and Jurisdiction",
+    "s6p1": "This legal notice is governed by Spanish law. For any dispute arising from access to or use of this application, the parties submit to the courts of Valencia (Spain), unless applicable law imperatively establishes a different jurisdiction.",
     "back": "Back to home"
   },
   "privacidad": {
     "metaTitle": "Privacy Policy | Takt Studio",
-    "metaDescription": "How we handle your data in Takt Studio.",
+    "metaDescription": "How we handle your data in Takt Studio: local storage, language cookie, Vercel and your GDPR rights.",
     "title": "Privacy",
     "subtitle": "Your engineering data is yours. Full transparency about information handling.",
+    "updated": "Last updated: August 3, 2026",
     "cards": [
       {
         "title": "Privacy by Design",
@@ -317,11 +327,76 @@
         "text": "Data persistence uses your browser's local storage (localStorage)."
       }
     ],
-    "treatmentTitle": "Data Processing",
-    "sec1Title": "1. Data Collected",
-    "sec1Text": "Takt Studio does not collect personally identifiable data. The technical data entered in the simulator (cycle times, station names) remains exclusively on the user's device.",
-    "sec2Title": "2. Usage Analytics",
-    "sec2Text": "We may use anonymous analytics tools to understand the technical performance of the application and improve the user experience, never linking this information to physical persons.",
+    "treatmentTitle": "Data Processing Information (GDPR)",
+    "sections": [
+      {
+        "t": "1. Data controller",
+        "p": [
+          "The data controller is Marc Cubero Cantavella, based in Valencia (Spain), owner and developer of Takt Studio.",
+          "The contact channel for any privacy matter is the issue tracker (Issues) of the project's public repository on GitHub. Given the personal, non-commercial nature of the project, no data protection officer has been appointed."
+        ]
+      },
+      {
+        "t": "2. What data is processed and where it is stored",
+        "p": [
+          "Takt Studio does not collect or receive personally identifiable data. All data you enter into the simulator (station names, cycle times, operators, failure rates, economic parameters, scenarios, snapshots and configuration preferences) is stored exclusively in your browser's local storage (localStorage), on your own device.",
+          "This data is never transmitted to the owner or to third parties: all computation happens in your browser. If you share a scenario via link, the configuration travels encoded within the URL itself and is only received by the person you choose to send it to.",
+          "You can delete all your data at any time using the reset option in the application itself, or by clearing the site's data in your browser settings."
+        ]
+      },
+      {
+        "t": "3. Technical language cookie",
+        "p": [
+          "The application uses a single cookie, NEXT_LOCALE, which remembers your language preference (Spanish or English) for up to one year. It is a strictly necessary cookie to provide the requested service, and is therefore exempt from consent under Article 22.2 of Spanish Law 34/2002 (LSSI-CE).",
+          "No advertising, tracking or third-party cookies are used."
+        ]
+      },
+      {
+        "t": "4. Service Worker and local cache",
+        "p": [
+          "To work offline, the application installs a Service Worker that stores temporary copies of pages and assets in your device's cache. This cache contains no information beyond the application itself and your local data, and you can delete it at any time by clearing the site's data in your browser."
+        ]
+      },
+      {
+        "t": "5. Hosting: Vercel (data processor)",
+        "p": [
+          "The application is served from the Vercel platform (Vercel Inc., United States). When you visit any page, its servers automatically process technical connection data —IP address, user agent, date and time, requested URL— in logs for security, performance and service operation purposes, in accordance with Vercel's privacy policy.",
+          "Vercel acts as a data processor and any international data transfers are covered by the EU-U.S. Data Privacy Framework and/or standard contractual clauses approved by the European Commission."
+        ]
+      },
+      {
+        "t": "6. Usage analytics: Vercel Analytics",
+        "p": [
+          "We use Vercel Analytics and Speed Insights to obtain aggregate usage metrics (page views, referrers) and performance metrics (Web Vitals). These tools do not use cookies, do not collect personally identifiable data and do not build individual profiles: all information is anonymous and aggregated.",
+          "Since no cookies or personal identifiers are used, this analytics setup does not require a consent banner."
+        ]
+      },
+      {
+        "t": "7. Legal basis for processing",
+        "p": [
+          "The legal basis for processing technical connection data and aggregate analytics is legitimate interest (Art. 6.1.f GDPR) in operating, protecting and improving the application. Your simulation data is not processed by the owner, as it never leaves your device."
+        ]
+      },
+      {
+        "t": "8. Your rights",
+        "p": [
+          "You have the rights of access, rectification, erasure, objection, restriction of processing and portability (Arts. 15 to 22 GDPR). In practice, since your simulation data resides solely on your device, you can exercise most of these rights directly by deleting it from your browser.",
+          "For any request or inquiry you can open an issue in the project's repository on GitHub. You also have the right to lodge a complaint with the Spanish Data Protection Agency (www.aepd.es) if you believe the processing does not comply with the regulations."
+        ]
+      },
+      {
+        "t": "9. Links to third-party sites",
+        "p": [
+          "The application links to third-party sites (GitHub, LinkedIn, Universidad Europea de Valencia and Porcelanosa) which have their own privacy policies. The owner is not responsible for the data processing practices of those sites."
+        ]
+      },
+      {
+        "t": "10. Changes to this policy",
+        "p": [
+          "This policy may be updated to reflect changes in the application or in the law. The current version, with its last-updated date, will always be available on this page, and significant changes will be announced in the project's repository."
+        ]
+      }
+    ],
     "back": "Back to home"
   },
   "metodologia": {
