@@ -33,6 +33,7 @@ $svgContent
     Write-Host "Saved $PngFile"
 }
 
+Convert-SvgToPng "favicon.svg" "favicon.png" 512
 Convert-SvgToPng "favicon.svg" "icon-512.png" 512
 Convert-SvgToPng "favicon.svg" "icon-192.png" 192
 Convert-SvgToPng "maskable-icon.svg" "maskable-icon-512.png" 512
