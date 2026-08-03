@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { notFound } from "next/navigation"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { setRequestLocale, getTranslations } from "next-intl/server"
@@ -6,7 +6,12 @@ import { routing } from "@/i18n/routing"
 import "../globals.css"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import Header from "@/components/Header"
+import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar"
 import { Analytics } from "@vercel/analytics/react"
+
+export const viewport: Viewport = {
+  themeColor: "#2563EB",
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -88,6 +93,7 @@ export default async function LocaleLayout({
           <TooltipProvider>
             <Header />
             <main className="pb-16 md:pb-0">{children}</main>
+            <ServiceWorkerRegistrar />
           </TooltipProvider>
           <Analytics />
         </NextIntlClientProvider>
