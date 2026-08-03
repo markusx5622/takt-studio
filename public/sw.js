@@ -97,19 +97,23 @@ self.addEventListener("fetch", (event) => {
       caches.match(request).then(
         (cached) =>
           cached ||
-          fetch(request).then((response) => {
-            if (response.ok) {
-              const copy = response.clone()
-              caches.open(RUNTIME).then((cache) => cache.put(request, copy).catch(() => {}))
-            }
-            return response
-          })
+          fetch(request)
+            .then((response) => {
+              if (response.ok) {
+                const copy = response.clone()
+                caches.open(RUNTIME).then((cache) => cache.put(request, copy).catch(() => {}))
+              }
+              return response
+            })
+            .catch(() => Response.error())
       )
     )
     return
   }
 
-  // Resto de estáticos same-origin: stale-while-revalidate
+  // Resto de estáticos same-origin: stale-while-revalidate.
+  // Sin red y sin cache hay que devolver una Response válida (Response.error()):
+  // resolver undefined provoca "TypeError: Failed to convert value to 'Response'".
   event.respondWith(
     caches.match(request).then((cached) => {
       const network = fetch(request)
@@ -120,7 +124,7 @@ self.addEventListener("fetch", (event) => {
           }
           return response
         })
-        .catch(() => cached)
+        .catch(() => cached || Response.error())
       return cached || network
     })
   )
