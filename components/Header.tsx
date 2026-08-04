@@ -22,6 +22,7 @@ export default function Header() {
   const pathname = usePathname()
   const resetToPreset = useTaktStore((s) => s.resetToPreset)
   const otherLocale = locale === "es" ? "en" : "es"
+  const isAppRoute = navLinks.some((link) => link.href === pathname || pathname.startsWith(link.href))
 
   function handleReset() {
     if (confirm(t("resetConfirm"))) {
@@ -45,7 +46,7 @@ export default function Header() {
     <>
       <header className={cn(
         "sticky top-0 z-50 h-16 w-full border-b transition-colors backdrop-blur-md",
-        pathname === "/" ? "bg-background/80" : "bg-white"
+        !isAppRoute ? "bg-background/80" : "bg-white"
       )}>
         <div className="flex h-full items-center px-4">
           <Link
@@ -56,7 +57,7 @@ export default function Header() {
             <BrandLogo variant="mark" className="h-9 w-auto md:hidden" />
           </Link>
 
-          {pathname !== "/" && (
+          {isAppRoute && (
             <nav className="hidden flex-1 justify-center gap-2 md:flex">
               {navLinks.map(({ href, key }) => (
                 <Link
@@ -76,7 +77,7 @@ export default function Header() {
             </nav>
           )}
 
-          {pathname === "/" ? (
+          {!isAppRoute ? (
             <div className="ml-auto">{languageToggle}</div>
           ) : (
             <div className="ml-auto flex items-center gap-2">
@@ -95,7 +96,7 @@ export default function Header() {
         </div>
       </header>
 
-      {pathname !== "/" && (
+      {isAppRoute && (
         <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-white pb-safe md:hidden">
           {navLinks.map(({ href, key, icon: Icon }) => (
             <Link
