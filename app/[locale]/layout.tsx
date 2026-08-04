@@ -8,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import Header from "@/components/Header"
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar"
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const viewport: Viewport = {
   themeColor: "#2563EB",
@@ -99,6 +100,7 @@ export default async function LocaleLayout({
             <ServiceWorkerRegistrar />
           </TooltipProvider>
           <Analytics />
+          <SpeedInsights />
         </NextIntlClientProvider>
       </body>
     </html>
