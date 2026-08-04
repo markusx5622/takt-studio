@@ -818,6 +818,8 @@
       "secExecutive": "1. EXECUTIVE SUMMARY",
       "execPass": "The production line MEETS the daily target demand of {demand} units with a projected capacity of {throughput} units/day (+{delta} units margin). The critical station is '{bottleneck}' with an effective cycle time of {bottleneckTime} min. Overall line balancing efficiency stands at {efficiency}%.",
       "execFail": "The production line SHOWS A DEFICIT against the daily target demand of {demand} units, reaching only {throughput} units/day (deficit of {delta} units/day). The primary bottleneck is '{bottleneck}' at {bottleneckTime} min/unit. The estimated lost opportunity gap value is {gap} €/day.",
+      "execSummaryPass": "The production line MEETS the daily target demand of {demand} units with a projected capacity of {throughput} units/day (+{delta} units margin). The critical station is '{bottleneck}' with an effective cycle time of {bottleneckTime} min. Overall line balancing efficiency stands at {efficiency}%.",
+      "execSummaryFail": "The production line SHOWS A DEFICIT against the daily target demand of {demand} units, reaching only {throughput} units/day (deficit of {delta} units/day). The primary bottleneck is '{bottleneck}' at {bottleneckTime} min/unit. The estimated lost opportunity gap value is {gap} €/day.",
       "secParams": "2. SCENARIO PARAMETERS",
       "paramDemand": "Demand/day",
       "paramShifts": "Shifts/day",

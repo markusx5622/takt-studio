@@ -818,6 +818,8 @@
       "secExecutive": "1. RESUMEN EJECUTIVO",
       "execPass": "La línea de producción CUMPLE la demanda objetiva diaria de {demand} uds con una capacidad proyectada de {throughput} uds/día (+{delta} uds de margen). La estación crítica es '{bottleneck}' con un tiempo de ciclo efectivo de {bottleneckTime} min. La eficiencia global de balanceo de línea es del {efficiency}%.",
       "execFail": "La línea de producción PRESENTA UN DÉFICIT respecto a la demanda objetiva diaria de {demand} uds, alcanzando únicamente {throughput} uds/día (déficit de {delta} uds/día). El cuello de botella principal reside en '{bottleneck}' con {bottleneckTime} min/ud. La brecha económica por oportunidad perdida es de {gap} €/día.",
+      "execSummaryPass": "La línea de producción CUMPLE la demanda objetiva diaria de {demand} uds con una capacidad proyectada de {throughput} uds/día (+{delta} uds de margen). La estación crítica es '{bottleneck}' con un tiempo de ciclo efectivo de {bottleneckTime} min. La eficiencia global de balanceo de línea es del {efficiency}%.",
+      "execSummaryFail": "La línea de producción PRESENTA UN DÉFICIT respecto a la demanda objetiva diaria de {demand} uds, alcanzando únicamente {throughput} uds/día (déficit de {delta} uds/día). El cuello de botella principal reside en '{bottleneck}' con {bottleneckTime} min/ud. La brecha económica por oportunidad perdida es de {gap} €/día.",
       "secParams": "2. PARÁMETROS DEL ESCENARIO",
       "paramDemand": "Demanda/día",
       "paramShifts": "Turnos/día",

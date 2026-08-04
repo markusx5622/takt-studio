@@ -26,18 +26,25 @@ const FOOTER_Y = 286 // y coordinate for footer line
 
 // ─── Formatting Helpers ───────────────────────────────────────────────────────
 
+function getTargetLocale(locale: string): string {
+  if (locale === "es") return "es-ES"
+  if (locale === "en") return "en-US"
+  return locale
+}
+
 function formatNumber(val: number, locale: string): string {
-  return Math.round(val).toLocaleString(locale)
+  const targetLocale = getTargetLocale(locale)
+  return new Intl.NumberFormat(targetLocale, { useGrouping: "always" }).format(Math.round(val))
 }
 
 function formatCurrency(val: number, locale: string): string {
-  return `${Math.round(val).toLocaleString(locale)} €`
+  return `${formatNumber(val, locale)} €`
 }
 
 function formatSignedAmount(num: number, locale: string, unit = "€/d"): string {
   const rounded = Math.round(num)
   if (rounded === 0) return `0 ${unit}`
-  const formatted = Math.abs(rounded).toLocaleString(locale)
+  const formatted = formatNumber(Math.abs(rounded), locale)
   return rounded > 0 ? `+${formatted} ${unit}` : `-${formatted} ${unit}`
 }
 
@@ -46,7 +53,7 @@ function formatPayback(paybackDays: number | null | undefined, t: PdfTranslator,
   const rounded = Math.round(paybackDays)
   if (rounded <= 0) return t("paybackImmediate")
   if (rounded > 3650) return t("paybackOver10Years")
-  return t("paybackDays", { days: rounded.toLocaleString(locale) })
+  return t("paybackDays", { days: formatNumber(rounded, locale) })
 }
 
 // ─── Types & i18n Interfaces ──────────────────────────────────────────────────
@@ -180,23 +187,19 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   sectionTitle(t("secExecutive"))
 
   const deltaVal = Math.abs(kpis.demandDelta)
+  const execValues = {
+    demand: formatNumber(scenario.demandPerDay, locale),
+    throughput: formatNumber(kpis.throughputPerDay, locale),
+    delta: formatNumber(deltaVal, locale),
+    bottleneck: kpis.bottleneckStationName || "—",
+    bottleneckTime: kpis.bottleneckCycleMin.toFixed(1),
+    efficiency: (kpis.balancingEfficiency * 100).toFixed(0),
+    gap: formatNumber(economicKpis.opportunityGapValuePerDay, locale),
+  }
+
   const execText = kpis.meetsDemand
-    ? t("execPass", {
-        demand: formatNumber(scenario.demandPerDay, locale),
-        throughput: formatNumber(kpis.throughputPerDay, locale),
-        delta: formatNumber(deltaVal, locale),
-        bottleneck: kpis.bottleneckStationName || "—",
-        bottleneckTime: kpis.bottleneckCycleMin.toFixed(1),
-        efficiency: (kpis.balancingEfficiency * 100).toFixed(0),
-      })
-    : t("execFail", {
-        demand: formatNumber(scenario.demandPerDay, locale),
-        throughput: formatNumber(kpis.throughputPerDay, locale),
-        delta: formatNumber(deltaVal, locale),
-        bottleneck: kpis.bottleneckStationName || "—",
-        bottleneckTime: kpis.bottleneckCycleMin.toFixed(1),
-        gap: formatNumber(economicKpis.opportunityGapValuePerDay, locale),
-      })
+    ? t("execPass", execValues)
+    : t("execFail", execValues)
 
   const execLines = doc.splitTextToSize(execText, CW - 8) as string[]
   const execBoxH = Math.max(execLines.length * 4.2 + 7, 16)
