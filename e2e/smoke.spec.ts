@@ -9,6 +9,9 @@ test.describe("ES (locale por defecto)", () => {
   test.use({ locale: "es-ES" })
 
   test("landing carga y navega al simulador", async ({ page }) => {
+    // La CTA lleva animate-cta-pulse (animación infinita): sin reduced-motion
+    // Playwright no la considera "estable" y el click expira.
+    await page.emulateMedia({ reducedMotion: "reduce" })
     await page.goto("/")
     const cta = page.getByRole("link", { name: /Empieza tu simulación ahora/i }).first()
     await expect(cta).toBeVisible()
