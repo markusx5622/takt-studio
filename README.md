@@ -1,9 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="public/logo-horizontal-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="public/logo-horizontal.svg">
-    <img alt="Takt Studio" src="public/logo-horizontal-dark.svg" width="700" />
-  </picture>
+  <img src="public/logo-horizontal.svg" alt="Takt Studio Logo" width="800" />
 </p>
 
 <p align="center">
