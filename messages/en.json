@@ -17,7 +17,8 @@
     },
     "reset": "Reset",
     "resetConfirm": "Are you sure? All changes will be lost.",
-    "switchLocale": "Switch language to {locale}"
+    "switchLocale": "Switch language to {locale}",
+    "access": "ACCESS"
   },
   "landing": {
     "hero": {

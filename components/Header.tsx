@@ -78,7 +78,15 @@ export default function Header() {
           )}
 
           {!isAppRoute ? (
-            <div className="ml-auto">{languageToggle}</div>
+            <div className="ml-auto flex items-center gap-2">
+              <Link
+                href="/simulador"
+                className="flex h-8 items-center justify-center rounded-lg bg-primary px-3.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                {t("access")}
+              </Link>
+              {languageToggle}
+            </div>
           ) : (
             <div className="ml-auto flex items-center gap-2">
               {languageToggle}
