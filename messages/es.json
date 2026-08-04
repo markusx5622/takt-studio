@@ -273,11 +273,32 @@
       "cta": "Empieza tu simulación ahora"
     },
     "footer": {
-      "tagline": "Takt Studio · 2026",
-      "subtitle": "Ingeniería de Organización Industrial · UEV",
-      "privacy": "Privacidad",
-      "legal": "Legal",
-      "madeWith": "Hecho con Next.js y Vercel"
+      "brandDesc": "Plataforma web de ingeniería de organización industrial para la simulación, detección de cuellos de botella y optimización de líneas de producción.",
+      "status": "Sistema 100% Privado (Client-Side Storage)",
+      "colProduct": "Producto",
+      "simulador": "Simulador de Línea",
+      "comparar": "Comparador A/B",
+      "metodologia": "Metodología Industrial",
+      "historial": "Historial de Análisis",
+      "importarExportar": "Importar / Exportar",
+      "colResources": "Recursos",
+      "guide": "Guía de Balanceo",
+      "preset": "Plantilla Monobath",
+      "monteCarlo": "Análisis Monte Carlo",
+      "sensitivity": "Sensibilidad",
+      "githubRepo": "Repositorio GitHub",
+      "colLegal": "Legal & RGPD",
+      "privacy": "Política de Privacidad",
+      "legal": "Aviso Legal",
+      "gdpr": "Privacidad Local (Sin cookies)",
+      "colAuthor": "Desarrollo",
+      "authorName": "Marc Cubero Cantavella",
+      "authorRole": "Ingeniería Industrial",
+      "uev": "Universidad Europea de Valencia",
+      "reportIssue": "Reportar un Issue",
+      "copyright": "© 2026 Takt Studio. Todos los derechos reservados.",
+      "scrollTop": "Volver arriba",
+      "stackNote": "Desarrollado con Next.js 16 · React 19 · TypeScript · Tailwind CSS"
     }
   },
   "legal": {

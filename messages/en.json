@@ -273,11 +273,32 @@
       "cta": "Start your simulation now"
     },
     "footer": {
-      "tagline": "Takt Studio · 2026",
-      "subtitle": "Industrial Organization Engineering · UEV",
-      "privacy": "Privacy",
-      "legal": "Legal",
-      "madeWith": "Built with Next.js and Vercel"
+      "brandDesc": "Industrial Engineering web platform for production line simulation, bottleneck detection, and What-If scenario optimization.",
+      "status": "100% Private System (Client-Side Storage)",
+      "colProduct": "Product",
+      "simulador": "Line Simulator",
+      "comparar": "A/B Comparator",
+      "metodologia": "Industrial Methodology",
+      "historial": "Analysis History",
+      "importarExportar": "Import / Export",
+      "colResources": "Resources",
+      "guide": "Line Balancing Guide",
+      "preset": "Monobath Template",
+      "monteCarlo": "Monte Carlo Simulation",
+      "sensitivity": "Sensitivity Analysis",
+      "githubRepo": "GitHub Repository",
+      "colLegal": "Legal & GDPR",
+      "privacy": "Privacy Policy",
+      "legal": "Legal Notice",
+      "gdpr": "Local Privacy (Cookieless)",
+      "colAuthor": "Development",
+      "authorName": "Marc Cubero Cantavella",
+      "authorRole": "Industrial Engineering",
+      "uev": "Universidad Europea de Valencia",
+      "reportIssue": "Report an Issue",
+      "copyright": "© 2026 Takt Studio. All rights reserved.",
+      "scrollTop": "Back to top",
+      "stackNote": "Built with Next.js 16 · React 19 · TypeScript · Tailwind CSS"
     }
   },
   "legal": {
