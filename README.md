@@ -98,8 +98,8 @@ Su objetivo fundamental es democratizar el análisis de balanceo de líneas en p
 - **Compartir por URL**: Serialización de escenarios en el hash de la URL (base64url) para compartir configuraciones sin backend ni cuentas — el receptor abre el enlace y carga el escenario validado al instante.
 
 ### 📄 Generador de Informes Ejecutivos en PDF
-- **Generación Vectorial nativa (jsPDF)**: Renderizado limpio en formato A4 sin depender de captura de pantalla.
-- **Estructura Profesional**: Portada de informe, parámetros de demanda, tabla detallada de estaciones, KPIs de balanceo, análisis de costes y resumen del plan de mejora.
+- **Generación Vectorial nativa (jsPDF 4.2)**: Renderizado limpio en formato A4 sin depender de captura de pantalla, con viñetas vectoriales puras y fuentes con codificación WinAnsi.
+- **Estructura Profesional**: Portada de informe, metadatos incrustados (título, autor, palabras clave), cabecera de continuación en páginas 2+, parámetros de demanda, tabla detallada de estaciones con paginación y cabecera repetida, KPIs de balanceo, gráficos, análisis de costes y resumen del plan de mejora.
 
 ---
 
@@ -141,9 +141,9 @@ $$E_b = \frac{\sum_{i=1}^{N} T_{ef, i}}{N \times T_{bottleneck}}$$
 | **Gestión de Estado** | [Zustand v5](https://zustand-demo.pmnd.rs/) + `persist` | Estado global reactivo con almacenamiento automático en `localStorage`. |
 | **Internacionalización** | [next-intl v4](https://next-intl.dev/) | ES/EN completos (560 claves por idioma), rutas localizadas y middleware de detección. |
 | **Visualización de Datos** | [Recharts v3](https://recharts.org/) | Gráficos interactivos de barras de ciclo vs Takt Time. |
-| **Generación de Documentos** | [jsPDF v4](https://github.com/parallax/jsPDF) | Generación vectorial de informes ejecutivos en PDF. |
-| **Testing Unitario** | [Vitest v4](https://vitest.dev/) + coverage v8 | 103 pruebas con umbrales de cobertura obligatorios. |
-| **Testing E2E** | [Playwright](https://playwright.dev/) | Smoke tests bilingües ejecutados en CI sobre build de producción. |
+| **Generación de Documentos** | [jsPDF v4](https://github.com/parallax/jsPDF) | Generación vectorial de informes ejecutivos en PDF con paginación automática, cabeceras de continuación y metadatos. |
+| **Testing Unitario** | [Vitest v4](https://vitest.dev/) + coverage v8 | 106 pruebas unitarias con umbrales de cobertura obligatorios. |
+| **Testing E2E** | [Playwright](https://playwright.dev/) | 12 smoke tests bilingües ejecutados en CI sobre build de producción. |
 | **Analítica** | [Vercel Analytics](https://vercel.com/analytics) | Métricas de uso y Web Vitals sin cookies ni datos personales. |
 | **Tipado** | TypeScript Estricto | Tipado completo sin uso de `any`. |
 
@@ -274,7 +274,7 @@ takt-studio/
 │   ├── SharedScenarioLoader.tsx# Carga de escenarios compartidos por URL
 │   └── …                       # LineDiagram, TaktChart, InsightsPanel, ExportPdfButton…
 ├── e2e/
-│   └── smoke.spec.ts           # 6 tests E2E Playwright (ES/EN, build de producción)
+│   └── smoke.spec.ts           # 12 tests E2E Playwright (ES/EN, build de producción)
 ├── i18n/
 │   ├── routing.ts              # Definición de locales y prefijos de ruta
 │   ├── navigation.ts           # Link/redirect localizados
@@ -288,7 +288,7 @@ takt-studio/
 │   ├── import-export.ts        # Validadores e importadores/exportadores JSON
 │   ├── share.ts                # Serialización de escenarios en hash de URL
 │   ├── presets.ts              # Plantilla precargada de línea Monobath (7 estaciones)
-│   └── *.test.ts               # 8 archivos de pruebas unitarias (103 tests)
+│   └── *.test.ts               # 10 archivos de pruebas unitarias (106 tests, paridad i18n y PDF)
 ├── messages/
 │   ├── es.json                 # Diccionario español (560 claves)
 │   └── en.json                 # Diccionario inglés (560 claves)
@@ -356,7 +356,7 @@ takt-studio/
 
 ## 🔬 Testing y Calidad
 
-### Pruebas Unitarias (103 tests, 8 archivos en `lib/`)
+### Pruebas Unitarias (106 tests, 10 archivos en `lib/`)
 - Cálculo exacto de **Takt Time** ante diferentes escenarios de demanda y jornada.
 - Identificación precisa del **Cuello de Botella** y tiempos efectivos con operarios y scrap.
 - Comprobación de límites en la **Eficiencia de Balanceo** ($0 \le E_b \le 1$).
@@ -364,12 +364,13 @@ takt-studio/
 - Motor **Monte Carlo**: reproducibilidad con semilla fija, muestreo lognormal y histogramas.
 - **Store Zustand**: todas las acciones (escenarios, snapshots, baseline, importación) con aislamiento de `localStorage`.
 - **Import/Export**: validación estricta de esquemas, errores localizados y resistencia a payloads corruptos.
+- **Paridad i18n y PDF**: aserción estricta de paridad de claves entre `es.json` y `en.json`, y prueba de interpolación sin placeholders sueltos en el resumen ejecutivo del informe PDF.
 - Resistencia ante colecciones vacías o parámetros nulos.
 
 **Umbrales de cobertura obligatorios** (el CI falla por debajo): 78% statements · 68% branches · 82% functions · 79% lines.
 
 ### Pruebas E2E (Playwright)
-6 smoke tests sobre el build de producción en Chromium, en español e inglés: navegación landing → simulador, edición de estaciones, páginas de historial/importación y cambio de idioma.
+12 smoke tests sobre el build de producción en Chromium con `prefers-reduced-motion: reduce`, en español e inglés: navegación landing → simulador, edición de estaciones, páginas de historial/importación y cambio de idioma.
 
 ### Integración Continua
 Cada push a `main` ejecuta en GitHub Actions: ESLint → TypeScript → tests con cobertura → build SSG de ambos locales → suite E2E. Pipeline bloqueante.
