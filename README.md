@@ -1,8 +1,10 @@
 <p align="center">
-  <img src="public/logo-horizontal.svg" alt="Takt Studio Logo" width="480" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/logo-horizontal-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="public/logo-horizontal.svg">
+    <img alt="Takt Studio" src="public/logo-horizontal-dark.svg" width="700" />
+  </picture>
 </p>
-
-<h1 align="center">Takt Studio</h1>
 
 <p align="center">
   <strong>Simulador y Analizador de Líneas de Producción Industrializada</strong>
