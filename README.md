@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/favicon.svg" alt="Takt Studio Favicon" width="96" height="96" />
+  <img src="public/logo-horizontal.svg" alt="Takt Studio Logo" width="480" />
 </p>
 
 <h1 align="center">Takt Studio</h1>
