@@ -722,15 +722,15 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   doc.setLineWidth(0.2)
 
   const methodText = t("methodologyText")
-  const methodLines = doc.splitTextToSize(methodText, CW - 6) as string[]
-  const methodBoxH = methodLines.length * 3.6 + 5
+  const methodLineCount = (doc.splitTextToSize(methodText, CW - 6) as string[]).length
+  const methodBoxH = methodLineCount * 3.6 + 5
 
   doc.rect(LM, y, CW, methodBoxH, "FD")
 
   setGray()
   doc.setFont("helvetica", "normal")
   doc.setFontSize(7)
-  doc.text(methodLines, LM + 3, y + 4)
+  doc.text(methodText, LM + 3, y + 4, { align: "justify", maxWidth: CW - 6 })
 
   // ── FOOTER NUMERADO EN TODAS LAS PÁGINAS ─────────────────────────────────────
 
