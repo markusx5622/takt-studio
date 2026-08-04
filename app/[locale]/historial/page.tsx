@@ -248,7 +248,7 @@ export default function HistorialPage() {
   return (
     <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
       <ConsultingBackground />
-      <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 pt-2 pb-8">
+      <div className="relative z-10 mx-auto max-w-5xl space-y-6 px-4 pt-2 pb-24 md:pb-8">
         <div className="page-header-rule pb-4 mb-2">
           <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">

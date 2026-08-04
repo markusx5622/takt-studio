@@ -76,7 +76,7 @@ export default async function MetodologiaPage({
         </div>
       </section>
 
-      <div className="relative z-10 mx-auto w-full max-w-4xl space-y-8 px-4 pt-2 pb-20">
+      <div className="relative z-10 mx-auto w-full max-w-4xl space-y-8 px-4 pt-2 pb-24 md:pb-12">
         {/* ── Introducción ────────────────────────────────────────────────────── */}
         <Card>
           <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-3">

@@ -112,9 +112,9 @@ export default function InterfaceMockup() {
           </div>
 
           {/* Charts Area */}
-          <div className="grid grid-cols-5 gap-4 h-48">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 sm:h-48">
             {/* Bar chart - Simulation */}
-            <div className="col-span-3 rounded-xl border bg-background/40 p-4 relative overflow-hidden">
+            <div className="sm:col-span-3 rounded-xl border bg-background/40 p-4 relative overflow-hidden">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("chartTitle")}</p>
                 <div className="flex gap-2">
@@ -131,7 +131,7 @@ export default function InterfaceMockup() {
                       }`}
                       style={{ height: `${h}%` }}
                     />
-                    <span className="text-[7px] font-bold text-muted-foreground/60">{name}</span>
+                    <span className="text-[7px] font-bold text-muted-foreground/60 truncate max-w-full">{name}</span>
                   </div>
                 ))}
                 {/* Takt Line */}
@@ -142,7 +142,7 @@ export default function InterfaceMockup() {
             </div>
 
             {/* Performance Mini Card */}
-            <div className="col-span-2 rounded-xl border bg-background/40 p-4 flex flex-col justify-between">
+            <div className="sm:col-span-2 rounded-xl border bg-background/40 p-4 flex flex-col justify-between min-h-[140px]">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">{t("oee")}</p>
                 <div className="flex items-baseline gap-2">

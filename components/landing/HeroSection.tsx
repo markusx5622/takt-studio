@@ -40,11 +40,11 @@ export default function HeroSection() {
     </p>
 
     {/* CTAs */}
-    <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+    <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
       <Button
         asChild
         size="lg"
-        className="gap-2 px-6 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 animate-cta-pulse"
+        className="w-full sm:w-auto gap-2 px-6 shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 animate-cta-pulse"
       >
         <Link href="/simulador">
           {t("ctaPrimary")}
@@ -55,7 +55,7 @@ export default function HeroSection() {
         asChild
         size="lg"
         variant="outline"
-        className="gap-2 px-6 bg-background/80 backdrop-blur-sm transition-all duration-200 hover:bg-background hover:border-primary hover:text-primary hover:shadow-md"
+        className="w-full sm:w-auto gap-2 px-6 bg-background/80 backdrop-blur-sm transition-all duration-200 hover:bg-background hover:border-primary hover:text-primary hover:shadow-md"
       >
         <Link href="/comparar">{t("ctaSecondary")}</Link>
       </Button>

@@ -87,7 +87,7 @@ export default function LandingFooter() {
         </div>
 
         {/* 4-Column Navigation Grid */}
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:gap-12">
           {/* Column 1: Producto */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-foreground/90">{t("colProduct")}</h4>

@@ -151,7 +151,7 @@ export default function MonteCarloPanel() {
               {meets ? t("confident") : t("atRisk")}
             </p>
           </div>
-          <div className="ml-auto flex flex-wrap gap-2">
+          <div className="sm:ml-auto flex flex-wrap gap-2">
             <Badge variant="secondary">
               {t("p5Badge", { value: result.throughput.p5.toFixed(0) })}
             </Badge>
