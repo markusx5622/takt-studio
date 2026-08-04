@@ -27,7 +27,7 @@ export default function InterfaceMockup() {
   const stations = t.raw("stations") as { name: string; h: number; bottleneck: boolean }[]
 
   return (
-    <div aria-hidden="true" className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-background/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] backdrop-blur-xl transition-all duration-700 hover:scale-[1.015] hover:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18)]">
+    <div aria-hidden="true" className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-background/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] backdrop-blur-xl transition-all duration-700 hover:scale-[1.015] hover:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18)] hover:border-primary/60">
       {/* Window chrome / Top bar */}
       <div className="flex items-center gap-4 border-b bg-muted/40 px-4 py-3">
         <div className="flex gap-2">
@@ -89,7 +89,7 @@ export default function InterfaceMockup() {
             {kpis.map(({ label, value, unit, bar, trend, status }) => (
               <div
                 key={label}
-                className="group relative rounded-xl border bg-background/40 p-3.5 transition-all hover:bg-background/60 hover:shadow-md"
+                className="group relative rounded-xl border bg-background/40 p-3.5 transition-all hover:bg-background/60 hover:shadow-md hover:border-primary/40"
               >
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/70">{label}</p>

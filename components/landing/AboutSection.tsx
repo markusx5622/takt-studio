@@ -43,7 +43,7 @@ export default function AboutSection() {
     <section className="reveal relative z-10 px-4 py-16 md:py-20">
       <div className="pointer-events-none absolute inset-0 section-ambient-calm" />
       <div className="mx-auto max-w-4xl">
-        <div className="rounded-xl border bg-background p-8 shadow-sm md:p-12">
+        <div className="rounded-xl border bg-background p-8 shadow-sm md:p-12 transition-all duration-300 hover:border-primary hover:shadow-md">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
             {/* Text */}
             <div className="flex flex-col justify-center">
@@ -85,7 +85,7 @@ export default function AboutSection() {
               <Button
                 asChild
                 variant="outline"
-                className="h-11 w-full justify-start gap-2.5 rounded-lg border-foreground/15 bg-muted/30 px-5 text-sm transition-all duration-200 hover:bg-muted hover:border-foreground/25"
+                className="h-11 w-full justify-start gap-2.5 rounded-lg border-foreground/15 bg-muted/30 px-5 text-sm transition-all duration-200 hover:bg-muted hover:border-primary hover:text-primary"
               >
                 <a
                   href="https://github.com/markusx5622/takt-studio"
@@ -100,7 +100,7 @@ export default function AboutSection() {
               <Button
                 asChild
                 variant="outline"
-                className="h-11 w-full justify-start gap-2.5 rounded-lg border-foreground/15 bg-muted/30 px-5 text-sm transition-all duration-200 hover:bg-muted hover:border-foreground/25"
+                className="h-11 w-full justify-start gap-2.5 rounded-lg border-foreground/15 bg-muted/30 px-5 text-sm transition-all duration-200 hover:bg-muted hover:border-primary hover:text-primary"
               >
                 <a
                   href="https://www.linkedin.com/in/marc-cubero-cantavella-bb04542a7"

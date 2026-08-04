@@ -31,7 +31,7 @@ export default function TechStackSection() {
         {cards.map((card, i) => {
           const Icon = CARD_ICONS[i]
           return (
-            <div key={i} className="rounded-2xl border bg-background/60 p-8 backdrop-blur-xl shadow-sm transition-all hover:shadow-md">
+            <div key={i} className="rounded-2xl border bg-background/60 p-8 backdrop-blur-xl shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary">
               <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
                 <Icon className="h-6 w-6 text-primary" />
               </div>

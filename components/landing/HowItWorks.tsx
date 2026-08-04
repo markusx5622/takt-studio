@@ -19,11 +19,11 @@ function StepCard({
   description: string
 }) {
   return (
-    <div className="relative flex flex-col items-center text-center">
-      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border bg-background font-bold text-sm text-primary shadow-sm">
+    <div className="relative group flex flex-col items-center text-center rounded-2xl border bg-background/60 p-6 backdrop-blur-xl transition-all duration-300 hover:shadow-lg hover:border-primary">
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border bg-background font-bold text-sm text-primary shadow-sm transition-colors group-hover:border-primary/50">
         {step}
       </div>
-      <div className="mb-3 inline-flex rounded-lg border bg-muted/50 p-2.5">
+      <div className="mb-3 inline-flex rounded-lg border bg-muted/50 p-2.5 transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
         <Icon className="h-5 w-5 text-primary" />
       </div>
       <h3 className="mb-1 text-sm font-semibold">{title}</h3>

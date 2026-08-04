@@ -21,14 +21,14 @@ export default function LandingFooter() {
       <div className="flex items-center gap-4">
         <Link
           href="/privacidad"
-          className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground/60 transition-all hover:border-primary/20 hover:bg-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground/60 transition-all hover:border-primary hover:bg-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <ShieldCheck className="h-3 w-3 transition-transform group-hover:scale-110" />
           {t("privacy")}
         </Link>
         <Link
           href="/legal"
-          className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground/60 transition-all hover:border-primary/20 hover:bg-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="group flex items-center gap-2 rounded-full border border-foreground/5 bg-background/40 px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground/60 transition-all hover:border-primary hover:bg-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <FileText className="h-3 w-3 transition-transform group-hover:scale-110" />
           {t("legal")}

@@ -18,7 +18,7 @@ export default function HeroSection() {
     {/* Focus glow around title area */}
     <div className="pointer-events-none absolute left-1/2 top-[20%] h-[500px] w-[800px] -translate-x-1/2 bg-hero-glow" />
     {/* Eyebrow */}
-    <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm">
+    <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm shadow-sm transition-colors hover:border-primary">
       <span className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-40" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse-soft" />
@@ -55,7 +55,7 @@ export default function HeroSection() {
         asChild
         size="lg"
         variant="outline"
-        className="gap-2 px-6 bg-background/80 backdrop-blur-sm transition-all duration-200 hover:bg-background hover:shadow-md"
+        className="gap-2 px-6 bg-background/80 backdrop-blur-sm transition-all duration-200 hover:bg-background hover:border-primary hover:text-primary hover:shadow-md"
       >
         <Link href="/comparar">{t("ctaSecondary")}</Link>
       </Button>

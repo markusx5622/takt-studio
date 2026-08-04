@@ -23,7 +23,7 @@ export default function FaqSection() {
         {items.map((faq, i) => (
           <details
             key={i}
-            className="group rounded-2xl border bg-background/40 p-6 backdrop-blur-xl transition-all open:bg-background/60 open:shadow-md hover:bg-background/60"
+            className="group rounded-2xl border bg-background/40 p-6 backdrop-blur-xl transition-all duration-300 open:bg-background/60 open:shadow-md hover:bg-background/60 hover:border-primary"
           >
             <summary className="flex cursor-pointer list-none items-center gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
               <div className="shrink-0">

@@ -40,7 +40,7 @@ export default function RoadmapSection() {
             <div
               key={i}
               className={cn(
-                "relative group rounded-2xl border bg-background/60 p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:border-primary/30",
+                "relative group rounded-2xl border bg-background/60 p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:border-primary",
                 meta.active && "border-primary/40 ring-1 ring-primary/20 bg-background/80"
               )}
             >
