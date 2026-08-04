@@ -36,7 +36,7 @@
       ]
     },
     "mockup": {
-      "prototype": "Prototipo V.2.0",
+      "prototype": "Prototipo V.1.0",
       "dashboardTitle": "Dashboard de Producción",
       "dashboardSub": "Línea Monobath — Planta Valencia Centro",
       "report": "Reporte",
@@ -285,7 +285,7 @@
       "colResources": "Recursos",
       "guide": "Guía de Balanceo",
       "preset": "Plantilla Monobath",
-      "monteCarlo": "Análisis Monte Carlo",
+      "monteCarlo": "Lab. de Sensibilidad",
       "sensitivity": "Sensibilidad",
       "githubRepo": "Repositorio GitHub",
       "colLegal": "Legal & RGPD",

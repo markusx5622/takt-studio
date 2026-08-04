@@ -124,7 +124,7 @@ export default function InterfaceMockup() {
               </div>
               <div className="relative flex items-end gap-1.5 h-24">
                 {stations.map(({ name, h, bottleneck }) => (
-                  <div key={name} className="flex-1 flex flex-col items-center gap-1 group">
+                  <div key={name} className="flex h-full flex-1 flex-col items-center justify-end gap-1 group">
                     <div
                       className={`w-full rounded-t-sm transition-all duration-700 ${
                         bottleneck ? "bg-red-500/90 shadow-[0_0_12px_rgba(239,68,68,0.3)]" : "bg-blue-500/50"

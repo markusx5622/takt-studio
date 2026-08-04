@@ -35,7 +35,7 @@ export default function HeroSection() {
     {/* Subtitle */}
     <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-foreground/70 sm:text-xl">
       {t("subtitleA")}{" "}
-      <em className="not-italic font-medium text-foreground/80">what-if</em>.{" "}
+      <em className="not-italic font-medium text-foreground/80 whitespace-nowrap">what-if</em>.{" "}
       {t("subtitleB")}
     </p>
 

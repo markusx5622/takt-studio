@@ -15,6 +15,8 @@ import {
   BookOpen,
   History,
   ArrowLeftRight,
+  Sparkles,
+  Sliders,
 } from "lucide-react"
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -135,11 +137,13 @@ export default function LandingFooter() {
               </li>
               <li>
                 <Link href="/simulador" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
+                  <Sparkles className="h-3.5 w-3.5 text-primary/70" />
                   {t("preset")}
                 </Link>
               </li>
               <li>
                 <Link href="/simulador" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
+                  <Sliders className="h-3.5 w-3.5 text-primary/70" />
                   {t("monteCarlo")}
                 </Link>
               </li>

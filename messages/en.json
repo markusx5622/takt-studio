@@ -36,7 +36,7 @@
       ]
     },
     "mockup": {
-      "prototype": "Prototype V.2.0",
+      "prototype": "Prototype V.1.0",
       "dashboardTitle": "Production Dashboard",
       "dashboardSub": "Monobath Line — Valencia Centro Plant",
       "report": "Report",
@@ -285,7 +285,7 @@
       "colResources": "Resources",
       "guide": "Line Balancing Guide",
       "preset": "Monobath Template",
-      "monteCarlo": "Monte Carlo Simulation",
+      "monteCarlo": "Sensitivity Lab",
       "sensitivity": "Sensitivity Analysis",
       "githubRepo": "GitHub Repository",
       "colLegal": "Legal & GDPR",
