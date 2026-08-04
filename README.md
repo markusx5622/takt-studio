@@ -173,6 +173,62 @@ $$E_b = \frac{\sum_{i=1}^{N} T_{ef, i}}{N \times T_{bottleneck}}$$
 
 ## 🧠 Decisiones Técnicas de Arquitectura
 
+### 📐 Diagrama de Arquitectura del Sistema (Zero-Backend)
+
+El siguiente flujo de arquitectura ilustra cómo interactúan los componentes lógicos de la plataforma en el navegador del usuario, desde la capa de vista reactiva hasta la persistencia local, el sistema de compartición por hash de URL y el soporte offline PWA:
+
+```mermaid
+flowchart TD
+    %% Capa de Cliente (UI)
+    subgraph CLIENT["Capa de Cliente (Navegador)"]
+        UI["Next.js 16 (React 19)<br/>Interfaz de Usuario & Componentes Reactivos"]
+    end
+
+    %% Capa Offline & Service Worker
+    subgraph PWA["Capa Offline & Caché (PWA)"]
+        SW["Service Worker<br/>Interceptación de Red & Caché"]
+        CACHE[("Cache Storage<br/>App Shell & Assets Estáticos")]
+    end
+
+    %% Capa de Estado Global (Cerebro de la App)
+    subgraph STATE["Capa de Estado Global"]
+        STORE["Zustand v5 Core Store<br/>Motor de Simulación & Cálculo Local"]
+    end
+
+    %% Almacenamiento Local e Intercambio
+    subgraph STORAGE["Persistencia & Intercambio de Datos"]
+        LS[("LocalStorage<br/>Middleware Persist de Zustand")]
+        URL["Hash de la URL (Base64)<br/>Escenarios Compartidos Zero-DB"]
+    end
+
+    %% Flujos de Datos y Relaciones
+    UI <-->|"Mutaciones y Renderizado"| STORE
+    STORE <-->|"Sincronización Automática"| LS
+    STORE <-->|"Serialización / Deserialización Base64"| URL
+    SW <-->|"Intercepta Peticiones HTTP"| UI
+    SW <-->|"Estrategia Cache-First (Disponibilidad Offline)"| CACHE
+
+    %% Notas Explicativas de Arquitectura
+    noteState["<b>Arquitectura Zero-Backend</b><br/>El 100% de los cálculos y Monte Carlo<br/>se ejecutan en el navegador del usuario."]
+    noteShare["<b>Compartición Serverless</b><br/>El estado se inyecta directamente en la URL<br/>permitiendo compartir sin servidor ni BD."]
+
+    STORE -.- noteState
+    URL -.- noteShare
+
+    %% Clases de Estilo Minimalistas y Sobrias
+    classDef client fill:#EFF6FF,stroke:#2563EB,stroke-width:1.5px,color:#1E3A8A;
+    classDef pwa fill:#F0FDF4,stroke:#16A34A,stroke-width:1.5px,color:#14532D;
+    classDef state fill:#F8FAFC,stroke:#0F172A,stroke-width:2px,color:#0F172A;
+    classDef storage fill:#FAF5FF,stroke:#9333EA,stroke-width:1.5px,color:#581C87;
+    classDef note fill:#FFFBEB,stroke:#D97706,stroke-width:1px,color:#78350F;
+
+    class UI client;
+    class SW,CACHE pwa;
+    class STORE state;
+    class LS,URL storage;
+    class noteState,noteShare note;
+```
+
 ### 1. ¿Por qué Zustand en lugar de Context API o Redux?
 Zustand ofrece una API ligera basada en suscripciones que permite selectores granulares `(state) => state.scenarios.find(...)`. Esto evita re-renders innecesarios en la UI a diferencia de la Context API de React, la cual fuerza la re-evaluación del árbol ante cualquier mutación. Además, el middleware `persist` garantiza sincronización instantánea con `localStorage` sin requerir infraestructura de servidor.
 
