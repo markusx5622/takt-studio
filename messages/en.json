@@ -870,6 +870,7 @@
       "colRecPayback": "Payback",
       "paybackDays": "{days} days",
       "paybackImmediate": "Immediate",
+      "paybackOver10Years": "> 10 years",
       "noImprovements": "No severe bottlenecks or high-priority improvement actions required for this scenario.",
       "secEconomics": "7. ECONOMIC & FINANCIAL IMPACT ANALYSIS",
       "econOpCost": "Total Operating Cost",

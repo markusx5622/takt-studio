@@ -24,6 +24,31 @@ const RM = 195       // right margin x-coordinate (mm)
 const CW = 180       // content width (mm)
 const FOOTER_Y = 286 // y coordinate for footer line
 
+// ─── Formatting Helpers ───────────────────────────────────────────────────────
+
+function formatNumber(val: number, locale: string): string {
+  return Math.round(val).toLocaleString(locale)
+}
+
+function formatCurrency(val: number, locale: string): string {
+  return `${Math.round(val).toLocaleString(locale)} €`
+}
+
+function formatSignedAmount(num: number, locale: string, unit = "€/d"): string {
+  const rounded = Math.round(num)
+  if (rounded === 0) return `0 ${unit}`
+  const formatted = Math.abs(rounded).toLocaleString(locale)
+  return rounded > 0 ? `+${formatted} ${unit}` : `-${formatted} ${unit}`
+}
+
+function formatPayback(paybackDays: number | null | undefined, t: PdfTranslator, locale: string): string {
+  if (paybackDays === null || paybackDays === undefined || !isFinite(paybackDays)) return "—"
+  const rounded = Math.round(paybackDays)
+  if (rounded <= 0) return t("paybackImmediate")
+  if (rounded > 3650) return t("paybackOver10Years")
+  return t("paybackDays", { days: rounded.toLocaleString(locale) })
+}
+
 // ─── Types & i18n Interfaces ──────────────────────────────────────────────────
 
 type PdfTranslator = (key: string, values?: Record<string, string | number>) => string
@@ -157,20 +182,20 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   const deltaVal = Math.abs(kpis.demandDelta)
   const execText = kpis.meetsDemand
     ? t("execPass", {
-        demand: scenario.demandPerDay,
-        throughput: kpis.throughputPerDay,
-        delta: deltaVal,
-        bottleneck: kpis.bottleneckStationName || "N/A",
+        demand: formatNumber(scenario.demandPerDay, locale),
+        throughput: formatNumber(kpis.throughputPerDay, locale),
+        delta: formatNumber(deltaVal, locale),
+        bottleneck: kpis.bottleneckStationName || "—",
         bottleneckTime: kpis.bottleneckCycleMin.toFixed(1),
         efficiency: (kpis.balancingEfficiency * 100).toFixed(0),
       })
     : t("execFail", {
-        demand: scenario.demandPerDay,
-        throughput: kpis.throughputPerDay,
-        delta: deltaVal,
-        bottleneck: kpis.bottleneckStationName || "N/A",
+        demand: formatNumber(scenario.demandPerDay, locale),
+        throughput: formatNumber(kpis.throughputPerDay, locale),
+        delta: formatNumber(deltaVal, locale),
+        bottleneck: kpis.bottleneckStationName || "—",
         bottleneckTime: kpis.bottleneckCycleMin.toFixed(1),
-        gap: Math.round(economicKpis.opportunityGapValuePerDay).toLocaleString(locale),
+        gap: formatNumber(economicKpis.opportunityGapValuePerDay, locale),
       })
 
   const execLines = doc.splitTextToSize(execText, CW - 8) as string[]
@@ -206,12 +231,12 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   const availMin = scenario.shiftHours * 60 * scenario.shiftsPerDay
 
   const paramCols = [
-    { label: t("paramDemand"),    value: t("paramDemandValue", { value: scenario.demandPerDay }) },
+    { label: t("paramDemand"),    value: t("paramDemandValue", { value: formatNumber(scenario.demandPerDay, locale) }) },
     { label: t("paramShifts"),    value: String(scenario.shiftsPerDay) },
     { label: t("paramHours"),     value: t("paramHoursValue", { value: scenario.shiftHours }) },
-    { label: t("paramAvailable"), value: t("paramAvailableValue", { value: availMin }) },
-    { label: t("paramLaborRate"), value: t("paramRateValue", { value: economics.laborCostPerHour }) },
-    { label: t("paramMargin"),    value: t("paramMarginValue", { value: economics.contributionMarginPerUnit }) },
+    { label: t("paramAvailable"), value: t("paramAvailableValue", { value: formatNumber(availMin, locale) }) },
+    { label: t("paramLaborRate"), value: t("paramRateValue", { value: formatNumber(economics.laborCostPerHour, locale) }) },
+    { label: t("paramMargin"),    value: t("paramMarginValue", { value: formatNumber(economics.contributionMarginPerUnit, locale) }) },
   ]
 
   const pColW = CW / 6
@@ -287,9 +312,17 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     else if (status === "amber") setAmber()
     else setDark()
 
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(11)
-    doc.text(val, bx + 4, by + 11.5)
+    // Handle multiline bottleneck station names cleanly without truncation
+    const valLines = doc.splitTextToSize(val, gridColW - 6) as string[]
+    if (valLines.length > 1) {
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(8.5)
+      doc.text(valLines.slice(0, 2), bx + 4, by + 9.5)
+    } else {
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(11)
+      doc.text(val, bx + 4, by + 11.5)
+    }
 
     setGray()
     doc.setFont("helvetica", "normal")
@@ -298,17 +331,14 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   }
 
   // Row 1
-  drawKpiGridCard(0, 0, t("taktTitle"), `${kpis.taktTimeMin.toFixed(1)} ${t("minPerUnit")}`, t("taktSub", { available: kpis.availableTimeMin, demand: scenario.demandPerDay }), "neutral")
+  drawKpiGridCard(0, 0, t("taktTitle"), `${kpis.taktTimeMin.toFixed(1)} ${t("minPerUnit")}`, t("taktSub", { available: formatNumber(kpis.availableTimeMin, locale), demand: formatNumber(scenario.demandPerDay, locale) }), "neutral")
   
   const tpSub = kpis.meetsDemand
-    ? t("throughputSubPass", { delta: Math.abs(kpis.demandDelta) })
-    : t("throughputSubFail", { delta: Math.abs(kpis.demandDelta) })
-  drawKpiGridCard(1, 0, t("throughputTitle"), `${kpis.throughputPerDay} uds`, tpSub, kpis.meetsDemand ? "green" : "red")
+    ? t("throughputSubPass", { delta: formatNumber(deltaVal, locale) })
+    : t("throughputSubFail", { delta: formatNumber(deltaVal, locale) })
+  drawKpiGridCard(1, 0, t("throughputTitle"), t("throughputValue", { value: formatNumber(kpis.throughputPerDay, locale) }), tpSub, kpis.meetsDemand ? "green" : "red")
 
-  const bnNameShort = (kpis.bottleneckStationName || "—").length > 18
-    ? (kpis.bottleneckStationName || "—").substring(0, 17) + "..."
-    : kpis.bottleneckStationName || "—"
-  drawKpiGridCard(2, 0, t("bottleneckTitle"), bnNameShort, t("bottleneckSub", { value: kpis.bottleneckCycleMin.toFixed(1) }), kpis.bottleneckCycleMin > kpis.taktTimeMin ? "red" : "amber")
+  drawKpiGridCard(2, 0, t("bottleneckTitle"), kpis.bottleneckStationName || "—", t("bottleneckSub", { value: kpis.bottleneckCycleMin.toFixed(1) }), kpis.bottleneckCycleMin > kpis.taktTimeMin ? "red" : "amber")
 
   // Row 2
   const effPct = (kpis.balancingEfficiency * 100).toFixed(0)
@@ -319,7 +349,7 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   drawKpiGridCard(1, 1, t("leadTimeTitle"), `${kpis.leadTimeMin.toFixed(1)} ${t("minUnit")}`, t("leadTimeSub"), "neutral")
 
   const totalOps = scenario.stations.reduce((sum, st) => sum + st.operators, 0)
-  drawKpiGridCard(2, 1, t("operatorsTitle"), `${totalOps} ${t("colOperators")}`, t("operatorsSub"), "neutral")
+  drawKpiGridCard(2, 1, t("operatorsTitle"), `${totalOps} ops.`, t("operatorsSub"), "neutral")
 
   y += gridBoxH * 2 + 9
 
@@ -431,12 +461,12 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
 
   const tCols = [
     { x: LM,       w: 8,  label: t("colIndex"),    align: "center" as const },
-    { x: LM + 8,   w: 64, label: t("colName"),     align: "left" as const   },
-    { x: LM + 72,  w: 22, label: t("colCycle"),    align: "right" as const  },
-    { x: LM + 94,  w: 18, label: t("colOperators"),align: "center" as const },
-    { x: LM + 112, w: 22, label: t("colFailure"),  align: "center" as const },
-    { x: LM + 134, w: 24, label: t("colEffective"),align: "right" as const  },
-    { x: LM + 158, w: 22, label: t("colExceeds"),  align: "center" as const },
+    { x: LM + 8,   w: 60, label: t("colName"),     align: "left" as const   },
+    { x: LM + 68,  w: 20, label: t("colCycle"),    align: "right" as const  },
+    { x: LM + 88,  w: 16, label: t("colOperators"),align: "center" as const },
+    { x: LM + 104, w: 20, label: t("colFailure"),  align: "center" as const },
+    { x: LM + 124, w: 23, label: t("colEffective"),align: "right" as const  },
+    { x: LM + 147, w: 33, label: t("colExceeds"),  align: "center" as const },
   ]
 
   function drawTableHeader() {
@@ -511,11 +541,11 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     sectionTitle(t("secImprovements"))
 
     const rCols = [
-      { x: LM,       w: 22, label: t("colRecType"),   align: "center" as const },
-      { x: LM + 22,  w: 80, label: t("colRecDesc"),   align: "left" as const   },
-      { x: LM + 102, w: 26, label: t("colRecImpact"), align: "right" as const  },
-      { x: LM + 128, w: 26, label: t("colRecCost"),   align: "right" as const  },
-      { x: LM + 154, w: 26, label: t("colRecPayback"),align: "center" as const },
+      { x: LM,       w: 20, label: t("colRecType"),   align: "center" as const },
+      { x: LM + 20,  w: 78, label: t("colRecDesc"),   align: "left" as const   },
+      { x: LM + 98,  w: 28, label: t("colRecImpact"), align: "right" as const  },
+      { x: LM + 126, w: 24, label: t("colRecCost"),   align: "right" as const  },
+      { x: LM + 150, w: 30, label: t("colRecPayback"),align: "center" as const },
     ]
 
     doc.setFillColor(241, 245, 249)
@@ -581,15 +611,15 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
 
       setGreen()
       doc.setFont("helvetica", "bold")
-      const netStr = `+${Math.round(econImpact.netImpactPerDay)} €/d`
+      const netStr = formatSignedAmount(econImpact.netImpactPerDay, locale, "€/d")
       doc.text(netStr, rCols[2].x + rCols[2].w - 1, y + 4, { align: "right" })
 
       setDark()
       doc.setFont("helvetica", "normal")
-      const costStr = econImpact.oneOffCost > 0 ? `${Math.round(econImpact.oneOffCost)} €` : "0 €"
+      const costStr = econImpact.oneOffCost > 0 ? formatCurrency(econImpact.oneOffCost, locale) : "0 €"
       doc.text(costStr, rCols[3].x + rCols[3].w - 1, y + 4, { align: "right" })
 
-      const paybackStr = econImpact.paybackDays === null ? "—" : econImpact.paybackDays === 0 ? t("paybackImmediate") : t("paybackDays", { days: econImpact.paybackDays })
+      const paybackStr = formatPayback(econImpact.paybackDays, t, locale)
       doc.text(paybackStr, rCols[4].x + rCols[4].w / 2, y + 4, { align: "center" })
 
       y += rRowH
@@ -624,8 +654,8 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     else setGray()
 
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(11)
-    const formattedAmount = `${Math.round(amount).toLocaleString(locale)} €${t("perDay")}`
+    doc.setFontSize(10.5)
+    const formattedAmount = `${formatCurrency(amount, locale)} ${t("perDay")}`
     doc.text(formattedAmount, bx + 4, by + 11.5)
   }
 
@@ -763,4 +793,3 @@ export default function ExportPdfButton() {
     </Button>
   )
 }
-
