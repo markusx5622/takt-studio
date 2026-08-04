@@ -52,7 +52,7 @@ export default async function LegalPage({
             </Link>
           </Button>
           <Link href="/" className="inline-flex items-center hover:opacity-90 transition-opacity" title="Takt Studio">
-            <BrandLogo variant="compact" className="h-8 sm:h-9 w-auto" priority />
+            <BrandLogo variant="horizontalLight" className="h-8 sm:h-9 w-auto" priority />
           </Link>
         </div>
 
