@@ -64,7 +64,7 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     setDark()
   }
 
-  function drawFooter() {
+  function drawFooter(current: number, total: number) {
     doc.setDrawColor(229, 231, 235)
     doc.setLineWidth(0.3)
     doc.line(LM, FOOTER_Y, RM, FOOTER_Y)
@@ -72,7 +72,7 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     doc.setFont("helvetica", "normal")
     doc.setFontSize(8)
     doc.text(t("footer"), LM, FOOTER_Y + 5)
-    doc.text(t("page"), RM, FOOTER_Y + 5, { align: "right" })
+    doc.text(t("page", { current, total }), RM, FOOTER_Y + 5, { align: "right" })
   }
 
   // ── HEADER ───────────────────────────────────────────────────────────────────
@@ -238,23 +238,33 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     { x: LM + 147, w: 33, label: t("colEffective"),align: "right"  },
   ]
 
-  // Table header
-  doc.setFillColor(241, 245, 249)
-  doc.setDrawColor(203, 213, 225)
-  doc.setLineWidth(0.2)
-  doc.rect(LM, y, CW, 6, "FD")
-  setGray()
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(7.5)
-  for (const col of tCols) {
-    const tx = col.align === "right" ? col.x + col.w - 1 : col.align === "center" ? col.x + col.w / 2 : col.x + 1.5
-    doc.text(col.label, tx, y + 4, { align: col.align })
+  function drawTableHeader() {
+    doc.setFillColor(241, 245, 249)
+    doc.setDrawColor(203, 213, 225)
+    doc.setLineWidth(0.2)
+    doc.rect(LM, y, CW, 6, "FD")
+    setGray()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(7.5)
+    for (const col of tCols) {
+      const tx = col.align === "right" ? col.x + col.w - 1 : col.align === "center" ? col.x + col.w / 2 : col.x + 1.5
+      doc.text(col.label, tx, y + 4, { align: col.align })
+    }
+    y += 6
   }
-  y += 6
+
+  drawTableHeader()
 
   const ROW_H = 6.5
   for (let i = 0; i < stations.length; i++) {
     const st = stations[i]
+
+    // Salto de página: repetir cabecera de tabla en la nueva página
+    if (y + ROW_H > FOOTER_Y - 10) {
+      doc.addPage()
+      y = 20
+      drawTableHeader()
+    }
 
     if (st.isBottleneck) {
       doc.setFillColor(254, 226, 226)
@@ -302,12 +312,6 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   sectionTitle(t("secAnalysis"), y)
   y += 7
 
-  const bulletSymbols: Record<string, string> = {
-    critical: "✖",
-    warning:  "▲",
-    success:  "✔",
-    info:     "ℹ",
-  }
   const bulletColors: Record<string, [number, number, number]> = {
     critical: [185, 28, 28],
     warning:  [180, 83, 9],
@@ -317,14 +321,21 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
 
   for (const insight of insights) {
     const [r, g, b] = bulletColors[insight.type]
+
+    // Salto de página si el insight no cabe completo (título + al menos 1 línea)
+    if (y + 12 > FOOTER_Y - 10) {
+      doc.addPage()
+      y = 20
+    }
+
+    // Bullet vectorial (los glifos Unicode ✖▲✔ℹ no existen en las fuentes base del PDF)
+    doc.setFillColor(r, g, b)
+    doc.circle(LM + 1.5, y - 1.2, 1.2, "F")
+
     doc.setTextColor(r, g, b)
     doc.setFont("helvetica", "bold")
     doc.setFontSize(9)
-    doc.text(
-      `${bulletSymbols[insight.type]}  ${tInsights(`${insight.key}.title`, insight.values)}`,
-      LM,
-      y
-    )
+    doc.text(tInsights(`${insight.key}.title`, insight.values), LM + 5, y)
     y += 5
 
     setGray()
@@ -338,9 +349,13 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     y += lines.length * 4 + 4
   }
 
-  // ── FOOTER ────────────────────────────────────────────────────────────────────
+  // ── FOOTER (todas las páginas) ─────────────────────────────────────────────
 
-  drawFooter()
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+    drawFooter(i, totalPages)
+  }
 
   // ── SAVE ─────────────────────────────────────────────────────────────────────
 
