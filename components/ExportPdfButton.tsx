@@ -17,6 +17,8 @@ import {
 import { generateInsights } from "@/lib/insights"
 import { LOGO_REPORT_BASE64 } from "@/lib/logo-base64"
 
+const APP_VERSION = "0.1.0"
+
 // ─── PDF Geometry Constants ───────────────────────────────────────────────────
 
 const LM = 15        // left margin (mm)
@@ -41,11 +43,12 @@ function formatCurrency(val: number, locale: string): string {
   return `${formatNumber(val, locale)} €`
 }
 
-function formatSignedAmount(num: number, locale: string, unit = "€/d"): string {
+function formatSignedAmount(num: number, locale: string, unit?: string): string {
   const rounded = Math.round(num)
-  if (rounded === 0) return `0 ${unit}`
+  const actualUnit = unit ?? (locale === "es" ? "€/día" : "€/day")
+  if (rounded === 0) return `0 ${actualUnit}`
   const formatted = formatNumber(Math.abs(rounded), locale)
-  return rounded > 0 ? `+${formatted} ${unit}` : `-${formatted} ${unit}`
+  return rounded > 0 ? `+${formatted} ${actualUnit}` : `-${formatted} ${actualUnit}`
 }
 
 function formatPayback(paybackDays: number | null | undefined, t: PdfTranslator, locale: string): string {
@@ -60,21 +63,21 @@ function formatPayback(paybackDays: number | null | undefined, t: PdfTranslator,
 
 type PdfTranslator = (key: string, values?: Record<string, string | number>) => string
 
-interface PdfI18n {
+interface PdfOptions {
   t: PdfTranslator
   tInsights: PdfTranslator
   tImprovements: PdfTranslator
   locale: string
 }
 
-// ─── Main PDF Generator ───────────────────────────────────────────────────────
+// ─── Main PDF Generation Engine ───────────────────────────────────────────────
 
-async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
-  const { t, tInsights, tImprovements, locale } = i18n
+export async function generatePdf(scenarioId: string, options: PdfOptions) {
+  const { t, tInsights, tImprovements, locale } = options
   const { jsPDF } = await import("jspdf")
 
-  const store = useTaktStore.getState()
-  const scenario = store.scenarios.find((s) => s.id === scenarioId)
+  const state = useTaktStore.getState()
+  const scenario = state.scenarios.find((s) => s.id === scenarioId)
   if (!scenario) return
 
   const kpis = calculateAllKPIs(scenario)
@@ -84,6 +87,14 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   const insights = generateInsights(scenario, kpis).slice(0, 4)
 
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
+
+  doc.setProperties({
+    title: `${t("reportTitle")} — ${scenario.name}`,
+    author: "Takt Studio",
+    subject: t("metadataSubject"),
+    keywords: `takt time, bottleneck, lean, ${scenario.name}`,
+    creator: "Takt Studio",
+  })
 
   // ── Color & Typography Helpers ──────────────────────────────────────────────
 
@@ -99,7 +110,7 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   function checkPageBreak(neededHeight: number): boolean {
     if (y + neededHeight > FOOTER_Y - 6) {
       doc.addPage()
-      y = 18
+      y = 28
       return true
     }
     return false
@@ -125,7 +136,11 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     setGray()
     doc.setFont("helvetica", "normal")
     doc.setFontSize(8)
-    doc.text(t("footer"), LM, FOOTER_Y + 5)
+    const baseFooterText = t("footer")
+    const footerStr = baseFooterText.includes("Takt Studio")
+      ? baseFooterText.replace("Takt Studio", `Generado por Takt Studio v${APP_VERSION}`)
+      : `Generado por Takt Studio v${APP_VERSION} · ${baseFooterText}`
+    doc.text(footerStr, LM, FOOTER_Y + 5)
     doc.text(t("page", { current, total }), RM, FOOTER_Y + 5, { align: "right" })
   }
 
@@ -381,10 +396,25 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   const axisTopY = chartY + 4
   const chartPlotH = axisBottomY - axisTopY
 
+  // Subtle horizontal background gridlines (3 lines)
+  doc.setDrawColor(240, 242, 245)
+  doc.setLineWidth(0.1)
+  const gridSteps = [0.25, 0.5, 0.75]
+  for (const step of gridSteps) {
+    const gridY = axisBottomY - chartPlotH * step
+    doc.line(axisX, gridY, LM + chartW - 4, gridY)
+  }
+
   doc.setDrawColor(203, 213, 225)
   doc.setLineWidth(0.3)
   doc.line(axisX, axisTopY, axisX, axisBottomY)
   doc.line(axisX, axisBottomY, LM + chartW - 4, axisBottomY)
+
+  // Y-axis Unit Label top-left of chart area
+  setGray()
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7)
+  doc.text(t("minUnit"), LM + 2, axisTopY - 1)
 
   // Takt Time Horizontal Line (Dashed)
   const taktY = axisBottomY - (kpis.taktTimeMin / yMaxScale) * chartPlotH
@@ -614,7 +644,7 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
 
       setGreen()
       doc.setFont("helvetica", "bold")
-      const netStr = formatSignedAmount(econImpact.netImpactPerDay, locale, "€/d")
+      const netStr = formatSignedAmount(econImpact.netImpactPerDay, locale, t("perDay"))
       doc.text(netStr, rCols[2].x + rCols[2].w - 1, y + 4, { align: "right" })
 
       setDark()
@@ -652,14 +682,21 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
     doc.setFontSize(7)
     doc.text(title.toUpperCase(), bx + 4, by + 4.5)
 
-    if (isGap && amount > 0) setRed()
-    else if (amount > 0) setDark()
-    else setGray()
+    if (isGap && amount <= 0) {
+      setGreen()
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(8.5)
+      doc.text(t("econGapZero"), bx + 4, by + 11.5)
+    } else {
+      if (isGap && amount > 0) setRed()
+      else if (amount > 0) setDark()
+      else setGray()
 
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(10.5)
-    const formattedAmount = `${formatCurrency(amount, locale)} ${t("perDay")}`
-    doc.text(formattedAmount, bx + 4, by + 11.5)
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(10.5)
+      const formattedAmount = `${formatNumber(amount, locale)} ${t("perDay")}`
+      doc.text(formattedAmount, bx + 4, by + 11.5)
+    }
   }
 
   drawEconCard(0, 0, t("econOpCost"), economicKpis.totalOperatingCostPerDay)
@@ -737,6 +774,23 @@ async function generatePdf(scenarioId: string, i18n: PdfI18n): Promise<void> {
   const totalPages = doc.getNumberOfPages()
   for (let pageIdx = 1; pageIdx <= totalPages; pageIdx++) {
     doc.setPage(pageIdx)
+    if (pageIdx >= 2) {
+      try {
+        doc.addImage(LOGO_REPORT_BASE64, "PNG", LM, 7, 24, 5.3)
+      } catch {
+        setBlue()
+        doc.setFont("helvetica", "bold")
+        doc.setFontSize(10)
+        doc.text("TAKT STUDIO", LM, 12)
+      }
+      setGray()
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(8)
+      doc.text(reportId, RM, 12, { align: "right" })
+      doc.setDrawColor(226, 232, 240)
+      doc.setLineWidth(0.3)
+      doc.line(LM, 15, RM, 15)
+    }
     drawFooter(pageIdx, totalPages)
   }
 
