@@ -54,7 +54,7 @@ export default async function PrivacyPage({
             </Link>
           </Button>
           <Link href="/" className="inline-flex items-center hover:opacity-90 transition-opacity" title="Takt Studio">
-            <BrandLogo variant="horizontalLight" className="h-8 sm:h-9 w-auto" priority />
+            <BrandLogo variant="horizontalLight" className="h-10 sm:h-11 w-auto" priority />
           </Link>
         </div>
 
