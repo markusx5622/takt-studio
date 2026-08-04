@@ -2,7 +2,7 @@
 
 import { Link, usePathname } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight, Languages } from "lucide-react"
+import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight, Languages, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import BrandLogo from "@/components/BrandLogo"
 import { useTaktStore } from "@/lib/store"
@@ -81,9 +81,10 @@ export default function Header() {
             <div className="ml-auto flex items-center gap-2">
               <Link
                 href="/simulador"
-                className="flex h-8 items-center justify-center rounded-lg bg-primary px-3.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="group flex h-8 items-center gap-1.5 justify-center rounded-lg bg-primary px-3.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 {t("access")}
+                <ArrowRight className="h-3.5 w-3.5 text-white transition-transform group-hover:translate-x-0.5" />
               </Link>
               {languageToggle}
             </div>
