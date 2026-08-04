@@ -192,6 +192,12 @@ export default function LandingFooter() {
               <li className="text-muted-foreground/70">{t("uev")}</li>
               <li className="pt-1 flex items-center gap-3">
                 <a
+                  href="mailto:taktstudio.app@gmail.com"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                >
+                  {t("contact")}
+                </a>
+                <a
                   href="https://github.com/markusx5622/takt-studio/issues"
                   target="_blank"
                   rel="noreferrer noopener"

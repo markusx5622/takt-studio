@@ -298,7 +298,8 @@
       "reportIssue": "Reportar un Issue",
       "copyright": "© 2026 Takt Studio. Todos los derechos reservados.",
       "scrollTop": "Volver arriba",
-      "stackNote": "Desarrollado con Next.js 16 · React 19 · TypeScript · Tailwind CSS"
+      "stackNote": "Desarrollado con Next.js 16 · React 19 · TypeScript · Tailwind CSS",
+      "contact": "Contacto"
     }
   },
   "legal": {
@@ -354,7 +355,7 @@
         "t": "1. Responsable del tratamiento",
         "p": [
           "El responsable del tratamiento de los datos es Marc Cubero Cantavella, con residencia en Valencia (España), titular y desarrollador de Takt Studio.",
-          "El canal de contacto para cualquier cuestión de privacidad es el gestor de incidencias (Issues) del repositorio público del proyecto en GitHub. Dada la naturaleza personal y sin ánimo de lucro del proyecto, no se ha designado delegado de protección de datos."
+          "El canal de contacto para cualquier cuestión de privacidad es el correo electrónico taktstudio.app@gmail.com. Como canal alternativo, especialmente para incidencias técnicas, también está disponible el gestor de incidencias (Issues) del repositorio público del proyecto en GitHub. Dada la naturaleza personal y sin ánimo de lucro del proyecto, no se ha designado delegado de protección de datos."
         ]
       },
       {

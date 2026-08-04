@@ -77,6 +77,13 @@ export default async function LegalPage({
                 <strong>{t("s1location")}</strong> Valencia, España<br />
                 <strong>{t("s1contact")}</strong>{" "}
                 <a
+                  href="mailto:taktstudio.app@gmail.com"
+                  className="text-primary hover:underline"
+                >
+                  taktstudio.app@gmail.com
+                </a>
+                {" · "}
+                <a
                   href={ISSUES_URL}
                   target="_blank"
                   rel="noopener noreferrer"
