@@ -52,7 +52,7 @@ export default function InterfaceMockup() {
         </div>
       </div>
 
-      <div className="flex h-[420px]">
+      <div className="flex h-[440px] sm:h-[460px] md:h-[480px]">
         {/* Sidebar Mini */}
         <div className="hidden w-16 flex-col items-center gap-6 border-r bg-muted/20 py-8 md:flex">
           <div className="rounded-xl bg-primary p-2 shadow-lg shadow-primary/20">
@@ -67,7 +67,7 @@ export default function InterfaceMockup() {
         </div>
 
         {/* Main Dashboard Content */}
-        <div className="flex-1 overflow-hidden p-6 space-y-5">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
           {/* Header Area */}
           <div className="flex items-center justify-between">
             <div>
