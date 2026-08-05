@@ -15,11 +15,13 @@ export default function MetricsSection() {
       <div className="rounded-2xl border border-slate-200/80 bg-background/80 p-8 shadow-sm backdrop-blur-xl md:p-10">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {stats.map((stat, i) => (
-            <div key={i} className="flex flex-col items-center text-center">
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
+            <div key={i} className="group relative flex flex-col items-center text-center">
+              {/* Glowing aura behind each number */}
+              <div className="pointer-events-none absolute -inset-2 rounded-full bg-blue-500/15 blur-xl transition-all duration-300 group-hover:bg-blue-500/25 group-hover:scale-110 group-hover:blur-2xl" />
+              <span className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-3xl font-extrabold text-transparent drop-shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-transform duration-200 group-hover:scale-105 sm:text-4xl">
                 {stat.val}
               </span>
-              <span className="mt-2 text-xs font-medium text-muted-foreground sm:text-sm">
+              <span className="relative mt-2 text-xs font-medium text-muted-foreground sm:text-sm">
                 {stat.label}
               </span>
             </div>
