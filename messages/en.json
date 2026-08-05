@@ -641,7 +641,9 @@
       "presetAutomotive": "Automotive Assembly (Chassis/Engine)",
       "presetElectronics": "Electronics Assembly (SMT Line)",
       "presetLogistics": "Logistics & Kit Packaging",
-      "presetConfirm": "Load preset \"{name}\"? Existing stations in this scenario will be replaced."
+      "presetConfirm": "Load preset \"{name}\"? Existing stations in this scenario will be replaced.",
+      "bottleneckBadge": "Bottleneck",
+      "bottleneckTooltip": "Constraining station with highest effective cycle time"
     },
     "kpi": {
       "empty": "Add stations to see the KPIs",

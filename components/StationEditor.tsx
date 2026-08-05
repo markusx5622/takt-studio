@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronUp, ChevronDown, Trash2, Plus, Sparkles } from "lucide-react"
+import { ChevronUp, ChevronDown, Trash2, Plus, Sparkles, AlertTriangle } from "lucide-react"
+import { findBottleneck } from "@/lib/calculations"
 import { cn } from "@/lib/utils"
 import type { Station } from "@/types"
 
@@ -53,6 +54,7 @@ interface RowProps extends RowActions {
   index: number
   isFirst: boolean
   isLast: boolean
+  isBottleneck: boolean
 }
 
 // ─── Cell input class ─────────────────────────────────────────────────────────
@@ -67,6 +69,7 @@ function StationRow({
   index,
   isFirst,
   isLast,
+  isBottleneck,
   onNameChange,
   onCycleChange,
   onOperatorsChange,
@@ -77,16 +80,34 @@ function StationRow({
 }: RowProps) {
   const t = useTranslations("simulator.stations")
   return (
-    <tr className="border-b transition-colors hover:bg-blue-50/60">
-      <td className="py-1 pl-4 text-sm text-foreground/60">{index + 1}</td>
+    <tr
+      className={cn(
+        "border-b transition-colors",
+        isBottleneck
+          ? "bg-amber-500/10 hover:bg-amber-500/15 dark:bg-amber-950/30 border-l-4 border-l-amber-500"
+          : "hover:bg-blue-50/60"
+      )}
+    >
+      <td className="py-1 pl-4 text-sm font-medium text-foreground/60">{index + 1}</td>
       <td className="py-1 pl-2">
-        <Input
-          className={cellInputCls}
-          value={station.name}
-          placeholder={t("namePlaceholder")}
-          aria-label={t("colName")}
-          onChange={(e) => onNameChange(station.id, e.target.value)}
-        />
+        <div className="flex items-center gap-2">
+          <Input
+            className={cellInputCls}
+            value={station.name}
+            placeholder={t("namePlaceholder")}
+            aria-label={t("colName")}
+            onChange={(e) => onNameChange(station.id, e.target.value)}
+          />
+          {isBottleneck && (
+            <span
+              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-300 bg-amber-100/90 px-2 py-0.5 text-[10px] font-bold text-amber-800 shadow-2xs dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300"
+              title={t("bottleneckTooltip")}
+            >
+              <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>{t("bottleneckBadge")}</span>
+            </span>
+          )}
+        </div>
       </td>
       <td className="py-1 pl-2">
         <Input
@@ -167,6 +188,7 @@ function StationCard({
   index,
   isFirst,
   isLast,
+  isBottleneck,
   onNameChange,
   onCycleChange,
   onOperatorsChange,
@@ -177,9 +199,27 @@ function StationCard({
 }: RowProps) {
   const t = useTranslations("simulator.stations")
   return (
-    <div className="rounded-lg border p-3">
+    <div
+      className={cn(
+        "rounded-lg border p-3 transition-all",
+        isBottleneck
+          ? "border-amber-400/80 bg-amber-50/40 border-l-4 border-l-amber-500 shadow-2xs dark:bg-amber-950/20"
+          : "hover:border-blue-300/60"
+      )}
+    >
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">#{index + 1}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground">#{index + 1}</span>
+          {isBottleneck && (
+            <span
+              className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-100/90 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300"
+              title={t("bottleneckTooltip")}
+            >
+              <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>{t("bottleneckBadge")}</span>
+            </span>
+          )}
+        </div>
         <div className="flex gap-0.5">
           <Button
             variant="ghost"
@@ -346,6 +386,8 @@ export default function StationEditor() {
     onDelete: () => handleDelete(station.id),
   })
 
+  const bottleneckId = stations.length > 0 ? findBottleneck(stations).stationId : ""
+
   return (
     <Card>
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between space-y-0 pb-4">
@@ -434,6 +476,7 @@ export default function StationEditor() {
                       index={index}
                       isFirst={index === 0}
                       isLast={index === stations.length - 1}
+                      isBottleneck={station.id === bottleneckId}
                       {...rowActions(station)}
                     />
                   ))}
@@ -450,6 +493,7 @@ export default function StationEditor() {
                   index={index}
                   isFirst={index === 0}
                   isLast={index === stations.length - 1}
+                  isBottleneck={station.id === bottleneckId}
                   {...rowActions(station)}
                 />
               ))}
