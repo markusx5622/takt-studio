@@ -201,28 +201,28 @@
       "sub": "Todo lo que incluye Takt Studio desde el primer acceso",
       "items": [
         {
-          "title": "Plantilla Monobath",
-          "description": "Línea de baños prefabricados preconfigurada como caso de estudio operativo."
+          "title": "Caso de Estudio Monobath",
+          "description": "Línea de baños prefabricados calibrada con datos reales de producción industrializada."
         },
         {
-          "title": "Comparación A/B",
-          "description": "Contrasta dos escenarios lado a lado con delta automático en cada métrica."
+          "title": "Comparación What-If A/B",
+          "description": "Contrasta dos escenarios lado a lado con deltas automáticos de rendimiento y costes."
         },
         {
-          "title": "KPIs clave",
-          "description": "Takt time, throughput, lead time, eficiencia de balanceo y análisis de constraint."
+          "title": "Diagnóstico de Cuello de Botella",
+          "description": "Identificación dinámica de restricciones, Takt Time y eficiencia global de balanceo."
         },
         {
-          "title": "Exportación PDF",
-          "description": "Genera informes del escenario activo para documentación o presentaciones."
+          "title": "Informes PDF Vectoriales A4",
+          "description": "Generación de informes ejecutivos con gráficos y tablas listos para imprimir."
         },
         {
-          "title": "Simulación instantánea",
-          "description": "Cálculo en tiempo real sin latencia perceptible al ajustar cualquier parámetro."
+          "title": "Simulación Monte Carlo",
+          "description": "Análisis estocástico con 2.000 iteraciones y percentiles de riesgo P10, P50 y P90."
         },
         {
-          "title": "Sin instalación",
-          "description": "Funciona en el navegador. Sin cuentas, sin licencias, sin dependencias externas."
+          "title": "Análisis de Impacto Económico",
+          "description": "Cálculo de coste de no-calidad, margen de contribución y payback de mejoras."
         }
       ]
     },

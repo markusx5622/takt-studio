@@ -1,14 +1,14 @@
 import { useTranslations } from "next-intl"
 import {
-  Gauge,
-  GitCompare,
   Layers,
+  GitCompare,
   BarChart3,
   FileDown,
-  Zap,
+  Sliders,
+  DollarSign,
 } from "lucide-react"
 
-const CAPABILITY_ICONS = [Layers, GitCompare, BarChart3, FileDown, Zap, Gauge]
+const CAPABILITY_ICONS = [Layers, GitCompare, BarChart3, FileDown, Sliders, DollarSign]
 
 export default function CapabilitiesSection() {
   const t = useTranslations("landing.capabilities")

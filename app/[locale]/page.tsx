@@ -7,7 +7,6 @@ import FeaturesSection from "@/components/landing/FeaturesSection"
 import HowItWorks from "@/components/landing/HowItWorks"
 import RoiCalculatorSection from "@/components/landing/RoiCalculatorSection"
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection"
-import MethodologySection from "@/components/landing/MethodologySection"
 import AboutSection from "@/components/landing/AboutSection"
 import TechStackSection from "@/components/landing/TechStackSection"
 import FaqSection from "@/components/landing/FaqSection"
@@ -37,7 +36,6 @@ export default async function Home({
       <HowItWorks />
       <RoiCalculatorSection />
       <CapabilitiesSection />
-      <MethodologySection />
       <AboutSection />
       <TechStackSection />
       <FaqSection />

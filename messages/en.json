@@ -201,28 +201,28 @@
       "sub": "Everything included in Takt Studio from the first visit",
       "items": [
         {
-          "title": "Monobath template",
-          "description": "A prefabricated bathroom pod line preconfigured as an operational case study."
+          "title": "Monobath Case Study",
+          "description": "Preconfigured off-site prefabricated bathroom module production line."
         },
         {
-          "title": "A/B comparison",
-          "description": "Contrast two scenarios side by side with automatic deltas on every metric."
+          "title": "What-If A/B Comparison",
+          "description": "Side-by-side scenario matrix with automated metric and financial deltas."
         },
         {
-          "title": "Key KPIs",
-          "description": "Takt time, throughput, lead time, balancing efficiency and constraint analysis."
+          "title": "Bottleneck & Takt Analysis",
+          "description": "Dynamic constraint detection, Takt Time tracking and line balancing efficiency."
         },
         {
-          "title": "PDF export",
-          "description": "Generate reports of the active scenario for documentation or presentations."
+          "title": "Vector A4 PDF Reports",
+          "description": "Executive report generation with vector charts and tables ready for print."
         },
         {
-          "title": "Instant simulation",
-          "description": "Real-time calculation with no perceptible latency when adjusting any parameter."
+          "title": "Stochastic Monte Carlo Engine",
+          "description": "Risk distribution analysis with 2,000 runs and P10/P50/P90 percentiles."
         },
         {
-          "title": "No installation",
-          "description": "Runs in the browser. No accounts, no licenses, no external dependencies."
+          "title": "Economic Impact Analysis",
+          "description": "Calculation of downtime costs, contribution margin and recommendation payback."
         }
       ]
     },
