@@ -15,6 +15,7 @@ import {
   Zap,
   Euro,
   CheckCircle2,
+  Sliders,
 } from "lucide-react"
 
 function Formula({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -161,6 +162,35 @@ export default async function MetodologiaPage({
               <div className="flex items-start gap-2 rounded-md border border-amber-200/60 bg-amber-50/40 px-3 py-2">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                 <p className="text-xs text-amber-800/80">{t("econWarning")}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* ── Motor Estocástico Monte Carlo & Sensibilidad ──────────────────── */}
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <Sliders className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-bold tracking-tight">{t("stochasticTitle")}</h2>
+          </div>
+          <Card>
+            <CardContent className="space-y-4 pt-6 text-sm leading-relaxed text-foreground/75">
+              <p>{t("stochasticIntro")}</p>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {t("mcTitle")}
+                </h4>
+                <p>{t("mcText")}</p>
+                <Formula>{t("mcFormula")}</Formula>
+                <p className="text-xs text-muted-foreground">{t("mcPercentiles")}</p>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {t("sensitivityTitle")}
+                </h4>
+                <p>{t("sensitivityText")}</p>
               </div>
             </CardContent>
           </Card>

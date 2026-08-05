@@ -551,11 +551,19 @@
     "paybackText": "Si la recomendación conlleva una inversión inicial one-off (mejora de método o de calidad), se estima el tiempo de recuperación.",
     "paybackFormula": "payback = inversiónInicial / impactoNetoDiario",
     "econWarning": "La capa económica es una estimación orientativa bajo supuestos configurables. No sustituye un análisis financiero detallado ni la validación contable real de la empresa.",
+    "stochasticTitle": "Motor Estocástico Monte Carlo & Sensibilidad",
+    "stochasticIntro": "Para complementar el cálculo analítico determinista en tiempo real, Takt Studio incorpora un motor de simulación de Monte Carlo con 2.000 iteraciones estocásticas y un laboratorio de sensibilidad de parámetros.",
+    "mcTitle": "Simulación Monte Carlo (Riesgo y Variabilidad)",
+    "mcText": "Cada estación de la línea simula variabilidad aleatoria en su tiempo de ciclo siguiendo una distribución normal truncada calculada mediante la transformada de Box-Muller y el generador PRNG Mulberry32.",
+    "mcFormula": "T_ef,i ~ Normal(μ = T_base,i / O_i, σ = 0.10 × μ) × (1 + p_i)",
+    "mcPercentiles": "A partir de las 2.000 iteraciones se extraen los percentiles P10 (escenario conservador), P50 (mediana esperada) y P90 (escenario optimista), ofreciendo una matriz de riesgo probabilístico del Throughput real.",
+    "sensitivityTitle": "Laboratorio de Sensibilidad",
+    "sensitivityText": "Permite proyectar el comportamiento de la línea ante barridos continuos de demanda (±50%) y variaciones de mano de obra, identificando visualmente los puntos de inflexión donde la línea entra en déficit.",
     "limitsTitle": "Supuestos y limitaciones",
     "limits": [
       {
-        "label": "Modelo determinista",
-        "text": "El cálculo es analítico y no modela la variabilidad estocástica del tiempo de ciclo, ausencias ni fallos aleatorios."
+        "label": "Dualidad Determinista / Estocástica",
+        "text": "El modelo base ofrece recálculo determinista instantáneo (<1 ms). Para evaluar la variabilidad y el riesgo operativo en planta se utiliza el motor estocástico Monte Carlo (2.000 iteraciones)."
       },
       {
         "label": "Sin DES completa",

@@ -551,11 +551,19 @@
     "paybackText": "If the recommendation involves a one-off initial investment (method or quality improvement), the recovery time is estimated.",
     "paybackFormula": "payback = initialInvestment / dailyNetImpact",
     "econWarning": "The economic layer is an indicative estimate under configurable assumptions. It does not replace a detailed financial analysis or the company's real accounting validation.",
-    "limitsTitle": "Assumptions and limitations",
+    "stochasticTitle": "Stochastic Monte Carlo Engine & Sensitivity",
+    "stochasticIntro": "To complement the real-time deterministic calculation, Takt Studio incorporates a Monte Carlo simulation engine with 2,000 stochastic runs and a parameter sensitivity laboratory.",
+    "mcTitle": "Monte Carlo Simulation (Risk & Variability)",
+    "mcText": "Each line station simulates random cycle time variability following a truncated normal distribution computed via the Box-Muller transform and the Mulberry32 PRNG generator.",
+    "mcFormula": "T_ef,i ~ Normal(μ = T_base,i / O_i, σ = 0.10 × μ) × (1 + p_i)",
+    "mcPercentiles": "From 2,000 runs, the P10 (conservative scenario), P50 (expected median), and P90 (optimistic scenario) percentiles are extracted, providing a probabilistic Throughput risk matrix.",
+    "sensitivityTitle": "Sensitivity Laboratory",
+    "sensitivityText": "Projects line performance across continuous demand sweeps (±50%) and labor variations, visually highlighting the inflection points where the line enters deficit.",
+    "limitsTitle": "Assumptions & Limitations",
     "limits": [
       {
-        "label": "Deterministic model",
-        "text": "The calculation is analytical and does not model stochastic cycle time variability, absences or random failures."
+        "label": "Deterministic / Stochastic Duality",
+        "text": "The core model provides real-time deterministic calculation (<1 ms). For plant variability and risk analysis, the 2,000-run Monte Carlo stochastic engine is deployed."
       },
       {
         "label": "No full DES",
