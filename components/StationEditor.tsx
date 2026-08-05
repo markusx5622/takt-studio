@@ -76,7 +76,7 @@ function StationRow({
 }: RowProps) {
   const t = useTranslations("simulator.stations")
   return (
-    <tr className="border-b transition-colors hover:bg-muted/50">
+    <tr className="border-b transition-colors hover:bg-blue-50/60">
       <td className="py-1 pl-4 text-sm text-foreground/60">{index + 1}</td>
       <td className="py-1 pl-2">
         <Input

@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import Header from "@/components/Header"
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar"
 import PwaInstallModal from "@/components/PwaInstallModal"
+import ScrollToTopFab from "@/components/ScrollToTopFab"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
@@ -107,6 +108,7 @@ export default async function LocaleLayout({
             <main className="pb-16 md:pb-0">{children}</main>
             <ServiceWorkerRegistrar />
             <PwaInstallModal />
+            <ScrollToTopFab />
           </TooltipProvider>
           <Analytics />
           <SpeedInsights />

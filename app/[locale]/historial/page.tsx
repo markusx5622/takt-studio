@@ -20,6 +20,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   ArrowRight,
+  Search,
 } from "lucide-react"
 import type { ScenarioSnapshot } from "@/types"
 import ConsultingBackground from "@/components/ConsultingBackground"
@@ -228,6 +229,7 @@ export default function HistorialPage() {
 
   const [selectedSnapshotId, setSelectedSnapshotId] = useState<string | null>(null)
   const [snapshotName, setSnapshotName] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
 
   const activeScenario = useMemo(
     () => scenarios.find((s) => s.id === activeScenarioId),
@@ -240,6 +242,12 @@ export default function HistorialPage() {
       .filter((s) => s.scenarioId === activeScenario.id)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   }, [snapshots, activeScenario])
+
+  const filteredSnapshots = useMemo(() => {
+    if (!searchQuery.trim()) return activeSnapshots
+    const q = searchQuery.toLowerCase()
+    return activeSnapshots.filter((s) => s.name.toLowerCase().includes(q))
+  }, [activeSnapshots, searchQuery])
 
   const baselineSnapshot = activeSnapshots.find((s) => s.isBaseline)
 
@@ -374,8 +382,27 @@ export default function HistorialPage() {
         </Card>
       )}
 
+      {/* Snapshots Search Bar & List Header */}
+      {activeSnapshots.length > 0 && (
+        <div className="flex items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Buscar instantánea por nombre..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-9 pl-9 text-xs"
+            />
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {filteredSnapshots.length} de {activeSnapshots.length} instantáneas
+          </span>
+        </div>
+      )}
+
       {/* Snapshots list */}
-      {activeSnapshots.length === 0 ? (
+      {filteredSnapshots.length === 0 ? (
         <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border bg-muted/20 text-center">
           <History className="h-10 w-10 text-muted-foreground/30" />
           <div>
@@ -387,7 +414,7 @@ export default function HistorialPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {activeSnapshots.map((snapshot) => (
+          {filteredSnapshots.map((snapshot) => (
             <SnapshotCard
               key={snapshot.id}
               snapshot={snapshot}

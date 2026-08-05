@@ -3,7 +3,7 @@
 import { useMemo } from "react"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs } from "@/lib/calculations"
-import { CheckCircle2, AlertTriangle, Gauge, Activity } from "lucide-react"
+import { CheckCircle2, AlertTriangle, Gauge, Activity, HardDrive } from "lucide-react"
 
 export default function ExecutiveHeaderBanner() {
   const hydrated = useHydrated()
@@ -60,6 +60,10 @@ export default function ExecutiveHeaderBanner() {
               </span>
               <span className="text-xs font-semibold text-foreground/80">
                 {scenario.name}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md border border-slate-200/80 bg-background/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground shadow-2xs">
+                <HardDrive className="h-3 w-3 text-blue-500" />
+                Auto-guardado en LocalStorage
               </span>
             </div>
 
