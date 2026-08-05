@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { RotateCcw, BarChart3, GitCompare, BookOpen, History, ArrowLeftRight, Languages, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import BrandLogo from "@/components/BrandLogo"
+import MobileNotice from "@/components/MobileNotice"
 import { useTaktStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 
@@ -16,6 +17,8 @@ const navLinks = [
   { href: "/importar-exportar", key: "importarExportar", icon: ArrowLeftRight },
 ] as const
 
+const appNoticeRoutes = ["/simulador", "/comparar", "/historial", "/importar-exportar"]
+
 export default function Header() {
   const t = useTranslations("header")
   const locale = useLocale()
@@ -23,6 +26,7 @@ export default function Header() {
   const resetToPreset = useTaktStore((s) => s.resetToPreset)
   const otherLocale = locale === "es" ? "en" : "es"
   const isAppRoute = navLinks.some((link) => link.href === pathname || pathname.startsWith(link.href))
+  const showMobileNotice = appNoticeRoutes.some((route) => pathname === route || pathname.startsWith(route))
 
   function handleReset() {
     if (confirm(t("resetConfirm"))) {
@@ -105,24 +109,31 @@ export default function Header() {
         </div>
       </header>
 
+      {showMobileNotice && <MobileNotice />}
+
       {isAppRoute && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-white pb-safe md:hidden">
-          {navLinks.map(({ href, key, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              aria-current={pathname === href ? "page" : undefined}
-              className={cn(
-                "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
-                pathname === href
-                  ? "bg-primary text-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)]"
-                  : "text-slate-500"
-              )}
-            >
-              <Icon className="h-5 w-5" />
-              {t(`nav.${key}`).split(" ")[0]}
-            </Link>
-          ))}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t bg-white px-2 py-2 pb-safe md:hidden">
+          {navLinks.map(({ href, key, icon: Icon }) => {
+            const label = t(`nav.${key}`)
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                title={label}
+                aria-current={pathname === href ? "page" : undefined}
+                className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
+                  pathname === href
+                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                )}
+              >
+                <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                <span className="hidden md:inline">{label}</span>
+              </Link>
+            )
+          })}
         </nav>
       )}
     </>

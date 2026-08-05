@@ -20,6 +20,9 @@
     "switchLocale": "Switch language to {locale}",
     "access": "ACCESS"
   },
+  "appShell": {
+    "mobileNotice": "Read-only view: Takt Studio is optimized for tablet and desktop. Use a larger screen to simulate and edit."
+  },
   "landing": {
     "hero": {
       "eyebrow": "Industrial Organization Engineering",

@@ -20,6 +20,9 @@
     "switchLocale": "Cambiar idioma a {locale}",
     "access": "ACCEDER"
   },
+  "appShell": {
+    "mobileNotice": "Vista de consulta: Takt Studio está optimizado para tablet y escritorio. Para simular y editar, usa una pantalla más grande."
+  },
   "landing": {
     "hero": {
       "eyebrow": "Ingeniería de Organización Industrial",
