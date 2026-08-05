@@ -34,8 +34,8 @@ export default function CapabilitiesSection() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, i) => {
             const Icon = CAPABILITY_ICONS[i]
-            // Make first card and 4th card span 2 cols on md screens for asymmetrical bento style
-            const isFeatured = i === 0 || i === 3
+            // Make card 1 (i=0), card 4 (i=3), and card 5 (i=4) span 2 cols for a balanced 3-row bento grid
+            const isFeatured = i === 0 || i === 3 || i === 4
             return (
               <div
                 key={i}
