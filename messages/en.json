@@ -136,6 +136,48 @@
         }
       ]
     },
+    "metrics": {
+      "kpi1Val": "+35%",
+      "kpi1Label": "Average Line Balancing Efficiency Improvement",
+      "kpi2Val": "< 1 ms",
+      "kpi2Label": "Analytical Recalculation Speed",
+      "kpi3Val": "2,000",
+      "kpi3Label": "Stochastic Monte Carlo Iterations",
+      "kpi4Val": "100%",
+      "kpi4Label": "Local Privacy (Cookieless & Offline-First)"
+    },
+    "sectors": {
+      "badge": "Industrial Sectors",
+      "heading": "Engineered for Demanding Manufacturing Plants",
+      "sub": "From continuous assembly lines to modular construction off-site facilities",
+      "automotive": {
+        "title": "Automotive & Components",
+        "desc": "High-velocity assembly lines with strict Takt Time constraints."
+      },
+      "modular": {
+        "title": "Modular & Off-Site Construction",
+        "desc": "3D volumetric module assembly and industrialized panelization."
+      },
+      "electronics": {
+        "title": "Electronics & Precision Assembly",
+        "desc": "Cellular manufacturing with operator variability balancing."
+      },
+      "logistics": {
+        "title": "Kitting, Packaging & Logistics",
+        "desc": "High-throughput order prep and packaging stations."
+      }
+    },
+    "roiCalculator": {
+      "badge": "Interactive ROI Calculator",
+      "heading": "Estimate the Financial Impact of Bottleneck Optimization",
+      "sub": "Adjust the sliders to project the annual economic loss caused by line imbalance",
+      "bottleneckHours": "Lost bottleneck hours per day:",
+      "hourlyCost": "Downtime direct hourly cost (€/h):",
+      "marginPerUnit": "Lost contribution margin per unit (€):",
+      "annualLossLabel": "Projected Annual Inefficiency Cost",
+      "potentialSavingsLabel": "Potential Savings with Takt Studio",
+      "cta": "Simulate My Production Line Now"
+    },
     "howItWorks": {
       "heading": "Workflow",
       "sub": "From definition to decision in three steps",

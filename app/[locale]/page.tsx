@@ -1,8 +1,11 @@
 import { setRequestLocale } from "next-intl/server"
 import HeroParticles from "@/components/HeroParticles"
 import HeroSection from "@/components/landing/HeroSection"
+import MetricsSection from "@/components/landing/MetricsSection"
+import SectorsSection from "@/components/landing/SectorsSection"
 import FeaturesSection from "@/components/landing/FeaturesSection"
 import HowItWorks from "@/components/landing/HowItWorks"
+import RoiCalculatorSection from "@/components/landing/RoiCalculatorSection"
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection"
 import MethodologySection from "@/components/landing/MethodologySection"
 import AboutSection from "@/components/landing/AboutSection"
@@ -28,8 +31,11 @@ export default async function Home({
       </div>
 
       <HeroSection />
+      <MetricsSection />
+      <SectorsSection />
       <FeaturesSection />
       <HowItWorks />
+      <RoiCalculatorSection />
       <CapabilitiesSection />
       <MethodologySection />
       <AboutSection />

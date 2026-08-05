@@ -136,6 +136,48 @@
         }
       ]
     },
+    "metrics": {
+      "kpi1Val": "+35%",
+      "kpi1Label": "Mejora media en Eficiencia de Balanceo",
+      "kpi2Val": "< 1 ms",
+      "kpi2Label": "Tiempo de Recálculo Analítico",
+      "kpi3Val": "2.000",
+      "kpi3Label": "Simulaciones Monte Carlo Estocásticas",
+      "kpi4Val": "100%",
+      "kpi4Label": "Privacidad Local (Sin Cookies ni Backend)"
+    },
+    "sectors": {
+      "badge": "Sectores Industriales",
+      "heading": "Diseñado para Entornos de Manufactura Exigentes",
+      "sub": "Desde líneas de montaje continuo hasta plantas de producción modular y componentes de alta precisión",
+      "automotive": {
+        "title": "Automoción y Componentes",
+        "desc": "Líneas de ensamblaje con secuencias ajustadas a Takt Time estricto."
+      },
+      "modular": {
+        "title": "Construcción Modular e Industrializada",
+        "desc": "Ensamblaje off-site de módulos tridimensionales y paneles industrializados."
+      },
+      "electronics": {
+        "title": "Electrónica y Aparatos de Precisión",
+        "desc": "Celdas de producción con balanceo de carga y variabilidad de mano de obra."
+      },
+      "logistics": {
+        "title": "Logística, Kits y Embalaje",
+        "desc": "Estaciones de preparación de pedidos y empaquetado de alto flujo."
+      }
+    },
+    "roiCalculator": {
+      "badge": "Calculadora Interactiva de ROI",
+      "heading": "Calcula el Impacto de Optimizar tu Cuello de Botella",
+      "sub": "Mueve los controles para estimar la pérdida económica actual por ineficiencia de balanceo en tu planta",
+      "bottleneckHours": "Horas perdidas en Cuello de Botella / día:",
+      "hourlyCost": "Coste directo por hora de parada (€/h):",
+      "marginPerUnit": "Margen de contribución perdido por unidad (€):",
+      "annualLossLabel": "Coste Estimado de Ineficiencia Anual",
+      "potentialSavingsLabel": "Ahorro Potencial con Takt Studio",
+      "cta": "Simular mi Línea Ahora"
+    },
     "howItWorks": {
       "heading": "Flujo de uso",
       "sub": "De la definición a la decisión en tres pasos",

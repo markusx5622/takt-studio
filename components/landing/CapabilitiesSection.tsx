@@ -8,30 +8,6 @@ import {
   Zap,
 } from "lucide-react"
 
-// ─── Capability pill ───────────────────────────────────────────────────────────
-
-function CapabilityItem({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: React.ComponentType<{ className?: string }>
-  title: string
-  description: string
-}) {
-  return (
-    <div className="flex items-start gap-3 rounded-lg border bg-background p-4 transition-all duration-200 hover:shadow-md hover:border-primary">
-      <div className="mt-0.5 shrink-0 rounded-md border bg-muted/50 p-2">
-        <Icon className="h-4 w-4 text-primary" />
-      </div>
-      <div>
-        <p className="text-sm font-semibold">{title}</p>
-        <p className="text-xs leading-relaxed text-foreground/65">{description}</p>
-      </div>
-    </div>
-  )
-}
-
 const CAPABILITY_ICONS = [Layers, GitCompare, BarChart3, FileDown, Zap, Gauge]
 
 export default function CapabilitiesSection() {
@@ -39,27 +15,56 @@ export default function CapabilitiesSection() {
   const items = t.raw("items") as { title: string; description: string }[]
 
   return (
-<section className="reveal relative z-10 px-4 py-20 md:py-24">
-    <div className="pointer-events-none absolute inset-0 section-ambient-structure" />
-    <div className="mx-auto max-w-4xl">
-      <div className="mb-14 text-center">
-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("heading")}</h2>
-        <p className="mt-2 text-sm text-foreground/60">
-          {t("sub")}
-        </p>
-      </div>
+    <section className="reveal relative z-10 px-4 py-20 md:py-24">
+      <div className="pointer-events-none absolute inset-0 section-ambient-structure" />
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-14 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50/80 px-3.5 py-1 text-xs font-semibold text-indigo-700 backdrop-blur-sm">
+            Bento Grid Architecture
+          </div>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-4xl">
+            {t("heading")}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t("sub")}
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item, i) => (
-          <CapabilityItem
-            key={i}
-            icon={CAPABILITY_ICONS[i]}
-            title={item.title}
-            description={item.description}
-          />
-        ))}
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item, i) => {
+            const Icon = CAPABILITY_ICONS[i]
+            // Make first card and 4th card span 2 cols on md screens for asymmetrical bento style
+            const isFeatured = i === 0 || i === 3
+            return (
+              <div
+                key={i}
+                className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-background/80 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-md ${
+                  isFeatured ? "sm:col-span-2 lg:col-span-2 bg-gradient-to-br from-background via-background to-blue-50/40" : ""
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+                    0{i + 1}
+                  </span>
+                </div>
+
+                <div className="mt-6">
+                  <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
   )
 }
