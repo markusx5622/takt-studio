@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server"
+import ExecutiveHeaderBanner from "@/components/ExecutiveHeaderBanner"
 import ScenarioControls from "@/components/ScenarioControls"
 import StationEditor from "@/components/StationEditor"
 import KpiPanel from "@/components/KpiPanel"
@@ -32,8 +33,11 @@ export default async function SimuladorPage({
             {t("subtitle")}
           </p>
         </div>
-      {/* ── 1. Configuración del escenario ──────────────────────────────────── */}
-      <ScenarioControls />
+        {/* ── 0. Banner de salud ejecutiva de línea ───────────────────────────── */}
+        <ExecutiveHeaderBanner />
+
+        {/* ── 1. Configuración del escenario ──────────────────────────────────── */}
+        <ScenarioControls />
 
       {/* ── 2. Definición de estaciones ─────────────────────────────────────── */}
       <StationEditor />
