@@ -115,7 +115,7 @@ $$T_t = \frac{T_{disp}}{\text{demandaDía}}$$
 
 ### 3. Tiempo de Ciclo Efectivo ($T_{ef, i}$)
 Para cada estación $i$, ajustado por operarios asignados ($O_i$) y tasa de fallo ($p_i$):
-$$T_{ef, i} = \left( \frac{T_{base, i}}{O_i} \right) \times \left( \frac{1}{1 - p_i} \right)$$
+$$T_{ef, i} = \left( \frac{T_{base, i}}{O_i} \right) \times \left( 1 + p_i \right)$$
 
 ### 4. Tiempo del Cuello de Botella ($T_{bottleneck}$)
 $$T_{bottleneck} = \max_{i} \left( T_{ef, i} \right)$$

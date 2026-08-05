@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { notFound } from "next/navigation"
+import { Inter } from "next/font/google"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { setRequestLocale, getTranslations } from "next-intl/server"
 import { routing } from "@/i18n/routing"
@@ -9,6 +10,12 @@ import Header from "@/components/Header"
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+})
 
 export const viewport: Viewport = {
   themeColor: "#2563EB",
@@ -92,7 +99,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body className="font-sans antialiased bg-[#f1f5f9]">
+      <body className={`${inter.className} font-sans antialiased bg-[#f1f5f9]`}>
         <NextIntlClientProvider>
           <TooltipProvider>
             <Header />

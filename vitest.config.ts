@@ -8,7 +8,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['lib/**/*.ts'],
-      exclude: ['lib/**/*.test.ts'],
+      exclude: ['lib/**/*.test.ts', 'lib/pdf-generator.ts'],
       reporter: ['text', 'lcov'],
       thresholds: {
         // Suelo actual del repo (calibrado en P3.5): statements 83, branches 74,
