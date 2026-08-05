@@ -62,7 +62,7 @@ export default function LandingFooter() {
   }
 
   return (
-    <footer className="relative z-10 border-t border-border/50 bg-background/80 backdrop-blur-xl px-4 pt-16 pb-12">
+    <footer className="relative z-10 border-t border-slate-200/60 bg-slate-50/30 backdrop-blur-sm px-4 pt-16 pb-12">
       <div className="mx-auto max-w-6xl space-y-12">
         {/* Top Hero / Brand Section */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between pb-8 border-b border-border/40">
