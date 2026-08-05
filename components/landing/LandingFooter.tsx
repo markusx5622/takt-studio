@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import BrandLogo from "@/components/BrandLogo"
@@ -194,16 +193,7 @@ export default function LandingFooter() {
             <ul className="space-y-2.5 text-xs">
               <li className="font-semibold text-foreground/80">{t("authorName")}</li>
               <li className="text-muted-foreground">{t("authorRole")}</li>
-              <li className="flex items-center gap-2 text-muted-foreground/80">
-                <span>{t("uev")}</span>
-                <Image
-                  src="/logo-uev.png"
-                  alt="Universidad Europea de Valencia"
-                  width={140}
-                  height={28}
-                  className="h-5 w-auto object-contain shrink-0"
-                />
-              </li>
+              <li className="text-muted-foreground/70">{t("uev")}</li>
               <li className="pt-1 flex items-center gap-3">
                 <a
                   href="mailto:taktstudio.app@gmail.com"
