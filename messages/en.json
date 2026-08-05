@@ -21,7 +21,18 @@
     "access": "ACCESS"
   },
   "appShell": {
-    "mobileNotice": "Read-only view: Takt Studio is optimized for tablet and desktop. Use a larger screen to simulate and edit."
+    "mobileNotice": "View mode: Takt Studio is optimized for tablet and desktop. To simulate and edit, use a larger screen.",
+    "pwaModal": {
+      "badge": "Installable PWA App",
+      "title": "Install Takt Studio as a Native App",
+      "subtitle": "Instant access, native performance, and 100% offline usage with no internet connection required.",
+      "guideTitle": "Quick installation guide by device:",
+      "stepDesktop": "Chrome / Edge on PC: Click the install icon (↓) in the address bar or menu ⋮ > 'Install Takt Studio'.",
+      "stepIos": "Safari on iPhone / iPad: Tap the Share button (⎋) and select 'Add to Home Screen'.",
+      "stepAndroid": "Chrome on Android: Tap the menu (⋮) and select 'Install app' or 'Add to Home Screen'.",
+      "installBtn": "Install Application",
+      "dismissBtn": "Got it, continue"
+    }
   },
   "landing": {
     "hero": {

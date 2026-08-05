@@ -8,6 +8,7 @@ import "../globals.css"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import Header from "@/components/Header"
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar"
+import PwaInstallModal from "@/components/PwaInstallModal"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
@@ -105,6 +106,7 @@ export default async function LocaleLayout({
             <Header />
             <main className="pb-16 md:pb-0">{children}</main>
             <ServiceWorkerRegistrar />
+            <PwaInstallModal />
           </TooltipProvider>
           <Analytics />
           <SpeedInsights />
