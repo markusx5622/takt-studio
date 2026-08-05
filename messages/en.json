@@ -632,9 +632,16 @@
       "operators": "Operators",
       "failurePct": "Failure (%)",
       "emptyTitle": "Define your first station",
-      "emptyText": "Each station represents an operation on the line: name, cycle time, operators and failure rate.",
+      "emptyText": "Each station represents a line operation: name, cycle time, operators, and failure rate.",
       "add": "Add station",
-      "newStationName": "New station"
+      "newStationName": "New station",
+      "presetLabel": "Load preset:",
+      "presetSelectPlaceholder": "Select industry preset...",
+      "presetMonobath": "Off-Site Prefabricated Modules (Monobath)",
+      "presetAutomotive": "Automotive Assembly (Chassis/Engine)",
+      "presetElectronics": "Electronics Assembly (SMT Line)",
+      "presetLogistics": "Logistics & Kit Packaging",
+      "presetConfirm": "Load preset \"{name}\"? Existing stations in this scenario will be replaced."
     },
     "kpi": {
       "empty": "Add stations to see the KPIs",

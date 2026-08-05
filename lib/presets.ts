@@ -54,6 +54,91 @@ const MONOBATH_STATIONS: Omit<Station, "id" | "name">[] = [
   { cycleTimeMin: 30, operators: 1, failureRate: 0.02 },
 ]
 
+export type IndustrySectorKey = "monobath" | "automotive" | "electronics" | "logistics"
+
+export const INDUSTRY_PRESETS_DATA: Record<
+  IndustrySectorKey,
+  {
+    nameEs: string
+    nameEn: string
+    demandPerDay: number
+    shiftHours: number
+    shiftsPerDay: number
+    stations: { nameEs: string; nameEn: string; cycleTimeMin: number; operators: number; failureRate: number }[]
+  }
+> = {
+  monobath: {
+    nameEs: "Módulos Prefabricados Off-Site (Monobath)",
+    nameEn: "Off-Site Prefabricated Modules (Monobath)",
+    demandPerDay: 8,
+    shiftHours: 8,
+    shiftsPerDay: 1,
+    stations: [
+      { nameEs: "Estructura y chasis de acero", nameEn: "Steel Frame & Chassis", cycleTimeMin: 45, operators: 2, failureRate: 0.02 },
+      { nameEs: "Tabiquería y paneles impermeables", nameEn: "Drywall & Waterproof Panels", cycleTimeMin: 55, operators: 2, failureRate: 0.05 },
+      { nameEs: "Fontanería y tuberías PEX", nameEn: "Plumbing & PEX Piping", cycleTimeMin: 35, operators: 1, failureRate: 0.03 },
+      { nameEs: "Alicatado y revestimiento cerámico", nameEn: "Tiling & Ceramic Cladding", cycleTimeMin: 90, operators: 3, failureRate: 0.04 },
+      { nameEs: "Montaje de sanitarios y grifería", nameEn: "Sanitary Fixture Assembly", cycleTimeMin: 50, operators: 2, failureRate: 0.03 },
+      { nameEs: "Instalación eléctrica y LED", nameEn: "Electrical & LED Wiring", cycleTimeMin: 25, operators: 1, failureRate: 0.01 },
+      { nameEs: "Inspección final y embalaje", nameEn: "Final Inspection & Packing", cycleTimeMin: 30, operators: 1, failureRate: 0.02 },
+    ],
+  },
+  automotive: {
+    nameEs: "Ensamblaje Automotriz (Chasis/Motor)",
+    nameEn: "Automotive Assembly (Chassis/Engine)",
+    demandPerDay: 120,
+    shiftHours: 8,
+    shiftsPerDay: 2,
+    stations: [
+      { nameEs: "Estructura de carrocería y soldadura", nameEn: "Body Structure & Welding", cycleTimeMin: 18, operators: 3, failureRate: 0.01 },
+      { nameEs: "Tratamiento de pintura y secado", nameEn: "Paint & Drying Process", cycleTimeMin: 22, operators: 2, failureRate: 0.02 },
+      { nameEs: "Inserción de motor y transmisión", nameEn: "Powertrain & Engine Marriage", cycleTimeMin: 32, operators: 4, failureRate: 0.03 },
+      { nameEs: "Montaje de interiores y salpicadero", nameEn: "Interior Trim & Dashboard", cycleTimeMin: 24, operators: 3, failureRate: 0.02 },
+      { nameEs: "Cableado eléctrico y batería", nameEn: "Harness & Battery Integration", cycleTimeMin: 16, operators: 2, failureRate: 0.01 },
+      { nameEs: "Test dinámico y alineación", nameEn: "Dynamic Roll Test & Alignment", cycleTimeMin: 12, operators: 2, failureRate: 0.01 },
+    ],
+  },
+  electronics: {
+    nameEs: "Montaje Electrónico (Línea SMT)",
+    nameEn: "Electronics Assembly (SMT Line)",
+    demandPerDay: 250,
+    shiftHours: 8,
+    shiftsPerDay: 2,
+    stations: [
+      { nameEs: "Impresión de pasta de soldar", nameEn: "Solder Paste Printing", cycleTimeMin: 6, operators: 1, failureRate: 0.01 },
+      { nameEs: "Montaje componentes SMT Pick&Place", nameEn: "SMT Component Pick & Place", cycleTimeMin: 12, operators: 2, failureRate: 0.02 },
+      { nameEs: "Horno de reflujo térmico", nameEn: "Thermal Reflow Oven", cycleTimeMin: 10, operators: 1, failureRate: 0.01 },
+      { nameEs: "Inspección óptica AOI y X-Ray", nameEn: "Automated Optical Inspection AOI", cycleTimeMin: 8, operators: 1, failureRate: 0.01 },
+      { nameEs: "Ensamblaje final y test funcional", nameEn: "Final Assembly & Functional Test", cycleTimeMin: 14, operators: 2, failureRate: 0.02 },
+    ],
+  },
+  logistics: {
+    nameEs: "Logística y Embalaje de Kits",
+    nameEn: "Logistics & Kit Packaging",
+    demandPerDay: 150,
+    shiftHours: 8,
+    shiftsPerDay: 1,
+    stations: [
+      { nameEs: "Recepción y desensamblaje", nameEn: "Receiving & Unboxing", cycleTimeMin: 8, operators: 2, failureRate: 0.01 },
+      { nameEs: "Picking en estanterías por lista", nameEn: "List-Based Shelf Picking", cycleTimeMin: 15, operators: 3, failureRate: 0.03 },
+      { nameEs: "Verificación por escáner y etiquetado", nameEn: "Barcode Verification & Labeling", cycleTimeMin: 6, operators: 1, failureRate: 0.01 },
+      { nameEs: "Empaquetado final y flejado", nameEn: "Final Packing & Pallet Strapping", cycleTimeMin: 10, operators: 2, failureRate: 0.02 },
+    ],
+  },
+}
+
+export function createPresetFromSector(sectorKey: IndustrySectorKey, locale?: "es" | "en"): Station[] {
+  const isEn = (locale ?? detectLocale()) === "en"
+  const sector = INDUSTRY_PRESETS_DATA[sectorKey] || INDUSTRY_PRESETS_DATA.monobath
+  return sector.stations.map((st) => ({
+    id: crypto.randomUUID(),
+    name: isEn ? st.nameEn : st.nameEs,
+    cycleTimeMin: st.cycleTimeMin,
+    operators: st.operators,
+    failureRate: st.failureRate,
+  }))
+}
+
 export function createMonobathPreset(names?: PresetNames): Scenario {
   const n = names ?? getPresetNames()
   return {

@@ -634,7 +634,14 @@
       "emptyTitle": "Define tu primera estación",
       "emptyText": "Cada estación representa una operación de la línea: nombre, tiempo de ciclo, operarios y tasa de fallo.",
       "add": "Añadir estación",
-      "newStationName": "Nueva estación"
+      "newStationName": "Nueva estación",
+      "presetLabel": "Cargar plantilla:",
+      "presetSelectPlaceholder": "Seleccionar plantilla de sector...",
+      "presetMonobath": "Módulos Prefabricados Off-Site (Monobath)",
+      "presetAutomotive": "Ensamblaje Automotriz (Chasis/Motor)",
+      "presetElectronics": "Montaje Electrónico (Línea SMT)",
+      "presetLogistics": "Logística y Embalaje de Kits",
+      "presetConfirm": "¿Cargar la plantilla \"{name}\"? Se reemplazarán las estaciones del escenario actual."
     },
     "kpi": {
       "empty": "Añade estaciones para ver los KPIs",
