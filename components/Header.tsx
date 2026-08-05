@@ -63,19 +63,20 @@ export default function Header() {
 
           {isAppRoute && (
             <nav className="hidden flex-1 justify-center gap-2 md:flex">
-              {navLinks.map(({ href, key }) => (
+              {navLinks.map(({ href, key, icon: Icon }) => (
                 <Link
                   key={href}
                   href={href}
                   aria-current={pathname === href ? "page" : undefined}
                   className={cn(
-                    "relative flex items-center justify-center rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                    "relative flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     pathname === href
                       ? "bg-primary text-white shadow-md shadow-primary/20 scale-105"
                       : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                   )}
                 >
-                  {t(`nav.${key}`)}
+                  <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>{t(`nav.${key}`)}</span>
                 </Link>
               ))}
             </nav>
