@@ -27,14 +27,23 @@ export type PresetNames = {
 }
 
 export function detectLocale(): "es" | "en" {
-  if (typeof document !== "undefined" && document.documentElement.lang === "en") {
-    return "en"
+  if (typeof window !== "undefined") {
+    const path = window.location.pathname
+    if (path === "/en" || path.startsWith("/en/")) {
+      return "en"
+    }
+  }
+  if (typeof document !== "undefined" && document.documentElement?.lang) {
+    if (document.documentElement.lang.toLowerCase().startsWith("en")) {
+      return "en"
+    }
   }
   return "es"
 }
 
-export function getPresetNames(locale?: "es" | "en"): PresetNames {
-  const messages = (locale ?? detectLocale()) === "en" ? enMessages : esMessages
+export function getPresetNames(locale?: string): PresetNames {
+  const loc = (locale ?? detectLocale()).toLowerCase().startsWith("en") ? "en" : "es"
+  const messages = loc === "en" ? enMessages : esMessages
   const p = messages.simulator.presets
   return {
     scenarioName: p.scenarioName,
@@ -127,8 +136,9 @@ export const INDUSTRY_PRESETS_DATA: Record<
   },
 }
 
-export function createPresetFromSector(sectorKey: IndustrySectorKey, locale?: "es" | "en"): Station[] {
-  const isEn = (locale ?? detectLocale()) === "en"
+export function createPresetFromSector(sectorKey: IndustrySectorKey, locale?: string): Station[] {
+  const loc = (locale ?? detectLocale()).toLowerCase().startsWith("en") ? "en" : "es"
+  const isEn = loc === "en"
   const sector = INDUSTRY_PRESETS_DATA[sectorKey] || INDUSTRY_PRESETS_DATA.monobath
   return sector.stations.map((st) => ({
     id: crypto.randomUUID(),

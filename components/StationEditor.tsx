@@ -291,9 +291,10 @@ export default function StationEditor() {
     const presetData = INDUSTRY_PRESETS_DATA[sector]
     if (!presetData) return
 
-    const confirmName = locale === "en" ? presetData.nameEn : presetData.nameEs
+    const isEn = locale.toLowerCase().startsWith("en")
+    const confirmName = isEn ? presetData.nameEn : presetData.nameEs
     if (confirm(t("presetConfirm", { name: confirmName }))) {
-      const newStations = createPresetFromSector(sector, locale as "es" | "en")
+      const newStations = createPresetFromSector(sector, locale)
       updateScenario(scenario.id, {
         stations: newStations,
         demandPerDay: presetData.demandPerDay,
