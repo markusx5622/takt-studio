@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import BrandLogo from "@/components/BrandLogo"
@@ -50,16 +51,6 @@ function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {
       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
       <rect width="4" height="12" x="2" y="9" />
       <circle cx="4" cy="4" r="2" />
-    </svg>
-  )
-}
-
-function UevLogo(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" {...props}>
-      <rect width="24" height="24" rx="4" fill="#002B49" />
-      <path d="M5.5 6.5H10.5V8.5H7.5V11.5H10V13.5H7.5V15.5H10.5V17.5H5.5V6.5Z" fill="#FFFFFF" />
-      <path d="M13.5 6.5H18.5V8.5H15.5V11.5H18V13.5H15.5V15.5H18.5V17.5H13.5V6.5Z" fill="#C5281C" />
     </svg>
   )
 }
@@ -203,9 +194,15 @@ export default function LandingFooter() {
             <ul className="space-y-2.5 text-xs">
               <li className="font-semibold text-foreground/80">{t("authorName")}</li>
               <li className="text-muted-foreground">{t("authorRole")}</li>
-              <li className="flex items-center gap-1.5 text-muted-foreground/70">
-                <UevLogo className="h-4 w-4 shrink-0 rounded-sm" aria-hidden="true" />
+              <li className="flex items-center gap-2 text-muted-foreground/80">
                 <span>{t("uev")}</span>
+                <Image
+                  src="/logo-uev.png"
+                  alt="Universidad Europea de Valencia"
+                  width={140}
+                  height={28}
+                  className="h-5 w-auto object-contain shrink-0"
+                />
               </li>
               <li className="pt-1 flex items-center gap-3">
                 <a
