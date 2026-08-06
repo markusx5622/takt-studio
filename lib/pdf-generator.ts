@@ -9,6 +9,7 @@ import {
   normalizeEconomics,
 } from "@/lib/calculations"
 import { generateInsights } from "@/lib/insights"
+import { runMonteCarlo } from "@/lib/monte-carlo"
 import { LOGO_REPORT_BASE64 } from "@/lib/logo-base64"
 
 const APP_VERSION = "0.1.0"
@@ -106,6 +107,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const stations = getStationsWithEffective(scenario.stations, kpis.taktTimeMin)
   const recommendations = generateRecommendations(scenario, kpis)
   const insights = generateInsights(scenario, kpis).slice(0, 4)
+  const mcResult = runMonteCarlo(scenario)
 
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
 
@@ -806,6 +808,81 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   drawEconCard(1, 1, t("econOpportunityGap"), economicKpis.opportunityGapValuePerDay, true)
 
   y += econCardH * 2 + 9
+
+  // ── 8. ANÁLISIS DE RIESGO ESTOCÁSTICO (SIMULACIÓN MONTE CARLO) ───────────────
+
+  checkPageBreak(40)
+  sectionTitle(t("secMonteCarlo"))
+
+  const mcConfidencePct = Math.round(mcResult.probabilityMeetDemand * 100)
+  const isMcHighConfidence = mcConfidencePct >= 80
+
+  // Status Banner
+  const mcBannerH = 14
+  doc.setFillColor(isMcHighConfidence ? 240 : 254, isMcHighConfidence ? 253 : 242, isMcHighConfidence ? 244 : 242)
+  doc.setDrawColor(isMcHighConfidence ? 187 : 254, isMcHighConfidence ? 247 : 202, isMcHighConfidence ? 208 : 202)
+  doc.setLineWidth(0.3)
+  doc.roundedRect(LM, y, CW, mcBannerH, 1.2, 1.2, "FD")
+
+  // Accent Pill
+  doc.setFillColor(isMcHighConfidence ? 22 : 220, isMcHighConfidence ? 163 : 38, isMcHighConfidence ? 74 : 38)
+  doc.rect(LM, y, 2.5, mcBannerH, "F")
+
+  if (isMcHighConfidence) setGreen()
+  else setRed()
+
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(8.5)
+  doc.text(t("mcConfidence", { pct: mcConfidencePct }), LM + 6, y + 5)
+
+  setGray()
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7.5)
+  const mcSubText = isMcHighConfidence
+    ? t("mcRobust", { pct: mcConfidencePct })
+    : t("mcAtRisk", { pct: mcConfidencePct })
+  const mcSubLines = doc.splitTextToSize(mcSubText, CW - 10) as string[]
+  doc.text(mcSubLines[0], LM + 6, y + 9.5)
+
+  y += mcBannerH + 4
+
+  // 3 Percentile Cards: P5 (Pesimista), P50 (Mediana), P95 (Optimista)
+  const mcCardW = (CW - 6) / 3
+  const mcCardH = 16
+
+  function drawMcCard(col: number, labelKey: string, valNum: number, status: "red" | "neutral" | "green") {
+    const bx = LM + col * (mcCardW + 3)
+    const by = y
+
+    doc.setFillColor(248, 250, 252)
+    doc.setDrawColor(226, 232, 240)
+    doc.setLineWidth(0.3)
+    doc.roundedRect(bx, by, mcCardW, mcCardH, 1.2, 1.2, "FD")
+
+    setGray()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(7)
+    const cleanTitle = fitText(doc, t(labelKey).toUpperCase(), mcCardW - 6)
+    doc.text(cleanTitle, bx + 4, by + 4.5)
+
+    if (status === "red") setRed()
+    else if (status === "green") setGreen()
+    else setDark()
+
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(10)
+    const formattedVal = fitText(doc, t("mcUnitsDay", { value: formatNumber(valNum, locale) }), mcCardW - 6)
+    doc.text(formattedVal, bx + 4, by + 11.5)
+  }
+
+  const p5Status = mcResult.throughput.p5 >= scenario.demandPerDay ? "green" : "red"
+  const p50Status = mcResult.throughput.median >= scenario.demandPerDay ? "green" : "neutral"
+
+  drawMcCard(0, "mcP5", mcResult.throughput.p5, p5Status)
+  drawMcCard(1, "mcP50", mcResult.throughput.median, p50Status)
+  drawMcCard(2, "mcP95", mcResult.throughput.p95, "green")
+
+  y += mcCardH + 9
 
   // ── 9. DIAGNÓSTICO AUTOMÁTICO DE LÍNEA (INSIGHTS) ────────────────────────────
 
