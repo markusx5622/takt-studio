@@ -696,7 +696,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const rStyles = [
     { bg: [254, 242, 242], border: [239, 68, 68], badgeBg: [239, 68, 68], text: [185, 28, 28] }, // Red
     { bg: [254, 243, 199], border: [245, 158, 11], badgeBg: [245, 158, 11], text: [180, 83, 9] },  // Orange
-    { bg: [239, 246, 255], border: [59, 130, 246], badgeBg: [59, 130, 246], text: [29, 78, 216] }  // Blue
+    { bg: [245, 243, 255], border: [139, 92, 246], badgeBg: [139, 92, 246], text: [109, 40, 217] } // Purple / Violet
   ]
 
   const numCards = Math.min(3, sortedStations.length)
