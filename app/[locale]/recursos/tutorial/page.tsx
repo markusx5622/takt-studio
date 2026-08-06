@@ -10,7 +10,8 @@ import {
   FileText,
   BookOpen,
   Lightbulb,
-  MousePointerClick
+  MousePointerClick,
+  Coins
 } from "lucide-react"
 
 export async function generateMetadata({
@@ -31,8 +32,9 @@ const STEPS = [
   { id: "s2", icon: LayoutList, color: "bg-indigo-100/50 text-indigo-600", borderColor: "border-indigo-200" },
   { id: "s3", icon: AlertTriangle, color: "bg-rose-100/50 text-rose-600", borderColor: "border-rose-200" },
   { id: "s4", icon: Activity, color: "bg-emerald-100/50 text-emerald-600", borderColor: "border-emerald-200" },
-  { id: "s5", icon: GitCompare, color: "bg-amber-100/50 text-amber-600", borderColor: "border-amber-200" },
-  { id: "s6", icon: FileText, color: "bg-slate-200/50 text-slate-700", borderColor: "border-slate-300" },
+  { id: "s5", icon: Coins, color: "bg-yellow-100/50 text-yellow-700", borderColor: "border-yellow-200" },
+  { id: "s6", icon: GitCompare, color: "bg-amber-100/50 text-amber-600", borderColor: "border-amber-200" },
+  { id: "s7", icon: FileText, color: "bg-slate-200/50 text-slate-700", borderColor: "border-slate-300" },
 ]
 
 export default async function TutorialPage({

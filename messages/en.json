@@ -1253,13 +1253,20 @@
           "action": "Click the 'Run Monte Carlo' button in the KPI panel. Observe how the bottom graph changes to a bell curve (Histogram) with percentiles."
         },
         "s5": {
+          "title": "Economic Modeling",
+          "desc": "Define the operating costs of your plant. Set the labor cost per hour and the hourly cost of having the line stopped due to the Bottleneck.",
+          "theory": "In industrial engineering, time is money. The Downtime Cost of the slowest station defines the financial viability of any investment. If your bottleneck stops the line for 1 hour, you lose the contribution margin of that entire hour.",
+          "tip": "Be realistic with the Labor Cost: include social charges and taxes, not just the base salary. Use Fully Burdened costs.",
+          "action": "In the Configuration panel, go to the 'Economics' section. Adjust the hourly operator cost and the hourly downtime cost of the bottleneck."
+        },
+        "s6": {
           "title": "What-If Comparison",
           "desc": "Save the baseline scenario and create a copy. Test changes (e.g., adding an operator) and use the A/B comparator to see the numerical impact.",
           "theory": "Line Balancing seeks to match the cycle times of all stations to the Takt Time. This reduces 'Idle Time' and maximizes the Contribution Margin.",
           "tip": "Before spending money on robots (CAPEX), try to level the load by moving tasks from the slowest station to the fastest ones.",
           "action": "In the top right, save a 'Snapshot'. Then make your changes, and go to the 'Comparator' tab to see the cost and efficiency deltas (Δ) side by side."
         },
-        "s6": {
+        "s7": {
           "title": "Executive Reporting",
           "desc": "Once the improvement is validated, export the full analysis to a vector PDF report, ready to justify your investment proposal.",
           "theory": "Top management requires financial metrics. Translating 'Efficiency' to 'Euros Saved by Rework' is key to getting continuous improvement projects approved.",

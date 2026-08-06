@@ -1253,13 +1253,20 @@
           "action": "Pulsa el botón 'Ejecutar Monte Carlo' en el panel de KPIs. Observa cómo cambia la gráfica inferior a una campana de Gauss (Histograma) con los percentiles."
         },
         "s5": {
+          "title": "Modelado Económico",
+          "desc": "Define los costes operativos de tu planta. Establece el coste por hora de mano de obra y el coste horario de tener la línea parada por culpa del Cuello de Botella.",
+          "theory": "En ingeniería industrial, el tiempo es dinero. El Coste de Inactividad (Downtime Cost) de la estación más lenta define la viabilidad financiera de cualquier inversión. Si tu cuello de botella para la línea 1 hora, pierdes el margen de contribución de toda esa hora.",
+          "tip": "Sé realista con el Coste de Mano de Obra: incluye cargas sociales e impuestos, no solo el salario base. Usa costes Fully Burdened.",
+          "action": "En el panel de Configuración, ve a la sección 'Economía'. Ajusta el coste por hora de operario y el coste horario de inactividad del cuello de botella."
+        },
+        "s6": {
           "title": "Comparativa (What-If)",
           "desc": "Guarda el escenario base (Baseline) y crea una copia. Prueba cambios (ej. añadir un operario) y usa el comparador A/B para ver el impacto numérico.",
           "theory": "El Balanceo de Líneas busca igualar los tiempos de ciclo de todas las estaciones al Takt Time. Esto reduce el 'Idle Time' (tiempo ocioso) y maximiza el Margen de Contribución.",
           "tip": "Antes de gastar dinero en robots (CAPEX), intenta nivelar la carga moviendo tareas de la estación más lenta a las más rápidas.",
           "action": "Arriba a la derecha, guarda un 'Snapshot'. Luego haz tus cambios, y ve a la pestaña 'Comparador' para ver las deltas (Δ) de costes y eficiencia lado a lado."
         },
-        "s6": {
+        "s7": {
           "title": "Reporting Ejecutivo",
           "desc": "Una vez validada la mejora, exporta el análisis completo a un informe PDF vectorial, listo para justificar tu propuesta de inversión.",
           "theory": "La alta dirección requiere métricas financieras. Traducir la 'Eficiencia' a 'Euros Ahorrados por Reproceso' es clave para aprobar los proyectos de mejora continua.",
