@@ -132,6 +132,9 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   let y = 15
 
+  // Table of Contents tracking
+  const tocEntries: { label: string; page: number }[] = []
+
   function checkPageBreak(neededHeight: number): boolean {
     if (y + neededHeight > FOOTER_Y - 6) {
       doc.addPage()
@@ -143,6 +146,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   function sectionTitle(label: string) {
     checkPageBreak(12)
+    tocEntries.push({ label: label.toUpperCase(), page: doc.getCurrentPageInfo().pageNumber })
     setBlue()
     doc.setFont("helvetica", "bold")
     doc.setFontSize(9)
@@ -169,24 +173,9 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.text(t("page", { current, total }), RM, FOOTER_Y + 5, { align: "right" })
   }
 
-  // ── 1. HEADER PROFESIONAL ────────────────────────────────────────────────────
+  // ── PORTADA CORPORATIVA (PÁGINA 1) ──────────────────────────────────────────
 
-  // Top accent bar
-  doc.setFillColor(30, 64, 175)
-  doc.rect(LM, 10, CW, 1.8, "F")
-
-  // Corporate Logo
-  try {
-    doc.addImage(LOGO_REPORT_BASE64, "PNG", LM, 14, 42, 9.3)
-  } catch {
-    // Fallback text if image fails
-    setBlue()
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(16)
-    doc.text("TAKT STUDIO", LM, 20)
-  }
-
-  // Report Date & Unique Identifier (Top Right Header)
+  // Report Date & Unique Identifier
   const now = new Date()
   const dateStr = new Intl.DateTimeFormat(locale, {
     day: "2-digit",
@@ -197,6 +186,124 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const timeCompact = `${now.getHours().toString().padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}`
   const dateCompact = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}`
   const reportId = `TST-${dateCompact}-${timeCompact}`
+  const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
+
+  // --- Top blue band ---
+  doc.setFillColor(30, 64, 175)
+  doc.rect(0, 0, 210, 38, "F")
+
+  // Logo on top band
+  try {
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", 210 / 2 - 30, 10, 60, 13.3)
+  } catch {
+    doc.setTextColor(255, 255, 255)
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(22)
+    doc.text("TAKT STUDIO", 210 / 2, 22, { align: "center" })
+  }
+
+  // Thin accent line under band
+  doc.setDrawColor(59, 130, 246)
+  doc.setLineWidth(0.8)
+  doc.line(0, 38, 210, 38)
+
+  // --- Center block: Report Title ---
+  const pageCenter = 210 / 2
+
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(22)
+  doc.text(t("reportTitle"), pageCenter, 75, { align: "center" })
+
+  // Subtitle
+  setBlue()
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(13)
+  doc.text(t("coverSubtitle"), pageCenter, 85, { align: "center" })
+
+  // Decorative line
+  doc.setDrawColor(30, 64, 175)
+  doc.setLineWidth(0.5)
+  doc.line(pageCenter - 40, 92, pageCenter + 40, 92)
+
+  // Scenario Name (large, prominent)
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(16)
+  const scenarioLines = doc.splitTextToSize(baseTitle, CW - 20) as string[]
+  const scenarioBlockY = 105
+  for (let i = 0; i < scenarioLines.length; i++) {
+    doc.text(scenarioLines[i], pageCenter, scenarioBlockY + i * 8, { align: "center" })
+  }
+
+  // Improvements subtitle (if applicable)
+  let metaStartY = scenarioBlockY + scenarioLines.length * 8 + 5
+  if (improvementSubtitle) {
+    setGray()
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(8.5)
+    const label = locale.toLowerCase().startsWith("en") ? "Applied improvements" : "Mejoras aplicadas"
+    const fullSubText = `${label}: ${improvementSubtitle}`
+    const subLines = doc.splitTextToSize(fullSubText, CW - 30) as string[]
+    for (let i = 0; i < subLines.length; i++) {
+      doc.text(subLines[i], pageCenter, metaStartY + i * 4, { align: "center" })
+    }
+    metaStartY += subLines.length * 4 + 8
+  } else {
+    metaStartY += 8
+  }
+
+  // --- Metadata card (centered) ---
+  const metaCardW = 100
+  const metaCardX = pageCenter - metaCardW / 2
+  const metaCardH = 38
+
+  doc.setFillColor(248, 250, 252)
+  doc.setDrawColor(226, 232, 240)
+  doc.setLineWidth(0.3)
+  doc.roundedRect(metaCardX, metaStartY, metaCardW, metaCardH, 2, 2, "FD")
+
+  const metaItems = [
+    { label: t("coverDate"), value: dateStr },
+    { label: t("coverId"), value: reportId },
+    { label: t("coverVersion"), value: `Takt Studio v${APP_VERSION}` },
+    { label: t("coverStations"), value: String(stations.length) },
+    { label: t("coverDemand"), value: t("coverUnits", { value: formatNumber(scenario.demandPerDay, locale) }) },
+  ]
+
+  const metaRowH = metaCardH / metaItems.length
+  for (let i = 0; i < metaItems.length; i++) {
+    const my = metaStartY + i * metaRowH + metaRowH / 2 + 1.5
+
+    setGray()
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(7.5)
+    doc.text(metaItems[i].label, metaCardX + 8, my)
+
+    setDark()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(7.5)
+    doc.text(metaItems[i].value, metaCardX + metaCardW - 8, my, { align: "right" })
+
+    if (i < metaItems.length - 1) {
+      doc.setDrawColor(226, 232, 240)
+      doc.setLineWidth(0.15)
+      doc.line(metaCardX + 4, metaStartY + (i + 1) * metaRowH, metaCardX + metaCardW - 4, metaStartY + (i + 1) * metaRowH)
+    }
+  }
+
+  // --- Bottom blue band with confidentiality notice ---
+  doc.setFillColor(30, 64, 175)
+  doc.rect(0, 280, 210, 17, "F")
+
+  doc.setTextColor(255, 255, 255)
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7)
+  doc.text(t("coverConfidential"), pageCenter, 290, { align: "center" })
+
+  // ── CONTENT PAGES START (Page 2+) ──────────────────────────────────────────
+
+  doc.addPage()
 
   function drawHeaderRightMetadata(yPos: number) {
     const isEn = locale.toLowerCase().startsWith("en")
@@ -216,45 +323,51 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     const totalW = wLabelEmision + wValEmision + wLabelId + wValId
     let curX = RM - totalW
 
-    // "Emisión: " in bold gray
     setGray()
     doc.setFont("helvetica", "bold")
     doc.setFontSize(8)
     doc.text(labelEmisionText, curX, yPos)
     curX += wLabelEmision
 
-    // dateStr in normal gray
     doc.setFont("helvetica", "normal")
     doc.text(dateStr, curX, yPos)
     curX += wValEmision
 
-    // " · ID: " in bold gray
     doc.setFont("helvetica", "bold")
     doc.text(labelIdText, curX, yPos)
     curX += wLabelId
 
-    // reportId in normal gray
     doc.setFont("helvetica", "normal")
     doc.text(reportId, curX, yPos)
   }
 
-  drawHeaderRightMetadata(19)
+  // First content page header (inline — subsequent pages get it in the footer loop)
+  try {
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", LM, 7, 42, 9.3)
+  } catch {
+    setBlue()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(14)
+    doc.text("TAKT STUDIO", LM, 14)
+  }
+  drawHeaderRightMetadata(13)
+  doc.setDrawColor(226, 232, 240)
+  doc.setLineWidth(0.3)
+  doc.line(LM, 18, RM, 18)
 
-  // Main Report Title & Scenario Subtitle (Clean & Boundary-safe)
+  // Main Report Title & Scenario Subtitle on content page
   setDark()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(14)
-  doc.text(t("reportTitle"), LM, 30)
-
-  const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
+  doc.text(t("reportTitle"), LM, 25)
 
   setBlue()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(11)
   const cleanBaseTitle = fitText(doc, baseTitle, CW)
-  doc.text(cleanBaseTitle, LM, 36.5)
+  doc.text(cleanBaseTitle, LM, 31)
 
-  let headerLineY = 40.5
+  let headerLineY = 35
 
   if (improvementSubtitle) {
     setGray()
@@ -263,8 +376,8 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     const label = locale.toLowerCase().startsWith("en") ? "Applied improvements" : "Mejoras aplicadas"
     const fullSubText = `${label}: ${improvementSubtitle}`
     const subLines = doc.splitTextToSize(fullSubText, CW) as string[]
-    doc.text(subLines, LM, 40.5)
-    headerLineY = 40.5 + subLines.length * 3.6 + 0.5
+    doc.text(subLines, LM, 35)
+    headerLineY = 35 + subLines.length * 3.6 + 0.5
   }
 
   doc.setDrawColor(226, 232, 240)
@@ -272,7 +385,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.line(LM, headerLineY, RM, headerLineY)
   y = headerLineY + 5
 
-  // ── 2. RESUMEN EJECUTIVO ─────────────────────────────────────────────────────
+  // ── 1. RESUMEN EJECUTIVO ─────────────────────────────────────────────────────
 
   sectionTitle(t("secExecutive"))
 
@@ -1222,12 +1335,145 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   setGray()
   doc.text(methodLines, LM + 3, y + 4)
 
-  // ── FOOTER NUMERADO EN TODAS LAS PÁGINAS ─────────────────────────────────────
+  // ── TABLE OF CONTENTS (Insert as Page 2) ──────────────────────────────────────
+
+  // At this point, all content pages have been generated and tocEntries[] is populated.
+  // We insert the TOC as page 2 (right after the cover page).
+  // This shifts all subsequent page numbers by +1, so we must adjust tocEntries accordingly.
+
+  doc.insertPage(2)
+  doc.setPage(2)
+
+  // TOC Header
+  try {
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", LM, 7, 42, 9.3)
+  } catch {
+    setBlue()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(14)
+    doc.text("TAKT STUDIO", LM, 14)
+  }
+  drawHeaderRightMetadata(13)
+  doc.setDrawColor(226, 232, 240)
+  doc.setLineWidth(0.3)
+  doc.line(LM, 18, RM, 18)
+
+  // TOC Title
+  let tocY = 30
+  setBlue()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(14)
+  doc.text(t("tocTitle"), LM, tocY)
+  doc.setDrawColor(30, 64, 175)
+  doc.setLineWidth(0.4)
+  doc.line(LM, tocY + 2, RM, tocY + 2)
+  tocY += 12
+
+  // TOC Entries
+  for (const entry of tocEntries) {
+    // Adjust page number: +1 because we inserted TOC page before all content pages
+    const displayPage = entry.page + 1
+
+    setDark()
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(9)
+    doc.text(entry.label, LM + 4, tocY)
+
+    // Dotted leader line
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(9)
+    const pageNumStr = String(displayPage)
+    const pageNumW = doc.getTextWidth(pageNumStr)
+    const labelW = doc.getTextWidth(entry.label)
+    const dotStart = LM + 4 + labelW + 2
+    const dotEnd = RM - pageNumW - 2
+    
+    setGray()
+    doc.setFontSize(7)
+    let dotX = dotStart
+    while (dotX < dotEnd) {
+      doc.text(".", dotX, tocY)
+      dotX += 1.8
+    }
+
+    setDark()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(9)
+    doc.text(pageNumStr, RM, tocY, { align: "right" })
+
+    tocY += 7
+  }
+
+  // ── CONTRAPORTADA (Back Page) ─────────────────────────────────────────────────
+
+  doc.addPage()
+
+  // Top blue band
+  doc.setFillColor(30, 64, 175)
+  doc.rect(0, 0, 210, 5, "F")
+
+  // Centered logo (large)
+  const bpCenter = 210 / 2
+  try {
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", bpCenter - 35, 90, 70, 15.5)
+  } catch {
+    setBlue()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(26)
+    doc.text("TAKT STUDIO", bpCenter, 100, { align: "center" })
+  }
+
+  // "Report generated by" text
+  setGray()
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(10)
+  doc.text(t("backpageGenerated"), bpCenter, 120, { align: "center" })
+
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(12)
+  doc.text(`Takt Studio v${APP_VERSION}`, bpCenter, 128, { align: "center" })
+
+  // Decorative line
+  doc.setDrawColor(30, 64, 175)
+  doc.setLineWidth(0.5)
+  doc.line(bpCenter - 30, 136, bpCenter + 30, 136)
+
+  // Disclaimer
+  setGray()
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7.5)
+  const disclaimerLines = doc.splitTextToSize(t("backpageDisclaimer"), CW - 40) as string[]
+  for (let i = 0; i < disclaimerLines.length; i++) {
+    doc.text(disclaimerLines[i], bpCenter, 148 + i * 4, { align: "center" })
+  }
+
+  // Bottom blue band
+  doc.setFillColor(30, 64, 175)
+  doc.rect(0, 280, 210, 17, "F")
+
+  doc.setTextColor(255, 255, 255)
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7)
+  doc.text(t("coverConfidential"), bpCenter, 290, { align: "center" })
+
+  // ── HEADER & FOOTER ON ALL CONTENT PAGES ──────────────────────────────────────
+
+  // Page layout:
+  //   Page 1 = Cover (no header/footer)
+  //   Page 2 = TOC (has header + footer with page numbering)
+  //   Pages 3..N-1 = Content (header + footer)
+  //   Page N = Back page (no header/footer)
 
   const totalPages = doc.getNumberOfPages()
-  for (let pageIdx = 1; pageIdx <= totalPages; pageIdx++) {
+  const lastContentPage = totalPages - 1 // Exclude back page
+  const contentPageCount = lastContentPage - 1 // Exclude cover page (page 1) from count
+
+  for (let pageIdx = 2; pageIdx <= lastContentPage; pageIdx++) {
     doc.setPage(pageIdx)
-    if (pageIdx >= 2) {
+
+    // Add header to pages 3+ (page 2 = TOC already has header drawn inline above)
+    if (pageIdx >= 3) {
       try {
         doc.addImage(LOGO_REPORT_BASE64, "PNG", LM, 7, 42, 9.3)
       } catch {
@@ -1241,7 +1487,10 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
       doc.setLineWidth(0.3)
       doc.line(LM, 18, RM, 18)
     }
-    drawFooter(pageIdx, totalPages)
+
+    // Footer on all content + TOC pages (numbering starts from 1 at page 2)
+    const displayPageNum = pageIdx - 1 // Page 2 → "1", Page 3 → "2", etc.
+    drawFooter(displayPageNum, contentPageCount)
   }
 
   // ── NOMBRE DE ARCHIVO SANITIZADO ──────────────────────────────────────────────
