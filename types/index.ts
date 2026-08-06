@@ -29,8 +29,10 @@ export type Scenario = {
   shiftHours: number
   /** Número de turnos por día (1, 2 o 3) */
   shiftsPerDay: number
-  /** Supuestos económicos del escenario */
+  /** Supuestos económicos configurables por escenario */
   economics: EconomicInputs
+  /** Opciones de la simulación Monte Carlo (variabilidad, semilla) */
+  monteCarloOptions?: MonteCarloOptions
 }
 
 /** Supuestos económicos configurables por escenario */

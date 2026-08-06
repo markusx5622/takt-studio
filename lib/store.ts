@@ -19,7 +19,7 @@ interface TaktStore extends AppState {
   ) => void
   updateScenario: (
     id: string,
-    updates: Partial<Pick<Scenario, "name" | "demandPerDay" | "shiftHours" | "shiftsPerDay" | "economics" | "stations">>
+    updates: Partial<Pick<Scenario, "name" | "demandPerDay" | "shiftHours" | "shiftsPerDay" | "economics" | "stations" | "monteCarloOptions">>
   ) => void
   setActiveScenario: (id: string) => void
   setCompareA: (id: string) => void

@@ -1001,7 +1001,7 @@
       "econGapZero": "No opportunity loss",
       "perDay": "€/day",
       "secMonteCarlo": "8. STOCHASTIC RISK ASSESSMENT (MONTE CARLO)",
-      "mcConfidence": "Demand fulfillment confidence: {pct}% (2,000 runs)",
+      "mcConfidence": "Demand fulfillment confidence: {pct}% ({cv}% variability, 2,000 runs)",
       "mcRobust": "The production line demonstrates high statistical robustness ({pct}% confidence) to meet target demand under process variability.",
       "mcAtRisk": "Operational risk detected: target daily demand is met on only {pct}% of simulated days. Implementing improvements is recommended.",
       "mcP5": "P5 (Pessimistic Scenario)",

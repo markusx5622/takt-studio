@@ -107,7 +107,9 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const stations = getStationsWithEffective(scenario.stations, kpis.taktTimeMin)
   const recommendations = generateRecommendations(scenario, kpis)
   const insights = generateInsights(scenario, kpis).slice(0, 4)
-  const mcResult = runMonteCarlo(scenario)
+  const mcCv = scenario.monteCarloOptions?.cv ?? 0.1
+  const mcSeed = scenario.monteCarloOptions?.seed ?? 42
+  const mcResult = runMonteCarlo(scenario, { runs: 2000, cv: mcCv, seed: mcSeed })
 
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
 
@@ -833,7 +835,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   doc.setFont("helvetica", "bold")
   doc.setFontSize(8.5)
-  doc.text(t("mcConfidence", { pct: mcConfidencePct }), LM + 6, y + 5)
+  doc.text(t("mcConfidence", { pct: mcConfidencePct, cv: Math.round(mcCv * 100) }), LM + 6, y + 5)
 
   setGray()
   doc.setFont("helvetica", "normal")

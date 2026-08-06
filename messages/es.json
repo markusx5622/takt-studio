@@ -1001,7 +1001,7 @@
       "econGapZero": "Sin pérdida de oportunidad",
       "perDay": "€/día",
       "secMonteCarlo": "8. ANÁLISIS DE RIESGO ESTOCÁSTICO (MONTE CARLO)",
-      "mcConfidence": "Confianza de cumplimiento: {pct}% (2.000 ejecuciones)",
+      "mcConfidence": "Confianza de cumplimiento: {pct}% (variabilidad {cv}%, 2.000 ejecuciones)",
       "mcRobust": "La línea muestra una alta robustez estadística ({pct}% de confianza) para cumplir la demanda objetiva frente a la variabilidad del proceso.",
       "mcAtRisk": "Riesgo operativo detectado: únicamente el {pct}% de los días simulados se alcanza la demanda objetiva. Se recomienda aplicar mejoras.",
       "mcP5": "P5 (Escenario Pesimista)",

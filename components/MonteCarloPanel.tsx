@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { useTranslations, useLocale } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { runMonteCarlo } from "@/lib/monte-carlo"
@@ -75,8 +75,24 @@ export default function MonteCarloPanel() {
   const scenario = useTaktStore((s) =>
     s.scenarios.find((sc) => sc.id === s.activeScenarioId)
   )
-  const [cv, setCv] = useState(0.1)
-  const [seed, setSeed] = useState(42)
+  const updateScenario = useTaktStore((s) => s.updateScenario)
+
+  const cv = scenario?.monteCarloOptions?.cv ?? 0.1
+  const seed = scenario?.monteCarloOptions?.seed ?? 42
+
+  function handleCvChange(newCv: number) {
+    if (!scenario) return
+    updateScenario(scenario.id, {
+      monteCarloOptions: { cv: newCv, seed, runs: RUNS },
+    })
+  }
+
+  function handleRerun() {
+    if (!scenario) return
+    updateScenario(scenario.id, {
+      monteCarloOptions: { cv, seed: seed + 1, runs: RUNS },
+    })
+  }
 
   const result = useMemo<MonteCarloResult | null>(() => {
     if (!scenario || scenario.stations.length === 0) return null
@@ -118,12 +134,12 @@ export default function MonteCarloPanel() {
                 key={opt.value}
                 variant={cv === opt.value ? "default" : "outline"}
                 size="sm"
-                onClick={() => setCv(opt.value)}
+                onClick={() => handleCvChange(opt.value)}
               >
                 {t(opt.labelKey)}
               </Button>
             ))}
-            <Button variant="outline" size="sm" onClick={() => setSeed((s) => s + 1)}>
+            <Button variant="outline" size="sm" onClick={handleRerun}>
               <Dices className="mr-2 h-4 w-4" />
               {t("rerun")}
             </Button>
