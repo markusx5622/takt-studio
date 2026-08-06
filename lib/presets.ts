@@ -63,7 +63,14 @@ const MONOBATH_STATIONS: Omit<Station, "id" | "name">[] = [
   { cycleTimeMin: 30, operators: 1, failureRate: 0.02 },
 ]
 
-export type IndustrySectorKey = "monobath" | "automotive" | "electronics" | "logistics"
+export type IndustrySectorKey =
+  | "monobath"
+  | "automotive"
+  | "electronics"
+  | "logistics"
+  | "ceramics"
+  | "food_pharma"
+  | "machinery"
 
 export const INDUSTRY_PRESETS_DATA: Record<
   IndustrySectorKey,
@@ -132,6 +139,50 @@ export const INDUSTRY_PRESETS_DATA: Record<
       { nameEs: "Picking en estanterías por lista", nameEn: "List-Based Shelf Picking", cycleTimeMin: 15, operators: 3, failureRate: 0.03 },
       { nameEs: "Verificación por escáner y etiquetado", nameEn: "Barcode Verification & Labeling", cycleTimeMin: 6, operators: 1, failureRate: 0.01 },
       { nameEs: "Empaquetado final y flejado", nameEn: "Final Packing & Pallet Strapping", cycleTimeMin: 10, operators: 2, failureRate: 0.02 },
+    ],
+  },
+  ceramics: {
+    nameEs: "Producción Industrial de Azulejos y Cerámica",
+    nameEn: "Industrial Ceramic & Tile Manufacturing",
+    demandPerDay: 180,
+    shiftHours: 8,
+    shiftsPerDay: 3,
+    stations: [
+      { nameEs: "Atomizado y molienda de arcillas", nameEn: "Clay Spray Drying & Atomization", cycleTimeMin: 5, operators: 1, failureRate: 0.01 },
+      { nameEs: "Prensado hidráulico de gran formato", nameEn: "High-Tonnage Hydraulic Pressing", cycleTimeMin: 12, operators: 2, failureRate: 0.02 },
+      { nameEs: "Secado rápido de azulejo crudo", nameEn: "Rapid Roller Dryer", cycleTimeMin: 7, operators: 1, failureRate: 0.01 },
+      { nameEs: "Esmaltado y decoración digital Inkjet", nameEn: "Glazing & Digital Inkjet Printing", cycleTimeMin: 10, operators: 2, failureRate: 0.03 },
+      { nameEs: "Cocción continua en horno monorrodillo", nameEn: "Continuous Roller Kiln Firing", cycleTimeMin: 16, operators: 2, failureRate: 0.02 },
+      { nameEs: "Rectificado, clasificación por tono y embalaje", nameEn: "Edge Grinding, Optical Sorting & Packing", cycleTimeMin: 9, operators: 2, failureRate: 0.01 },
+    ],
+  },
+  food_pharma: {
+    nameEs: "Procesado y Envasado Agroalimentario",
+    nameEn: "Agri-Food Processing & Canning Line",
+    demandPerDay: 300,
+    shiftHours: 8,
+    shiftsPerDay: 2,
+    stations: [
+      { nameEs: "Selección de materia prima y lavado", nameEn: "Raw Material Sorting & Washing", cycleTimeMin: 6, operators: 2, failureRate: 0.01 },
+      { nameEs: "Escaldado térmico y troceado automático", nameEn: "Thermal Blanching & Dicing", cycleTimeMin: 8, operators: 1, failureRate: 0.02 },
+      { nameEs: "Dosificación y envasado en línea", nameEn: "Dosing & Container Filling", cycleTimeMin: 10, operators: 2, failureRate: 0.02 },
+      { nameEs: "Sellado hermético y esterilización autoclave", nameEn: "Hermetic Sealing & Autoclave Sterilization", cycleTimeMin: 15, operators: 2, failureRate: 0.03 },
+      { nameEs: "Etiquetado, encajado y paletizado robotizado", nameEn: "Labeling, Case Packing & Palletizing", cycleTimeMin: 7, operators: 1, failureRate: 0.01 },
+    ],
+  },
+  machinery: {
+    nameEs: "Fabricación de Equipos e Hidráulica Industrial",
+    nameEn: "Industrial Equipment & Machinery Assembly",
+    demandPerDay: 45,
+    shiftHours: 8,
+    shiftsPerDay: 1,
+    stations: [
+      { nameEs: "Mecanizado CNC de carcasas y bloques", nameEn: "CNC Block Machining", cycleTimeMin: 24, operators: 2, failureRate: 0.02 },
+      { nameEs: "Inserción de rodamientos y retenes", nameEn: "Bearing & Seal Insertion", cycleTimeMin: 16, operators: 1, failureRate: 0.01 },
+      { nameEs: "Montaje de rotor y bobinado eléctrico", nameEn: "Rotor Assembly & Stator Wiring", cycleTimeMin: 30, operators: 3, failureRate: 0.03 },
+      { nameEs: "Prueba de estanqueidad y test hidráulico", nameEn: "Leak & Pressure Test Bench", cycleTimeMin: 20, operators: 2, failureRate: 0.04 },
+      { nameEs: "Pintura electrostática y secado", nameEn: "Electrostatic Painting & Curing", cycleTimeMin: 18, operators: 1, failureRate: 0.02 },
+      { nameEs: "Embalaje técnico e inspección final", nameEn: "Technical Packaging & Final Inspection", cycleTimeMin: 12, operators: 1, failureRate: 0.01 },
     ],
   },
 }

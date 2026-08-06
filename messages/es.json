@@ -662,6 +662,9 @@
       "presetAutomotive": "Ensamblaje Automotriz (Chasis/Motor)",
       "presetElectronics": "Montaje Electrónico (Línea SMT)",
       "presetLogistics": "Logística y Embalaje de Kits",
+      "presetCeramics": "Producción Industrial de Azulejos y Cerámica",
+      "presetFoodPharma": "Procesado y Envasado Agroalimentario",
+      "presetMachinery": "Fabricación de Equipos e Hidráulica Industrial",
       "presetConfirm": "¿Cargar la plantilla \"{name}\"? Se reemplazarán las estaciones del escenario actual.",
       "bottleneckBadge": "Cuello de botella",
       "bottleneckTooltip": "Estación restrictiva con el mayor tiempo de ciclo efectivo de la línea"

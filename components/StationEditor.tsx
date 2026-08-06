@@ -417,9 +417,12 @@ export default function StationEditor() {
               {t("presetSelectPlaceholder")}
             </option>
             <option value="monobath">{t("presetMonobath")}</option>
+            <option value="ceramics">{t("presetCeramics")}</option>
             <option value="automotive">{t("presetAutomotive")}</option>
             <option value="electronics">{t("presetElectronics")}</option>
             <option value="logistics">{t("presetLogistics")}</option>
+            <option value="food_pharma">{t("presetFoodPharma")}</option>
+            <option value="machinery">{t("presetMachinery")}</option>
           </select>
         </div>
       </CardHeader>

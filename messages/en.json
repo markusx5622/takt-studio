@@ -662,6 +662,9 @@
       "presetAutomotive": "Automotive Assembly (Chassis/Engine)",
       "presetElectronics": "Electronics Assembly (SMT Line)",
       "presetLogistics": "Logistics & Kit Packaging",
+      "presetCeramics": "Industrial Ceramic & Tile Manufacturing",
+      "presetFoodPharma": "Agri-Food Processing & Canning Line",
+      "presetMachinery": "Industrial Equipment & Machinery Assembly",
       "presetConfirm": "Load preset \"{name}\"? Existing stations in this scenario will be replaced.",
       "bottleneckBadge": "Bottleneck",
       "bottleneckTooltip": "Constraining station with highest effective cycle time"
