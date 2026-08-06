@@ -208,6 +208,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.line(0, 38, 210, 38)
 
   // --- Center block: Report Title & Metadata (Lowered for breathing room) ---
+  const pageCenter = 210 / 2
 
   setDark()
   doc.setFont("helvetica", "bold")
