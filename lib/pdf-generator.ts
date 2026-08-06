@@ -188,50 +188,42 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const reportId = `TST-${dateCompact}-${timeCompact}`
   const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
-  // --- Top blue band ---
-  doc.setFillColor(30, 64, 175)
-  doc.rect(0, 0, 210, 38, "F")
+  // --- Large Centered Logo on Cover Page (No background color) ---
+  const pageCenter = 210 / 2
 
-  // Logo on top band
   try {
-    doc.addImage(LOGO_REPORT_BASE64, "PNG", 210 / 2 - 30, 10, 60, 13.3)
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", pageCenter - 45, 20, 90, 20)
   } catch {
-    doc.setTextColor(255, 255, 255)
+    setBlue()
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(22)
-    doc.text("TAKT STUDIO", 210 / 2, 22, { align: "center" })
+    doc.setFontSize(28)
+    doc.text("TAKT STUDIO", pageCenter, 32, { align: "center" })
   }
 
-  // Thin accent line under band
-  doc.setDrawColor(59, 130, 246)
-  doc.setLineWidth(0.8)
-  doc.line(0, 38, 210, 38)
-
-  // --- Center block: Report Title & Metadata (Lowered for breathing room) ---
-  const pageCenter = 210 / 2
+  // --- Center block: Report Title & Metadata (Spacious layout) ---
 
   setDark()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(22)
-  doc.text(t("reportTitle"), pageCenter, 98, { align: "center" })
+  doc.text(t("reportTitle"), pageCenter, 85, { align: "center" })
 
   // Subtitle
   setBlue()
   doc.setFont("helvetica", "normal")
   doc.setFontSize(13)
-  doc.text(t("coverSubtitle"), pageCenter, 109, { align: "center" })
+  doc.text(t("coverSubtitle"), pageCenter, 96, { align: "center" })
 
   // Decorative line
   doc.setDrawColor(30, 64, 175)
   doc.setLineWidth(0.5)
-  doc.line(pageCenter - 40, 117, pageCenter + 40, 117)
+  doc.line(pageCenter - 40, 104, pageCenter + 40, 104)
 
   // Scenario Name (large, prominent)
   setDark()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(16)
   const scenarioLines = doc.splitTextToSize(baseTitle, CW - 20) as string[]
-  const scenarioBlockY = 132
+  const scenarioBlockY = 118
   for (let i = 0; i < scenarioLines.length; i++) {
     doc.text(scenarioLines[i], pageCenter, scenarioBlockY + i * 8, { align: "center" })
   }
