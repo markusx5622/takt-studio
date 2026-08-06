@@ -6,7 +6,6 @@ import BrandLogo from "@/components/BrandLogo"
 import {
   ShieldCheck,
   FileText,
-  ArrowUp,
   ExternalLink,
   Lock,
   Layers,
@@ -56,10 +55,6 @@ function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export default function LandingFooter() {
   const t = useTranslations("landing.footer")
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
 
   return (
     <footer className="relative z-10 border-t border-slate-200/60 bg-slate-50/30 backdrop-blur-sm px-4 pt-16 pb-12">
@@ -224,20 +219,12 @@ export default function LandingFooter() {
           </div>
         </div>
 
-        {/* Sub-Footer / Copyright & Scroll Top */}
+        {/* Sub-Footer / Copyright */}
         <div className="flex flex-col items-center justify-between gap-4 pt-8 border-t border-border/40 text-xs text-muted-foreground sm:flex-row">
           <div className="flex flex-col items-center gap-1 sm:items-start">
             <p>{t("copyright")}</p>
             <p className="text-[11px] text-muted-foreground/60">{t("stackNote")}</p>
           </div>
-
-          <button
-            onClick={scrollToTop}
-            className="group flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3.5 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all hover:border-primary hover:bg-background hover:text-primary"
-          >
-            <span>{t("scrollTop")}</span>
-            <ArrowUp className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5" />
-          </button>
         </div>
       </div>
     </footer>
