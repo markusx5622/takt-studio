@@ -128,17 +128,18 @@ export default async function ComparisonPage({
           <div className="grid grid-cols-1 md:grid-cols-4">
             
             {/* Cabecera Desktop */}
-            <div className="hidden md:block bg-muted/30 p-6 border-b border-r border-border/40">
-              <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Característica</span>
+            <div className="hidden md:block bg-muted/20 p-6 border-b border-r border-border/40">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Característica</span>
             </div>
-            <div className="hidden md:flex bg-primary/5 p-6 border-b border-r border-border/40 flex-col items-center justify-center text-center">
-              <span className="text-lg font-bold text-primary">{t("taktStudio")}</span>
+            <div className="relative hidden md:flex bg-primary/[0.03] p-6 border-b border-r border-border/40 flex-col items-center justify-center text-center overflow-hidden">
+              <div className="absolute inset-x-0 top-0 h-1 bg-primary"></div>
+              <span className="text-xl font-extrabold text-primary">{t("taktStudio")}</span>
             </div>
-            <div className="hidden md:flex bg-muted/30 p-6 border-b border-r border-border/40 flex-col items-center justify-center text-center">
-              <span className="text-lg font-bold text-foreground/80">{t("excel")}</span>
+            <div className="hidden md:flex bg-muted/20 p-6 border-b border-r border-border/40 flex-col items-center justify-center text-center">
+              <span className="text-lg font-semibold text-foreground/80">{t("excel")}</span>
             </div>
-            <div className="hidden md:flex bg-muted/30 p-6 border-b border-border/40 flex-col items-center justify-center text-center">
-              <span className="text-lg font-bold text-foreground/80">{t("des")}</span>
+            <div className="hidden md:flex bg-muted/20 p-6 border-b border-border/40 flex-col items-center justify-center text-center">
+              <span className="text-lg font-semibold text-foreground/80">{t("des")}</span>
             </div>
 
             {/* Filas */}
@@ -149,40 +150,42 @@ export default async function ComparisonPage({
               const DesIcon = feat.desIcon
 
               return (
-                <div key={feat.id} className="col-span-1 md:col-span-4 grid grid-cols-1 md:grid-cols-4 border-b border-border/40 last:border-b-0">
+                <div key={feat.id} className="group col-span-1 md:col-span-4 grid grid-cols-1 md:grid-cols-4 border-b border-border/40 last:border-b-0 transition-colors hover:bg-muted/30">
                   
                   {/* Etiqueta Feature */}
-                  <div className="flex items-center gap-3 bg-muted/10 p-4 md:p-6 md:border-r border-border/40">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                  <div className="flex items-center gap-4 bg-muted/10 p-5 md:p-6 md:border-r border-border/40 group-hover:bg-transparent transition-colors">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background shadow-sm border border-border/50 text-foreground/70 group-hover:text-primary transition-colors">
                       <Icon className="h-5 w-5" />
                     </div>
                     <span className="font-semibold text-foreground/90">{t(`features.${feat.id}`)}</span>
                   </div>
 
                   {/* Takt Studio */}
-                  <div className="flex flex-col gap-2 p-4 md:p-6 bg-primary/[0.02] md:border-r border-border/40">
-                    <span className="md:hidden text-xs font-bold uppercase tracking-wider text-primary">{t("taktStudio")}</span>
-                    <div className="flex items-start gap-2">
-                      <TaktIcon className={`mt-0.5 h-4 w-4 shrink-0 ${feat.taktColor}`} />
-                      <span className="text-sm font-medium text-foreground/90">{feat.takt}</span>
+                  <div className="flex flex-col gap-2 p-5 md:p-6 bg-primary/[0.02] md:border-r border-border/40 group-hover:bg-primary/[0.06] transition-colors relative">
+                    <span className="md:hidden text-[10px] font-bold uppercase tracking-wider text-primary">{t("taktStudio")}</span>
+                    <div className="flex items-start gap-3">
+                      <div className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${feat.taktColor.replace('text-', 'bg-').replace('500', '100')} ${feat.taktColor}`}>
+                         <TaktIcon className="h-3.5 w-3.5" />
+                      </div>
+                      <span className="text-sm font-bold text-foreground/90 leading-snug">{feat.takt}</span>
                     </div>
                   </div>
 
                   {/* Excel */}
-                  <div className="flex flex-col gap-2 p-4 md:p-6 bg-muted/5 md:border-r border-border/40 border-t md:border-t-0 border-border/20">
-                    <span className="md:hidden text-xs font-bold uppercase tracking-wider text-muted-foreground">{t("excel")}</span>
-                    <div className="flex items-start gap-2">
-                      <ExcelIcon className={`mt-0.5 h-4 w-4 shrink-0 ${feat.excelColor}`} />
-                      <span className="text-sm text-foreground/70">{feat.excel}</span>
+                  <div className="flex flex-col gap-2 p-5 md:p-6 bg-muted/5 md:border-r border-border/40 border-t md:border-t-0 border-border/20 group-hover:bg-transparent transition-colors">
+                    <span className="md:hidden text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("excel")}</span>
+                    <div className="flex items-start gap-3">
+                      <ExcelIcon className={`mt-1 h-4 w-4 shrink-0 ${feat.excelColor}`} />
+                      <span className="text-sm font-medium text-foreground/70 leading-snug">{feat.excel}</span>
                     </div>
                   </div>
 
                   {/* DES */}
-                  <div className="flex flex-col gap-2 p-4 md:p-6 bg-muted/5 border-t md:border-t-0 border-border/20">
-                    <span className="md:hidden text-xs font-bold uppercase tracking-wider text-muted-foreground">{t("des")}</span>
-                    <div className="flex items-start gap-2">
-                      <DesIcon className={`mt-0.5 h-4 w-4 shrink-0 ${feat.desColor}`} />
-                      <span className="text-sm text-foreground/70">{feat.des}</span>
+                  <div className="flex flex-col gap-2 p-5 md:p-6 bg-muted/5 border-t md:border-t-0 border-border/20 group-hover:bg-transparent transition-colors">
+                    <span className="md:hidden text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("des")}</span>
+                    <div className="flex items-start gap-3">
+                      <DesIcon className={`mt-1 h-4 w-4 shrink-0 ${feat.desColor}`} />
+                      <span className="text-sm font-medium text-foreground/70 leading-snug">{feat.des}</span>
                     </div>
                   </div>
 
