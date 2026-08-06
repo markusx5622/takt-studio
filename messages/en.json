@@ -597,6 +597,27 @@
     ]
   },
   "simulator": {
+    "executiveBanner": {
+      "lineBalanced": "Balanced Line",
+      "lineDeficit": "Deficit of {delta} Units/Day",
+      "autoSave": "Auto-saved in LocalStorage",
+      "meetsText": "Projected capacity of {capacity} units/day exceeds target demand of {demand} units/day (+{delta} units margin).",
+      "deficitText": "Current capacity is {capacity} units/day, creating a daily deficit of {delta} units against target {demand} units/day.",
+      "bottleneckLabel": "Bottleneck Station",
+      "efficiencyLabel": "Line Efficiency",
+      "copySummary": "Copy summary",
+      "copied": "Copied!",
+      "summaryHeader": "📊 [Takt Studio] Executive Production Summary",
+      "summaryScenario": "Scenario",
+      "summaryStatus": "Status",
+      "statusPass": "MEETS DEMAND",
+      "statusFail": "CAPACITY DEFICIT",
+      "summaryCapacity": "Capacity",
+      "summaryBottleneck": "Bottleneck",
+      "summaryEfficiency": "Line Efficiency",
+      "summaryTaktTime": "Takt Time",
+      "summaryDate": "Date"
+    },
     "title": "Simulator",
     "subtitle": "Configure the line, adjust parameters and watch the KPIs in real time.",
     "controls": {

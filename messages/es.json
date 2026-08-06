@@ -597,6 +597,27 @@
     ]
   },
   "simulator": {
+    "executiveBanner": {
+      "lineBalanced": "Línea en Equilibrio",
+      "lineDeficit": "Déficit de {delta} Uds/Día",
+      "autoSave": "Auto-guardado en LocalStorage",
+      "meetsText": "La capacidad proyectada de {capacity} uds/día supera la demanda objetivo de {demand} uds/día (+{delta} uds de margen).",
+      "deficitText": "La capacidad actual es de {capacity} uds/día, generando un déficit diario de {delta} uds frente al objetivo de {demand} uds/día.",
+      "bottleneckLabel": "Restricción / Cuello",
+      "efficiencyLabel": "Eficiencia Balanceo",
+      "copySummary": "Copiar informe",
+      "copied": "¡Copiado!",
+      "summaryHeader": "📊 [Takt Studio] Resumen Ejecutivo de Producción",
+      "summaryScenario": "Escenario",
+      "summaryStatus": "Estado",
+      "statusPass": "CUMPLE DEMANDA",
+      "statusFail": "DÉFICIT DE CAPACIDAD",
+      "summaryCapacity": "Capacidad",
+      "summaryBottleneck": "Cuello de botella",
+      "summaryEfficiency": "Eficiencia de balanceo",
+      "summaryTaktTime": "Takt Time",
+      "summaryDate": "Fecha"
+    },
     "title": "Simulador",
     "subtitle": "Configura la línea, ajusta parámetros y observa los KPIs en tiempo real.",
     "controls": {
