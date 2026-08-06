@@ -341,6 +341,7 @@
       "colResources": "Resources",
       "guide": "Line Balancing Guide",
       "templatesGuide": "Templates Guide",
+      "tutorial": "Step-by-Step Tutorial",
       "preset": "Monobath Template",
       "monteCarlo": "Sensitivity Lab",
       "sensitivity": "Sensitivity Analysis",
@@ -1212,6 +1213,36 @@
         "ceramics": "Capital-intensive continuous process industry. The bottleneck is rigidly set at the roller kiln and the hydraulic press. Efficiency depends on minimizing downtime at these critical stations.",
         "food_pharma": "Sector subject to strict hygienic regulations. It features scheduled cleaning stops (C.I.P.) and the bottleneck is usually in the sterilization phase (autoclave) or packaging sealing.",
         "machinery": "Make-to-Order or low-volume production. Long cycle times (measured in hours or days), high need for skilled labor, and high probability of reworks due to the complexity of pressure and quality testing."
+      }
+    },
+    "tutorial": {
+      "title": "Step-by-Step Tutorial",
+      "subtitle": "Learn to simulate, diagnose, and optimize your industrial production line in 6 sequential steps.",
+      "steps": {
+        "s1": {
+          "title": "Base Configuration",
+          "desc": "Define the daily demand volume required by the client and configure the effective hours of your workday. This data determines the target Takt Time."
+        },
+        "s2": {
+          "title": "Station Modeling",
+          "desc": "Build your line by adding each station. Enter the timed cycle time, the number of assigned operators, and, importantly, the expected failure rate per station."
+        },
+        "s3": {
+          "title": "Constraint Diagnostics",
+          "desc": "The simulator will instantly identify the Bottleneck (the slowest station). You will be able to compare the bottleneck's cycle time with the Takt Time to see if you meet the demand."
+        },
+        "s4": {
+          "title": "Sensitivity Analysis (Monte Carlo)",
+          "desc": "Start the stochastic simulation. The system will run thousands of iterations applying the failure rates to show you the real behavior of the line under uncertainty (P50 and P90 probability)."
+        },
+        "s5": {
+          "title": "What-If Comparison",
+          "desc": "Save the baseline scenario and create a copy (Snapshot). Add operators, reduce times, or improve quality, and use the A/B comparator to see the economic impact of your improvement."
+        },
+        "s6": {
+          "title": "Executive Reporting",
+          "desc": "Once the improvement is validated, export the full analysis to a vector PDF report, ready to be presented to technical management to justify the investment (ROI)."
+        }
       }
     }
   }

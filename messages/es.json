@@ -341,6 +341,7 @@
       "colResources": "Recursos",
       "guide": "Guía de Balanceo",
       "templatesGuide": "Guía de Plantillas",
+      "tutorial": "Tutorial Paso a Paso",
       "preset": "Plantilla Monobath",
       "monteCarlo": "Lab. de Sensibilidad",
       "sensitivity": "Sensibilidad",
@@ -1212,6 +1213,36 @@
         "ceramics": "Industria de proceso continuo intensiva en capital. El cuello de botella está rígidamente fijado en el horno monorrodillo y la prensa hidráulica. La eficiencia depende de minimizar los paros en estas estaciones críticas.",
         "food_pharma": "Sector sujeto a estrictas normativas higiénicas. Presenta paradas programadas para limpieza (C.I.P.) y el cuello de botella suele estar en la fase de esterilización (autoclave) o en el sellado de los envases.",
         "machinery": "Producción bajo pedido (Make-to-Order) o de bajo volumen. Tiempos de ciclo largos (medidos en horas o jornadas), gran necesidad de mano de obra cualificada y alta probabilidad de reprocesos debido a la complejidad de las pruebas de presión y calidad."
+      }
+    },
+    "tutorial": {
+      "title": "Tutorial Paso a Paso",
+      "subtitle": "Aprende a simular, diagnosticar y optimizar tu línea de producción industrial en 6 pasos secuenciales.",
+      "steps": {
+        "s1": {
+          "title": "Configuración Base",
+          "desc": "Define el volumen de demanda diaria que el cliente te exige y configura las horas efectivas de tu jornada laboral. Estos datos determinan el Takt Time objetivo."
+        },
+        "s2": {
+          "title": "Modelado de Estaciones",
+          "desc": "Construye tu línea añadiendo cada estación. Introduce el tiempo de ciclo cronometrado, el número de operarios asignados y, muy importante, la tasa de fallo esperada por estación."
+        },
+        "s3": {
+          "title": "Diagnóstico de Restricciones",
+          "desc": "El simulador identificará instantáneamente el Cuello de Botella (la estación más lenta). Podrás comparar el tiempo de ciclo del cuello de botella con el Takt Time para ver si cumples la demanda."
+        },
+        "s4": {
+          "title": "Análisis de Sensibilidad (Monte Carlo)",
+          "desc": "Inicia la simulación estocástica. El sistema ejecutará miles de iteraciones aplicando las tasas de fallo para mostrarte el comportamiento real de la línea bajo incertidumbre (probabilidad P50 y P90)."
+        },
+        "s5": {
+          "title": "Comparativa (What-If)",
+          "desc": "Guarda el escenario base y crea una copia (Snapshot). Añade operarios, reduce tiempos o mejora la calidad, y usa el comparador A/B para ver el impacto económico de tu mejora."
+        },
+        "s6": {
+          "title": "Reporting Ejecutivo",
+          "desc": "Una vez validada la mejora, exporta el análisis completo a un informe PDF vectorial, listo para ser presentado a dirección técnica y justificar la inversión (ROI)."
+        }
       }
     }
   }
