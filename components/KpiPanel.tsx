@@ -7,7 +7,7 @@ import { calculateAllKPIs } from "@/lib/calculations"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { Clock, AlertTriangle, TrendingUp, BarChart3, Info } from "lucide-react"
+import { Clock, AlertTriangle, TrendingUp, BarChart3, Info, Gauge } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // ─── Mini progress bar ─────────────────────────────────────────────────────────
@@ -75,11 +75,28 @@ export default function KpiPanel() {
 
   const bottleneckExceedsTakt = kpis.bottleneckCycleMin > kpis.taktTimeMin
 
-  const throughputPct =
-    scenario.demandPerDay > 0
-      ? (kpis.throughputPerDay / scenario.demandPerDay) * 100
+  const saturationRatioPct =
+    kpis.throughputPerDay > 0
+      ? Math.round((scenario.demandPerDay / kpis.throughputPerDay) * 100)
       : 0
-  const throughputColorClass = kpis.meetsDemand ? "bg-green-600" : "bg-red-600"
+
+  let saturationStatus: "overload" | "optimal" | "underutilized" = "optimal"
+  let saturationColorClass = "bg-emerald-500 dark:bg-emerald-400"
+  let saturationLabel = ""
+
+  if (saturationRatioPct > 100) {
+    saturationStatus = "overload"
+    saturationColorClass = "bg-rose-500 dark:bg-rose-400"
+    saturationLabel = t("saturationOverload", { pct: saturationRatioPct })
+  } else if (saturationRatioPct >= 75) {
+    saturationStatus = "optimal"
+    saturationColorClass = "bg-emerald-500 dark:bg-emerald-400"
+    saturationLabel = t("saturationOptimal", { pct: saturationRatioPct })
+  } else {
+    saturationStatus = "underutilized"
+    saturationColorClass = "bg-sky-500 dark:bg-sky-400"
+    saturationLabel = t("saturationUnderutilized", { pct: saturationRatioPct })
+  }
 
   const effPct = kpis.balancingEfficiency * 100
   const effColorClass =
@@ -158,30 +175,77 @@ export default function KpiPanel() {
           </CardContent>
         </Card>
 
-        {/* CARD 3 — Throughput */}
-        <Card>
+        {/* CARD 3 — Capacidad de Producción y Saturación */}
+        <Card className="transition-all hover:shadow-md">
           <CardContent className="pt-5">
-            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-              <TrendingUp className="h-3.5 w-3.5 text-primary" />
-              Throughput
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                {t("capacityTitle")}
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">
+                    <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-xs text-xs">
+                  <p>
+                    {t("saturationTooltip", {
+                      demand: scenario.demandPerDay,
+                      capacity: kpis.throughputPerDay,
+                    })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             </div>
-            <div className="mt-2">
+
+            <div className="mt-2 flex items-baseline justify-between">
+              <div>
+                <span
+                  className={cn(
+                    "text-2xl font-bold tracking-tight",
+                    kpis.meetsDemand ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                  )}
+                >
+                  {kpis.throughputPerDay}
+                </span>
+                <span className="ml-1 text-xs text-muted-foreground">{t("unitsPerDay")}</span>
+              </div>
+
+              {/* Badge de estado de saturación */}
               <span
                 className={cn(
-                  "text-2xl font-bold",
-                  kpis.meetsDemand ? "text-green-600" : "text-red-600"
+                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold shadow-2xs",
+                  saturationStatus === "overload" && "border-rose-300 bg-rose-100/90 text-rose-800 dark:border-rose-700/60 dark:bg-rose-950/80 dark:text-rose-300",
+                  saturationStatus === "optimal" && "border-emerald-300 bg-emerald-100/90 text-emerald-800 dark:border-emerald-700/60 dark:bg-emerald-950/80 dark:text-emerald-300",
+                  saturationStatus === "underutilized" && "border-sky-300 bg-sky-100/90 text-sky-800 dark:border-sky-700/60 dark:bg-sky-950/80 dark:text-sky-300"
                 )}
               >
-                {kpis.throughputPerDay}
+                <Gauge className="h-3 w-3 shrink-0" />
+                <span>{saturationLabel}</span>
               </span>
-              <span className="ml-1 text-xs text-muted-foreground">{t("unitsPerDay")}</span>
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+
+            <p className="mt-1 text-xs text-muted-foreground">
               {kpis.meetsDemand
                 ? t("meetsDemand", { delta: kpis.demandDelta })
                 : t("missesDemand", { delta: Math.abs(kpis.demandDelta) })}
             </p>
-            <ProgressBar value={throughputPct} colorClass={throughputColorClass} />
+
+            {/* Mini-barra de saturación */}
+            <div className="mt-3">
+              <div className="mb-1 flex items-center justify-between text-[10px] font-medium text-muted-foreground">
+                <span>{t("capacitySaturation")}</span>
+                <span className="font-semibold text-foreground">{saturationRatioPct}%</span>
+              </div>
+              <div className="relative h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                <div
+                  className={cn("h-full transition-all duration-500 rounded-full", saturationColorClass)}
+                  style={{ width: `${Math.min(100, saturationRatioPct)}%` }}
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
 
