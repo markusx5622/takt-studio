@@ -131,9 +131,9 @@ export default function LandingFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/simulador" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
-                  <Sparkles className="h-3.5 w-3.5 text-primary/70" />
-                  {t("preset")}
+                <Link href="/recursos/plantillas" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
+                  <BookOpen className="h-3.5 w-3.5 text-primary/70" />
+                  {t("templatesGuide")}
                 </Link>
               </li>
               <li>

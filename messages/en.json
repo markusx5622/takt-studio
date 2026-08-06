@@ -340,6 +340,7 @@
       "importarExportar": "Import / Export",
       "colResources": "Resources",
       "guide": "Line Balancing Guide",
+      "templatesGuide": "Templates Guide",
       "preset": "Monobath Template",
       "monteCarlo": "Sensitivity Lab",
       "sensitivity": "Sensitivity Analysis",
@@ -1188,5 +1189,27 @@
     "retry": "Try again",
     "backHome": "Back to home",
     "report": "If the problem persists, report it on GitHub Issues"
+  },
+  "resources": {
+    "templates": {
+      "title": "Templates Guide",
+      "subtitle": "Case studies and predefined configurations to understand the dynamics of production lines.",
+      "default": {
+        "title": "Sequential Line (Default)",
+        "desc": "The most standard use case. A sequential production line with 5 stations. Perfect to understand how a bottleneck restricts the whole flow and how variability (Monte Carlo) affects the Takt Time."
+      },
+      "monobath": {
+        "title": "Monobath Process",
+        "desc": "An industrialized line based on the manufacturing of modular bathrooms. It includes high manual effort stations and lognormal times, ideal to test efficiency improvement scenarios."
+      },
+      "highRework": {
+        "title": "High Rework Rate",
+        "desc": "A stress environment for the simulator. This template simulates stations with high failure rates (up to 20%), forcing reworks that significantly alter the Lead Time and the Balancing Efficiency."
+      },
+      "single": {
+        "title": "Single Station",
+        "desc": "The most isolated environment. Ideal for academic training where the goal is to observe the pure behavior of the stochastic distribution without the interferences of adjacent stations."
+      }
+    }
   }
 }

@@ -340,6 +340,7 @@
       "importarExportar": "Importar / Exportar",
       "colResources": "Recursos",
       "guide": "Guía de Balanceo",
+      "templatesGuide": "Guía de Plantillas",
       "preset": "Plantilla Monobath",
       "monteCarlo": "Lab. de Sensibilidad",
       "sensitivity": "Sensibilidad",
@@ -1188,5 +1189,27 @@
     "retry": "Reintentar",
     "backHome": "Volver al inicio",
     "report": "Si el problema persiste, repórtalo en GitHub Issues"
+  },
+  "resources": {
+    "templates": {
+      "title": "Guía de Plantillas",
+      "subtitle": "Casos de estudio y configuraciones predefinidas para entender la dinámica de las líneas de producción.",
+      "default": {
+        "title": "Línea Secuencial (Por Defecto)",
+        "desc": "El caso de uso más estándar. Una línea de producción en serie con 5 estaciones. Perfecta para entender cómo un cuello de botella restringe todo el flujo y cómo la variabilidad (Monte Carlo) afecta al Takt Time."
+      },
+      "monobath": {
+        "title": "Proceso Monobaño",
+        "desc": "Una línea industrializada basada en la fabricación de baños modulares. Incluye estaciones de alto esfuerzo manual y tiempos lognormales, ideal para probar escenarios de mejora de eficiencia."
+      },
+      "highRework": {
+        "title": "Alta Tasa de Reproceso",
+        "desc": "Un entorno de estrés para el simulador. Esta plantilla simula estaciones con altas tasas de fallo (hasta 20%), forzando reprocesos que alteran significativamente el Lead Time y la Eficiencia de Balanceo."
+      },
+      "single": {
+        "title": "Estación Única",
+        "desc": "El entorno más aislado. Ideal para formaciones académicas donde se desea observar el comportamiento puro de la distribución estocástica sin las interferencias de estaciones adyacentes."
+      }
+    }
   }
 }
