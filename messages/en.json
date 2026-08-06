@@ -1218,30 +1218,53 @@
     "tutorial": {
       "title": "Step-by-Step Tutorial",
       "subtitle": "Learn to simulate, diagnose, and optimize your industrial production line in 6 sequential steps.",
+      "labels": {
+        "theory": "Theoretical Concept",
+        "tip": "Practical Tip",
+        "action": "Action in Takt Studio"
+      },
       "steps": {
         "s1": {
           "title": "Base Configuration",
-          "desc": "Define the daily demand volume required by the client and configure the effective hours of your workday. This data determines the target Takt Time."
+          "desc": "Define the daily demand volume required by the client and configure the effective hours of your workday.",
+          "theory": "The Takt Time is the heartbeat of the customer. It represents the pace at which you must manufacture a product to meet demand. Any station taking longer than this time will be a Bottleneck.",
+          "tip": "Do not use a full 8-hour shift. Subtract breaks, preventive maintenance, and meetings (OEE - Availability). Use real values (e.g., 7.2 hours).",
+          "action": "Go to the top-left panel and adjust the 'Daily Demand' and 'Shift Hours'. You will see the Takt Time recalculate instantly."
         },
         "s2": {
           "title": "Station Modeling",
-          "desc": "Build your line by adding each station. Enter the timed cycle time, the number of assigned operators, and, importantly, the expected failure rate per station."
+          "desc": "Build your line by adding each station. Enter the timed cycle time, the number of assigned operators, and the failure rate.",
+          "theory": "The 'Cycle Time' (CT) is the actual time it takes a station to complete its task. The 'Failure Rate' introduces the probability of rework or scrap, which is vital for stochastic models.",
+          "tip": "Avoid ideal times. Use direct time studies on the shop floor with rating techniques, and add an allowance for human fatigue (usually 10-15%).",
+          "action": "In the central area, click 'Add Station'. Use the sliders to configure the time and watch how the capacity bar fills up against the Takt Time."
         },
         "s3": {
           "title": "Constraint Diagnostics",
-          "desc": "The simulator will instantly identify the Bottleneck (the slowest station). You will be able to compare the bottleneck's cycle time with the Takt Time to see if you meet the demand."
+          "desc": "The simulator will instantly identify the Bottleneck (the slowest station) and calculate the theoretical maximum Throughput.",
+          "theory": "The Theory of Constraints (TOC) indicates that the total performance of the system is dictated solely and exclusively by the Bottleneck. Improving a non-bottleneck station is a mirage.",
+          "tip": "If your Bottleneck exceeds the Takt Time, the line will not be able to meet demand without overtime. Your first improvement goal must be this station.",
+          "action": "Look for the station marked in dark red in the bar chart. The top KPI panel will show you the 'Line Balancing Efficiency'."
         },
         "s4": {
           "title": "Sensitivity Analysis (Monte Carlo)",
-          "desc": "Start the stochastic simulation. The system will run thousands of iterations applying the failure rates to show you the real behavior of the line under uncertainty (P50 and P90 probability)."
+          "desc": "Start the stochastic simulation. The system will run thousands of iterations applying variability to show you the real behavior of the line under uncertainty.",
+          "theory": "In real life, times are not fixed (deterministic). They follow a lognormal distribution. The Monte Carlo method reveals hidden risk by calculating the P90 percentile (the worst probable scenario).",
+          "tip": "If the P50 (median) meets the demand, but the P90 does not, your line is fragile. A minor breakdown will cause severe delivery delays.",
+          "action": "Click the 'Run Monte Carlo' button in the KPI panel. Observe how the bottom graph changes to a bell curve (Histogram) with percentiles."
         },
         "s5": {
           "title": "What-If Comparison",
-          "desc": "Save the baseline scenario and create a copy (Snapshot). Add operators, reduce times, or improve quality, and use the A/B comparator to see the economic impact of your improvement."
+          "desc": "Save the baseline scenario and create a copy. Test changes (e.g., adding an operator) and use the A/B comparator to see the numerical impact.",
+          "theory": "Line Balancing seeks to match the cycle times of all stations to the Takt Time. This reduces 'Idle Time' and maximizes the Contribution Margin.",
+          "tip": "Before spending money on robots (CAPEX), try to level the load by moving tasks from the slowest station to the fastest ones.",
+          "action": "In the top right, save a 'Snapshot'. Then make your changes, and go to the 'Comparator' tab to see the cost and efficiency deltas (Δ) side by side."
         },
         "s6": {
           "title": "Executive Reporting",
-          "desc": "Once the improvement is validated, export the full analysis to a vector PDF report, ready to be presented to technical management to justify the investment (ROI)."
+          "desc": "Once the improvement is validated, export the full analysis to a vector PDF report, ready to justify your investment proposal.",
+          "theory": "Top management requires financial metrics. Translating 'Efficiency' to 'Euros Saved by Rework' is key to getting continuous improvement projects approved.",
+          "tip": "Use the 'ROI Calculator' in the report to demonstrate Payback. A 5% increase in efficiency usually pays for the investment in less than 3 months.",
+          "action": "In the top bar, click the PDF Export icon. An A4 corporate document will be generated with all mathematical graphs and tables."
         }
       }
     }

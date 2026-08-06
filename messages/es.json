@@ -1218,30 +1218,53 @@
     "tutorial": {
       "title": "Tutorial Paso a Paso",
       "subtitle": "Aprende a simular, diagnosticar y optimizar tu línea de producción industrial en 6 pasos secuenciales.",
+      "labels": {
+        "theory": "Concepto Teórico",
+        "tip": "Tip Práctico",
+        "action": "Acción en Takt Studio"
+      },
       "steps": {
         "s1": {
           "title": "Configuración Base",
-          "desc": "Define el volumen de demanda diaria que el cliente te exige y configura las horas efectivas de tu jornada laboral. Estos datos determinan el Takt Time objetivo."
+          "desc": "Define el volumen de demanda diaria que el cliente te exige y configura las horas efectivas de tu jornada laboral.",
+          "theory": "El Takt Time es el latido del cliente. Representa el ritmo al que debes fabricar un producto para satisfacer la demanda. Cualquier estación que tarde más que este tiempo será un Cuello de Botella.",
+          "tip": "No uses 8 horas completas de turno. Resta descansos, mantenimientos preventivos y reuniones (OEE - Disponibilidad). Usa valores reales (ej. 7.2 horas).",
+          "action": "Ve al panel superior izquierdo y ajusta la 'Demanda Diaria' y las 'Horas por Turno'. Verás que el Takt Time se recalcula al instante."
         },
         "s2": {
           "title": "Modelado de Estaciones",
-          "desc": "Construye tu línea añadiendo cada estación. Introduce el tiempo de ciclo cronometrado, el número de operarios asignados y, muy importante, la tasa de fallo esperada por estación."
+          "desc": "Construye tu línea añadiendo cada estación. Introduce el tiempo de ciclo cronometrado, el número de operarios asignados y la tasa de fallo.",
+          "theory": "El 'Tiempo de Ciclo' (CT) es el tiempo real que tarda una estación en completar su tarea. La 'Tasa de Fallo' introduce la probabilidad de reproceso o chatarra (Scrap), vital para modelos estocásticos.",
+          "tip": "Evita tiempos ideales. Usa cronometraje directo en planta con técnica de rating, y añade un suplemento por fatiga humana (usualmente 10-15%).",
+          "action": "En el área central, pulsa 'Añadir Estación'. Usa los sliders para configurar el tiempo y observa cómo la barra de capacidad se llena respecto al Takt Time."
         },
         "s3": {
           "title": "Diagnóstico de Restricciones",
-          "desc": "El simulador identificará instantáneamente el Cuello de Botella (la estación más lenta). Podrás comparar el tiempo de ciclo del cuello de botella con el Takt Time para ver si cumples la demanda."
+          "desc": "El simulador identificará instantáneamente el Cuello de Botella (la estación más lenta) y calculará el Throughput máximo teórico.",
+          "theory": "La Teoría de Restricciones (TOC) indica que el rendimiento total del sistema está dictado única y exclusivamente por el Cuello de Botella. Mejorar una estación que no es cuello de botella es un espejismo.",
+          "tip": "Si tu Cuello de Botella supera el Takt Time, la línea no podrá cumplir la demanda sin hacer horas extras. Tu primer objetivo de mejora debe ser esta estación.",
+          "action": "Busca la estación marcada en rojo oscuro en el gráfico de barras. El panel de KPIs superior te mostrará la 'Eficiencia de Balanceo' (Line Balancing Efficiency)."
         },
         "s4": {
           "title": "Análisis de Sensibilidad (Monte Carlo)",
-          "desc": "Inicia la simulación estocástica. El sistema ejecutará miles de iteraciones aplicando las tasas de fallo para mostrarte el comportamiento real de la línea bajo incertidumbre (probabilidad P50 y P90)."
+          "desc": "Inicia la simulación estocástica. El sistema ejecutará miles de iteraciones aplicando variabilidad para mostrarte el comportamiento real de la línea bajo incertidumbre.",
+          "theory": "En la vida real, los tiempos no son fijos (deterministas). Siguen una distribución lognormal. El método Monte Carlo revela el riesgo oculto calculando el percentil P90 (el peor escenario probable).",
+          "tip": "Si el P50 (mediana) cumple la demanda, pero el P90 no, tu línea es frágil. Una avería menor causará retrasos severos en la entrega.",
+          "action": "Pulsa el botón 'Ejecutar Monte Carlo' en el panel de KPIs. Observa cómo cambia la gráfica inferior a una campana de Gauss (Histograma) con los percentiles."
         },
         "s5": {
           "title": "Comparativa (What-If)",
-          "desc": "Guarda el escenario base y crea una copia (Snapshot). Añade operarios, reduce tiempos o mejora la calidad, y usa el comparador A/B para ver el impacto económico de tu mejora."
+          "desc": "Guarda el escenario base (Baseline) y crea una copia. Prueba cambios (ej. añadir un operario) y usa el comparador A/B para ver el impacto numérico.",
+          "theory": "El Balanceo de Líneas busca igualar los tiempos de ciclo de todas las estaciones al Takt Time. Esto reduce el 'Idle Time' (tiempo ocioso) y maximiza el Margen de Contribución.",
+          "tip": "Antes de gastar dinero en robots (CAPEX), intenta nivelar la carga moviendo tareas de la estación más lenta a las más rápidas.",
+          "action": "Arriba a la derecha, guarda un 'Snapshot'. Luego haz tus cambios, y ve a la pestaña 'Comparador' para ver las deltas (Δ) de costes y eficiencia lado a lado."
         },
         "s6": {
           "title": "Reporting Ejecutivo",
-          "desc": "Una vez validada la mejora, exporta el análisis completo a un informe PDF vectorial, listo para ser presentado a dirección técnica y justificar la inversión (ROI)."
+          "desc": "Una vez validada la mejora, exporta el análisis completo a un informe PDF vectorial, listo para justificar tu propuesta de inversión.",
+          "theory": "La alta dirección requiere métricas financieras. Traducir la 'Eficiencia' a 'Euros Ahorrados por Reproceso' es clave para aprobar los proyectos de mejora continua.",
+          "tip": "Usa la 'Calculadora de ROI' del informe para demostrar el Payback. Un aumento del 5% en eficiencia suele pagar la inversión en menos de 3 meses.",
+          "action": "En la barra superior, haz clic en el icono de Exportar PDF. Se generará un documento A4 corporativo con todas las gráficas y tablas matemáticas."
         }
       }
     }
