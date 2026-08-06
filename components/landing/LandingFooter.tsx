@@ -124,24 +124,14 @@ export default function LandingFooter() {
           <div className="space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-foreground/90">{t("colResources")}</h4>
             <ul className="space-y-2.5 text-xs">
-              <li>
-                <Link href="/metodologia" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
-                  <Layers className="h-3.5 w-3.5 text-primary/70" />
-                  {t("guide")}
-                </Link>
-              </li>
+
               <li>
                 <Link href="/recursos/plantillas" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
                   <BookOpen className="h-3.5 w-3.5 text-primary/70" />
                   {t("templatesGuide")}
                 </Link>
               </li>
-              <li>
-                <Link href="/simulador" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
-                  <Sliders className="h-3.5 w-3.5 text-primary/70" />
-                  {t("monteCarlo")}
-                </Link>
-              </li>
+
               <li>
                 <a
                   href="https://github.com/markusx5622/takt-studio"
