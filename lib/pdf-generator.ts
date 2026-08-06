@@ -176,20 +176,24 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     try {
       doc.addImage(LOGO_HORIZONTAL_LIGHT_SVG, "SVG", LM, yPos, logoW, logoH)
     } catch {
-      doc.setFillColor(37, 99, 235)
-      doc.roundedRect(LM, yPos, 8.5, 8.5, 2, 2, "F")
+      const iconSize = 7.0
+      const iconX = LM + 1.4
+      const iconY = yPos + 1.16
 
+      doc.setFillColor(37, 99, 235)
+      doc.roundedRect(iconX, iconY, iconSize, iconSize, 1.5, 1.5, "F")
+      
       doc.setDrawColor(255, 255, 255)
-      doc.setLineWidth(0.8)
-      doc.line(LM + 2, yPos + 2.8, LM + 6.5, yPos + 2.8)
-      doc.line(LM + 4.25, yPos + 2.8, LM + 4.25, yPos + 5.8)
+      doc.setLineWidth(0.6)
+      doc.line(iconX + 1.7, iconY + 2.3, iconX + 5.3, iconY + 2.3)
+      doc.line(iconX + 3.5, iconY + 2.3, iconX + 3.5, iconY + 4.6)
 
       doc.setFont("helvetica", "bold")
-      doc.setFontSize(11)
+      doc.setFontSize(10.5)
       doc.setTextColor(15, 23, 42)
-      doc.text("Takt", LM + 10.5, yPos + 6.5)
+      doc.text("Takt", LM + 9.8, yPos + 6.5)
       doc.setTextColor(37, 99, 235)
-      doc.text("Studio", LM + 19.5, yPos + 6.5)
+      doc.text("Studio", LM + 18.4, yPos + 6.5)
     }
   }
 
@@ -224,32 +228,36 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   try {
     doc.addImage(LOGO_HORIZONTAL_LIGHT_SVG, "SVG", logoX, logoY, logoW, logoH)
   } catch {
-    const iconX = logoX
-    const iconY = logoY
-    const iconSize = 21
+    const iconSize = 15.8
+    const iconX = logoX + 3.2
+    const iconY = logoY + 2.6
 
-    doc.setFillColor(37, 99, 235)
-    doc.roundedRect(iconX, iconY, iconSize, iconSize, 4.5, 4.5, "F")
+    doc.setFillColor(37, 99, 235) // #2563EB
+    doc.roundedRect(iconX, iconY, iconSize, iconSize, 3.5, 3.5, "F")
 
+    // Draw the T (White)
     doc.setDrawColor(255, 255, 255)
-    doc.setLineWidth(1.6)
-    doc.line(iconX + 5, iconY + 7, iconX + 16, iconY + 7)
-    doc.line(iconX + 10.5, iconY + 7, iconX + 10.5, iconY + 14)
+    doc.setLineWidth(1.2)
+    doc.line(iconX + 3.9, iconY + 5.2, iconX + 11.9, iconY + 5.2) // Top bar
+    doc.line(iconX + 7.9, iconY + 5.2, iconX + 7.9, iconY + 10.3) // Vertical bar
 
-    doc.setDrawColor(6, 182, 212)
-    doc.setLineWidth(1.1)
-    doc.line(iconX + 5.5, iconY + 12.5, iconX + 10.5, iconY + 14.5)
-    doc.line(iconX + 10.5, iconY + 14.5, iconX + 15.5, iconY + 12.5)
+    // Draw the Wave (Cyan)
+    doc.setDrawColor(6, 182, 212) // #06B6D4
+    doc.setLineWidth(0.8)
+    doc.line(iconX + 4.3, iconY + 9.3, iconX + 7.9, iconY + 10.7) // Left wave
+    doc.line(iconX + 7.9, iconY + 10.7, iconX + 11.6, iconY + 9.3) // Right wave
+    // Green dot
+    doc.setFillColor(34, 197, 94) // #22C55E
+    doc.circle(iconX + 7.9, iconY + 10.7, 0.6, "F")
 
-    doc.setFillColor(34, 197, 94)
-    doc.circle(iconX + 10.5, iconY + 14.5, 0.9, "F")
-
+    // Text: Takt Studio
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(24)
+    doc.setFontSize(24) // 24pt is perfect
     doc.setTextColor(15, 23, 42)
-    doc.text("Takt", iconX + 25, iconY + 15)
+    const textBaseY = logoY + 14 
+    doc.text("Takt", logoX + 22.2, textBaseY)
     doc.setTextColor(37, 99, 235)
-    doc.text("Studio", iconX + 47, iconY + 15)
+    doc.text("Studio", logoX + 41.5, textBaseY)
   }
 
   // 3. Official Document Pill Tag (Shifted Down)
@@ -427,17 +435,17 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     const mc = i % metaGridCols
     const mr = Math.floor(i / metaGridCols)
     const mx = metaCardX + mc * colW
-    const my = metaCardY + 7 + mr * 12
+    const my = metaCardY + 7 + mr * 13
 
     setGray()
     doc.setFont("helvetica", "normal")
     doc.setFontSize(7)
-    doc.text(metaItems[i].label + ":", mx + 8, my + 4)
+    doc.text(metaItems[i].label, mx + 8, my + 3)
 
     setDark()
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(7.5)
-    doc.text(metaItems[i].value, mx + colW - 8, my + 4, { align: "right" })
+    doc.setFontSize(8)
+    doc.text(metaItems[i].value, mx + 8, my + 7.5)
   }
 
   // 8. Executive Summary Note Box (Fills Lower Page Balance)
@@ -1519,14 +1527,15 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const totalPages = doc.getNumberOfPages()
   for (let pageIdx = 1; pageIdx <= totalPages; pageIdx++) {
     doc.setPage(pageIdx)
-    if (pageIdx >= 2) {
+    if (pageIdx > 1 && pageIdx < totalPages) {
       drawHeaderLeftLogo(7)
       drawHeaderRightMetadata(13)
       doc.setDrawColor(226, 232, 240)
       doc.setLineWidth(0.3)
       doc.line(LM, 18, RM, 18)
+      
+      drawFooter(pageIdx, totalPages)
     }
-    drawFooter(pageIdx, totalPages)
   }
 
   // ── NOMBRE DE ARCHIVO SANITIZADO ──────────────────────────────────────────────
