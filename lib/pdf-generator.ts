@@ -1397,6 +1397,23 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.setFontSize(9)
     doc.text(pageNumStr, RM, tocY, { align: "right" })
 
+    // Interactive Clickable Link: Clicking anywhere on this row jumps to the target page
+    try {
+      doc.link(LM, tocY - 4.5, CW, 6, { pageNumber: displayPage })
+    } catch {
+      // Fallback if link API differs
+    }
+
+    // Add PDF Sidebar Bookmark / Outline
+    try {
+      const outline = (doc as unknown as { outline?: { add: (parent: unknown, title: string, opts: { pageNumber: number }) => void } }).outline
+      if (outline) {
+        outline.add(null, entry.label, { pageNumber: displayPage })
+      }
+    } catch {
+      // Ignore if outline is unavailable
+    }
+
     tocY += 7
   }
 
