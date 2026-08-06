@@ -182,7 +182,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.text("TAKT STUDIO", LM, 20)
   }
 
-  // Report Date & Unique Identifier (Top Right)
+  // Report Date & Unique Identifier (Top Right Header)
   const now = new Date()
   const dateStr = new Intl.DateTimeFormat(locale, {
     day: "2-digit",
@@ -194,13 +194,47 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const dateCompact = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}`
   const reportId = `TST-${dateCompact}-${timeCompact}`
 
-  setGray()
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(8)
-  doc.text(reportId, RM, 16, { align: "right" })
-  doc.setFont("helvetica", "normal")
-  doc.setFontSize(8)
-  doc.text(t("generatedOn", { date: dateStr, id: reportId }), RM, 21, { align: "right" })
+  function drawHeaderRightMetadata(yPos: number) {
+    const isEn = locale.toLowerCase().startsWith("en")
+    const labelEmisionText = isEn ? "Issued: " : "Emisión: "
+    const labelIdText = " · ID: "
+
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(8)
+    const wValEmision = doc.getTextWidth(dateStr)
+
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(8)
+    const wLabelEmision = doc.getTextWidth(labelEmisionText)
+    const wLabelId = doc.getTextWidth(labelIdText)
+    const wValId = doc.getTextWidth(reportId)
+
+    const totalW = wLabelEmision + wValEmision + wLabelId + wValId
+    let curX = RM - totalW
+
+    // "Emisión: " in bold gray
+    setGray()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(8)
+    doc.text(labelEmisionText, curX, yPos)
+    curX += wLabelEmision
+
+    // dateStr in normal gray
+    doc.setFont("helvetica", "normal")
+    doc.text(dateStr, curX, yPos)
+    curX += wValEmision
+
+    // " · ID: " in bold gray
+    doc.setFont("helvetica", "bold")
+    doc.text(labelIdText, curX, yPos)
+    curX += wLabelId
+
+    // reportId in normal gray
+    doc.setFont("helvetica", "normal")
+    doc.text(reportId, curX, yPos)
+  }
+
+  drawHeaderRightMetadata(19)
 
   // Main Report Title & Scenario Subtitle (Clean & Boundary-safe)
   setDark()
@@ -482,11 +516,6 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.setLineDashPattern([1.5, 1.5], 0)
   doc.line(axisX, taktY, LM + chartW - 4, taktY)
   doc.setLineDashPattern([], 0) // Reset line style
-
-  setRed()
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(6.5)
-  doc.text(`TAKT: ${kpis.taktTimeMin.toFixed(1)}m`, LM + chartW - 5, taktY - 1, { align: "right" })
 
   // Bars rendering
   const numStations = stations.length
@@ -850,20 +879,17 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.setPage(pageIdx)
     if (pageIdx >= 2) {
       try {
-        doc.addImage(LOGO_REPORT_BASE64, "PNG", LM, 7, 24, 5.3)
+        doc.addImage(LOGO_REPORT_BASE64, "PNG", LM, 7, 42, 9.3)
       } catch {
         setBlue()
         doc.setFont("helvetica", "bold")
-        doc.setFontSize(10)
-        doc.text("TAKT STUDIO", LM, 12)
+        doc.setFontSize(14)
+        doc.text("TAKT STUDIO", LM, 14)
       }
-      setGray()
-      doc.setFont("helvetica", "bold")
-      doc.setFontSize(8)
-      doc.text(reportId, RM, 12, { align: "right" })
+      drawHeaderRightMetadata(13)
       doc.setDrawColor(226, 232, 240)
       doc.setLineWidth(0.3)
-      doc.line(LM, 15, RM, 15)
+      doc.line(LM, 18, RM, 18)
     }
     drawFooter(pageIdx, totalPages)
   }
