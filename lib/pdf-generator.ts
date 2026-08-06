@@ -53,6 +53,33 @@ function formatPayback(paybackDays: number | null | undefined, t: PdfTranslator,
   return t("paybackDays", { days: formatNumber(rounded, locale) })
 }
 
+/**
+ * Truncates text with an ellipsis if it exceeds maxWidth at current font settings
+ */
+function fitText(doc: { getTextWidth: (s: string) => number }, text: string, maxWidth: number): string {
+  if (!text) return ""
+  if (doc.getTextWidth(text) <= maxWidth) return text
+  let truncated = text
+  while (truncated.length > 0 && doc.getTextWidth(truncated + "…") > maxWidth) {
+    truncated = truncated.slice(0, -1)
+  }
+  return truncated ? truncated + "…" : ""
+}
+
+/**
+ * Cleanly separates scenario base title from applied improvement suffixes
+ */
+function parseCleanScenarioTitle(rawName: string): { baseTitle: string; improvementSubtitle?: string } {
+  if (!rawName) return { baseTitle: "Escenario" }
+  const parts = rawName.split(" — ")
+  const baseTitle = parts[0].trim()
+  if (parts.length > 1) {
+    const improvementSubtitle = parts.slice(1).join(" · ").trim()
+    return { baseTitle, improvementSubtitle }
+  }
+  return { baseTitle }
+}
+
 // ─── Types & i18n Interfaces ──────────────────────────────────────────────────
 
 export type PdfTranslator = (key: string, values?: Record<string, string | number>) => string
@@ -175,21 +202,36 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.setFontSize(8)
   doc.text(t("generatedOn", { date: dateStr, id: reportId }), RM, 21, { align: "right" })
 
-  // Main Report Title & Scenario Subtitle
+  // Main Report Title & Scenario Subtitle (Clean & Boundary-safe)
   setDark()
   doc.setFont("helvetica", "bold")
-  doc.setFontSize(15)
-  doc.text(t("reportTitle"), LM, 31)
+  doc.setFontSize(14)
+  doc.text(t("reportTitle"), LM, 30)
+
+  const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
   setBlue()
   doc.setFont("helvetica", "bold")
-  doc.setFontSize(12)
-  doc.text(scenario.name, LM, 38)
+  doc.setFontSize(11)
+  const cleanBaseTitle = fitText(doc, baseTitle, CW)
+  doc.text(cleanBaseTitle, LM, 36.5)
+
+  let headerLineY = 40.5
+
+  if (improvementSubtitle) {
+    setGray()
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(7.5)
+    const label = locale.toLowerCase().startsWith("en") ? "Applied improvements" : "Mejoras aplicadas"
+    const cleanSubTitle = fitText(doc, `${label}: ${improvementSubtitle}`, CW)
+    doc.text(cleanSubTitle, LM, 40.5)
+    headerLineY = 44.5
+  }
 
   doc.setDrawColor(226, 232, 240)
   doc.setLineWidth(0.4)
-  doc.line(LM, 42, RM, 42)
-  y = 47
+  doc.line(LM, headerLineY, RM, headerLineY)
+  y = headerLineY + 5
 
   // ── 2. RESUMEN EJECUTIVO ─────────────────────────────────────────────────────
 
@@ -210,6 +252,8 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     ? t("execPass", execValues)
     : t("execFail", execValues)
 
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(8.5)
   const execLines = doc.splitTextToSize(execText, CW - 8) as string[]
   const execBoxH = Math.max(execLines.length * 4.2 + 7, 16)
 
@@ -265,7 +309,8 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.setFont("helvetica", "bold")
   doc.setFontSize(7)
   paramCols.forEach((col, i) => {
-    doc.text(col.label, LM + i * pColW + pColW / 2, y + 3.5, { align: "center" })
+    const cleanLabel = fitText(doc, col.label, pColW - 2)
+    doc.text(cleanLabel, LM + i * pColW + pColW / 2, y + 3.5, { align: "center" })
   })
   y += 5
 
@@ -274,9 +319,10 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.rect(LM, y, CW, pBoxH - 5, "FD")
   setDark()
   doc.setFont("helvetica", "bold")
-  doc.setFontSize(9)
+  doc.setFontSize(8.5)
   paramCols.forEach((col, i) => {
-    doc.text(col.value, LM + i * pColW + pColW / 2, y + 5, { align: "center" })
+    const cleanVal = fitText(doc, col.value, pColW - 2)
+    doc.text(cleanVal, LM + i * pColW + pColW / 2, y + 4.8, { align: "center" })
   })
   y += pBoxH + 2
 
@@ -314,32 +360,50 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.setFillColor(cr, cg, cb)
     doc.circle(bx + 4, by + 4.5, 1.2, "F")
 
+    // Card Header Title (7pt bold)
     setGray()
     doc.setFont("helvetica", "bold")
     doc.setFontSize(7)
-    doc.text(title.toUpperCase(), bx + 7, by + 5)
+    const cleanTitle = fitText(doc, title.toUpperCase(), gridColW - 12)
+    doc.text(cleanTitle, bx + 7, by + 5)
 
     if (status === "red") setRed()
     else if (status === "green") setGreen()
     else if (status === "amber") setAmber()
     else setDark()
 
-    // Handle multiline bottleneck station names cleanly without truncation
-    const valLines = doc.splitTextToSize(val, gridColW - 6) as string[]
-    if (valLines.length > 1) {
-      doc.setFont("helvetica", "bold")
-      doc.setFontSize(8.5)
-      doc.text(valLines.slice(0, 2), bx + 4, by + 9.5)
+    const maxValW = gridColW - 8 // 50mm max inner width
+
+    // Test font size 11pt bold first
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(11)
+    if (doc.getTextWidth(val) <= maxValW) {
+      doc.text(val, bx + 4, by + 11.2)
     } else {
-      doc.setFont("helvetica", "bold")
-      doc.setFontSize(11)
-      doc.text(val, bx + 4, by + 11.5)
+      // Try font size 9pt bold
+      doc.setFontSize(9)
+      if (doc.getTextWidth(val) <= maxValW) {
+        doc.text(val, bx + 4, by + 11.2)
+      } else {
+        // Multi-line value (e.g. long station names): use 8pt bold with line wrapping and fitText
+        doc.setFontSize(8)
+        const lines = doc.splitTextToSize(val, maxValW) as string[]
+        if (lines.length === 1) {
+          doc.text(lines[0], bx + 4, by + 11.2)
+        } else {
+          const line1 = lines[0]
+          const line2 = fitText(doc, lines.slice(1).join(" "), maxValW)
+          doc.text(line1, bx + 4, by + 9.0)
+          doc.text(line2, bx + 4, by + 12.0)
+        }
+      }
     }
 
     setGray()
     doc.setFont("helvetica", "normal")
     doc.setFontSize(6.8)
-    doc.text(sub, bx + 4, by + 15.5)
+    const cleanSub = fitText(doc, sub, maxValW)
+    doc.text(cleanSub, bx + 4, by + 15.5)
   }
 
   // Row 1
@@ -460,28 +524,38 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   y = chartY + chartH + 5
 
-  // Chart Legend
+  // Chart Legend (Boundary safe positioning)
+  const legendY = y
   doc.setFillColor(30, 64, 175)
-  doc.rect(LM + 10, y, 3, 3, "F")
+  doc.rect(LM + 4, legendY, 3, 3, "F")
   setGray()
   doc.setFont("helvetica", "normal")
   doc.setFontSize(7)
-  doc.text(t("chartLegendNormal"), LM + 15, y + 2.5)
+  const legNormal = fitText(doc, t("chartLegendNormal"), 40)
+  doc.text(legNormal, LM + 9, legendY + 2.5)
+
+  const legendOffset1 = LM + 9 + doc.getTextWidth(legNormal) + 8
 
   doc.setFillColor(220, 38, 38)
-  doc.rect(LM + 55, y, 3, 3, "F")
-  doc.text(t("chartLegendBottleneck"), LM + 60, y + 2.5)
+  doc.rect(legendOffset1, legendY, 3, 3, "F")
+  const legBottleneck = fitText(doc, t("chartLegendBottleneck"), 40)
+  doc.text(legBottleneck, legendOffset1 + 5, legendY + 2.5)
 
-  doc.setDrawColor(220, 38, 38)
-  doc.setLineWidth(0.4)
-  doc.setLineDashPattern([1.5, 1.5], 0)
-  doc.line(LM + 105, y + 1.5, LM + 112, y + 1.5)
-  doc.setLineDashPattern([], 0)
-  doc.text(t("chartLegendTakt", { value: kpis.taktTimeMin.toFixed(1) }), LM + 115, y + 2.5)
+  const legendOffset2 = legendOffset1 + 5 + doc.getTextWidth(legBottleneck) + 8
+
+  if (legendOffset2 + 25 <= RM) {
+    doc.setDrawColor(220, 38, 38)
+    doc.setLineWidth(0.4)
+    doc.setLineDashPattern([1.5, 1.5], 0)
+    doc.line(legendOffset2, legendY + 1.5, legendOffset2 + 7, legendY + 1.5)
+    doc.setLineDashPattern([], 0)
+    const taktLegendStr = fitText(doc, t("chartLegendTakt", { value: kpis.taktTimeMin.toFixed(1) }), RM - (legendOffset2 + 9))
+    doc.text(taktLegendStr, legendOffset2 + 9, legendY + 2.5)
+  }
 
   y += 9
 
-  // ── 6. TABLA DETALLADA DE ESTACIONES (MULTILÍNEA Y SIN TRUNCAR) ─────────────
+  // ── 6. TABLA DETALLADA DE ESTACIONES (MULTILÍNEA Y BOUNDARY SAFE) ─────────────
 
   checkPageBreak(30)
   sectionTitle(t("secStations"))
@@ -517,7 +591,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     const st = stations[i]
     const exceedsTakt = st.effectiveCycleMin > kpis.taktTimeMin
 
-    // Multiline wrapped station name
+    // Multiline wrapped station name with correct font size set first
     doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
     doc.setFontSize(7.5)
     const nameLines = doc.splitTextToSize(st.name, tCols[1].w - 3) as string[]
@@ -543,18 +617,18 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     if (st.isBottleneck) setRed()
     else setDark()
 
-    // Render columns
-    doc.text(String(i + 1), tCols[0].x + tCols[0].w / 2, y + 4, { align: "center" })
-    doc.text(nameLines, tCols[1].x + 1.5, y + 4)
-    doc.text(`${st.cycleTimeMin} ${t("minUnit")}`, tCols[2].x + tCols[2].w - 1, y + 4, { align: "right" })
-    doc.text(String(st.operators), tCols[3].x + tCols[3].w / 2, y + 4, { align: "center" })
-    doc.text(`${(st.failureRate * 100).toFixed(0)}%`, tCols[4].x + tCols[4].w / 2, y + 4, { align: "center" })
-    doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, tCols[5].x + tCols[5].w - 1, y + 4, { align: "right" })
+    const textY = y + 4.2
+    doc.text(String(i + 1), tCols[0].x + tCols[0].w / 2, textY, { align: "center" })
+    doc.text(nameLines, tCols[1].x + 1.5, textY)
+    doc.text(`${st.cycleTimeMin} ${t("minUnit")}`, tCols[2].x + tCols[2].w - 1, textY, { align: "right" })
+    doc.text(String(st.operators), tCols[3].x + tCols[3].w / 2, textY, { align: "center" })
+    doc.text(`${(st.failureRate * 100).toFixed(0)}%`, tCols[4].x + tCols[4].w / 2, textY, { align: "center" })
+    doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, tCols[5].x + tCols[5].w - 1, textY, { align: "right" })
 
     if (exceedsTakt) setRed()
     else setGreen()
     doc.setFont("helvetica", "bold")
-    doc.text(exceedsTakt ? t("exceedsYes") : t("exceedsNo"), tCols[6].x + tCols[6].w / 2, y + 4, { align: "center" })
+    doc.text(exceedsTakt ? t("exceedsYes") : t("exceedsNo"), tCols[6].x + tCols[6].w / 2, textY, { align: "center" })
 
     y += rowH
   }
@@ -575,18 +649,22 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
       { x: LM + 150, w: 30, label: t("colRecPayback"),align: "center" as const },
     ]
 
-    doc.setFillColor(241, 245, 249)
-    doc.setDrawColor(203, 213, 225)
-    doc.setLineWidth(0.2)
-    doc.rect(LM, y, CW, 5.5, "FD")
-    setGray()
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(7)
-    for (const col of rCols) {
-      const tx = col.align === "right" ? col.x + col.w - 1 : col.align === "center" ? col.x + col.w / 2 : col.x + 1.5
-      doc.text(col.label, tx, y + 3.8, { align: col.align })
+    function drawRecTableHeader() {
+      doc.setFillColor(241, 245, 249)
+      doc.setDrawColor(203, 213, 225)
+      doc.setLineWidth(0.2)
+      doc.rect(LM, y, CW, 5.5, "FD")
+      setGray()
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(7)
+      for (const col of rCols) {
+        const tx = col.align === "right" ? col.x + col.w - 1 : col.align === "center" ? col.x + col.w / 2 : col.x + 1.5
+        doc.text(col.label, tx, y + 3.8, { align: col.align })
+      }
+      y += 5.5
     }
-    y += 5.5
+
+    drawRecTableHeader()
 
     for (let rIdx = 0; rIdx < recommendations.length; rIdx++) {
       const rec = recommendations[rIdx]
@@ -597,24 +675,16 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
       const { scenario: projectedScenario } = simulateScenario(scenario, stationChanges, rec.scenarioChanges)
       const econImpact = calculateRecommendationEconomicImpact(scenario, projectedScenario, rec.type)
 
-      // Priority translation label
       const priorityText = rec.priority === "high" ? "ALTA" : rec.priority === "medium" ? "MEDIA" : "BAJA"
       const recDesc = tImprovements(`recs.${rec.titleKey}.title`, rec.titleValues)
+
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(7.5)
       const descLines = doc.splitTextToSize(recDesc, rCols[1].w - 3) as string[]
       const rRowH = Math.max(6, descLines.length * 3.8 + 2.5)
 
       if (checkPageBreak(rRowH)) {
-        // Redraw header if page break
-        doc.setFillColor(241, 245, 249)
-        doc.rect(LM, y, CW, 5.5, "FD")
-        setGray()
-        doc.setFont("helvetica", "bold")
-        doc.setFontSize(7)
-        for (const col of rCols) {
-          const tx = col.align === "right" ? col.x + col.w - 1 : col.align === "center" ? col.x + col.w / 2 : col.x + 1.5
-          doc.text(col.label, tx, y + 3.8, { align: col.align })
-        }
-        y += 5.5
+        drawRecTableHeader()
       }
 
       doc.setFillColor(rIdx % 2 === 0 ? 255 : 248, rIdx % 2 === 0 ? 255 : 250, rIdx % 2 === 0 ? 255 : 252)
@@ -627,27 +697,28 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
       else if (rec.priority === "medium") setAmber()
       else setBlue()
 
+      const rTextY = y + 4.2
       doc.setFont("helvetica", "bold")
       doc.setFontSize(7)
-      doc.text(priorityText, rCols[0].x + rCols[0].w / 2, y + 4, { align: "center" })
+      doc.text(priorityText, rCols[0].x + rCols[0].w / 2, rTextY, { align: "center" })
 
       setDark()
       doc.setFont("helvetica", "normal")
       doc.setFontSize(7.5)
-      doc.text(descLines, rCols[1].x + 1.5, y + 4)
+      doc.text(descLines, rCols[1].x + 1.5, rTextY)
 
       setGreen()
       doc.setFont("helvetica", "bold")
-      const netStr = formatSignedAmount(econImpact.netImpactPerDay, locale, t("perDay"))
-      doc.text(netStr, rCols[2].x + rCols[2].w - 1, y + 4, { align: "right" })
+      const netStr = fitText(doc, formatSignedAmount(econImpact.netImpactPerDay, locale, t("perDay")), rCols[2].w - 2)
+      doc.text(netStr, rCols[2].x + rCols[2].w - 1, rTextY, { align: "right" })
 
       setDark()
       doc.setFont("helvetica", "normal")
-      const costStr = econImpact.oneOffCost > 0 ? formatCurrency(econImpact.oneOffCost, locale) : "0 €"
-      doc.text(costStr, rCols[3].x + rCols[3].w - 1, y + 4, { align: "right" })
+      const costStr = fitText(doc, econImpact.oneOffCost > 0 ? formatCurrency(econImpact.oneOffCost, locale) : "0 €", rCols[3].w - 2)
+      doc.text(costStr, rCols[3].x + rCols[3].w - 1, rTextY, { align: "right" })
 
-      const paybackStr = formatPayback(econImpact.paybackDays, t, locale)
-      doc.text(paybackStr, rCols[4].x + rCols[4].w / 2, y + 4, { align: "center" })
+      const paybackStr = fitText(doc, formatPayback(econImpact.paybackDays, t, locale), rCols[4].w - 2)
+      doc.text(paybackStr, rCols[4].x + rCols[4].w / 2, rTextY, { align: "center" })
 
       y += rRowH
     }
@@ -671,24 +742,28 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.setLineWidth(0.3)
     doc.roundedRect(bx, by, econCardW, econCardH, 1.2, 1.2, "FD")
 
+    const maxW = econCardW - 8
+
     setGray()
     doc.setFont("helvetica", "bold")
     doc.setFontSize(7)
-    doc.text(title.toUpperCase(), bx + 4, by + 4.5)
+    const cleanTitle = fitText(doc, title.toUpperCase(), maxW)
+    doc.text(cleanTitle, bx + 4, by + 4.5)
 
     if (isGap && amount <= 0) {
       setGreen()
       doc.setFont("helvetica", "bold")
       doc.setFontSize(8.5)
-      doc.text(t("econGapZero"), bx + 4, by + 11.5)
+      const cleanZero = fitText(doc, t("econGapZero"), maxW)
+      doc.text(cleanZero, bx + 4, by + 11.5)
     } else {
       if (isGap && amount > 0) setRed()
       else if (amount > 0) setDark()
       else setGray()
 
       doc.setFont("helvetica", "bold")
-      doc.setFontSize(10.5)
-      const formattedAmount = `${formatNumber(amount, locale)} ${t("perDay")}`
+      doc.setFontSize(10)
+      const formattedAmount = fitText(doc, `${formatNumber(amount, locale)} ${t("perDay")}`, maxW)
       doc.text(formattedAmount, bx + 4, by + 11.5)
     }
   }
@@ -719,6 +794,9 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
     const titleText = tInsights(`${insight.key}.title`, insight.values)
     const msgText = tInsights(`${insight.key}.message`, insight.values)
+
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(7.5)
     const msgLines = doc.splitTextToSize(msgText, CW - 8) as string[]
     const insightH = msgLines.length * 3.8 + 6
 
@@ -731,7 +809,8 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.setTextColor(r, g, b)
     doc.setFont("helvetica", "bold")
     doc.setFontSize(8.5)
-    doc.text(titleText, LM + 5, y + 3)
+    const cleanInsightTitle = fitText(doc, titleText, CW - 8)
+    doc.text(cleanInsightTitle, LM + 5, y + 3)
 
     setGray()
     doc.setFont("helvetica", "normal")
@@ -753,15 +832,15 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.setLineWidth(0.2)
 
   const methodText = t("methodologyText")
-  const methodLineCount = (doc.splitTextToSize(methodText, CW - 6) as string[]).length
-  const methodBoxH = methodLineCount * 3.6 + 5
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7)
+  const methodLines = doc.splitTextToSize(methodText, CW - 6) as string[]
+  const methodBoxH = methodLines.length * 3.6 + 5
 
   doc.rect(LM, y, CW, methodBoxH, "FD")
 
   setGray()
-  doc.setFont("helvetica", "normal")
-  doc.setFontSize(7)
-  doc.text(methodText, LM + 3, y + 4, { align: "justify", maxWidth: CW - 6 })
+  doc.text(methodLines, LM + 3, y + 4)
 
   // ── FOOTER NUMERADO EN TODAS LAS PÁGINAS ─────────────────────────────────────
 
@@ -790,7 +869,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   // ── NOMBRE DE ARCHIVO SANITIZADO ──────────────────────────────────────────────
 
-  const safeScenarioName = scenario.name
+  const safeScenarioName = baseTitle
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "") // Remove accents
     .replace(/[^a-zA-Z0-9_-]/g, "_")  // Replace invalid chars with _
