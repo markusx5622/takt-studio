@@ -126,11 +126,16 @@ export default function KpiPanel() {
                     <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
                   </span>
                 </TooltipTrigger>
-                <TooltipContent side="left">
-                  <p>
-                    {t("taktTooltip", {
+                <TooltipContent side="left" className="max-w-xs p-3 text-xs space-y-1.5 shadow-lg border backdrop-blur-md">
+                  <p className="font-semibold text-foreground">{t("taktFormulaTitle")}</p>
+                  <div className="rounded bg-muted/80 p-1.5 font-mono text-[11px] text-center text-primary font-bold border">
+                    {t("taktFormulaEq")}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {t("taktFormulaCalc", {
                       available: kpis.availableTimeMin.toFixed(0),
                       demand: scenario.demandPerDay,
+                      result: kpis.taktTimeMin.toFixed(1),
                     })}
                   </p>
                 </TooltipContent>
@@ -147,15 +152,37 @@ export default function KpiPanel() {
         {/* CARD 2 — Cuello de botella */}
         <Card>
           <CardContent className="pt-5">
-            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-              <AlertTriangle
-                className={cn(
-                  "h-3.5 w-3.5",
-                  bottleneckExceedsTakt ? "text-destructive" : "text-amber-500"
-                )}
-              />
-              {t("bottleneck")}
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                <AlertTriangle
+                  className={cn(
+                    "h-3.5 w-3.5",
+                    bottleneckExceedsTakt ? "text-destructive" : "text-amber-500"
+                  )}
+                />
+                {t("bottleneck")}
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">
+                    <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-xs p-3 text-xs space-y-1.5 shadow-lg border backdrop-blur-md">
+                  <p className="font-semibold text-foreground">{t("bottleneckFormulaTitle")}</p>
+                  <div className="rounded bg-muted/80 p-1.5 font-mono text-[11px] text-center text-primary font-bold border">
+                    {t("bottleneckFormulaEq")}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {t("bottleneckFormulaCalc", {
+                      name: kpis.bottleneckStationName || "—",
+                      result: kpis.bottleneckCycleMin.toFixed(1),
+                    })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             </div>
+
             <div
               className="mt-2 truncate text-lg font-bold leading-tight"
               title={kpis.bottleneckStationName}
@@ -189,11 +216,16 @@ export default function KpiPanel() {
                     <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
                   </span>
                 </TooltipTrigger>
-                <TooltipContent side="left" className="max-w-xs text-xs">
-                  <p>
-                    {t("saturationTooltip", {
-                      demand: scenario.demandPerDay,
-                      capacity: kpis.throughputPerDay,
+                <TooltipContent side="left" className="max-w-xs p-3 text-xs space-y-1.5 shadow-lg border backdrop-blur-md">
+                  <p className="font-semibold text-foreground">{t("capacityFormulaTitle")}</p>
+                  <div className="rounded bg-muted/80 p-1.5 font-mono text-[11px] text-center text-primary font-bold border">
+                    {t("capacityFormulaEq")}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {t("capacityFormulaCalc", {
+                      available: kpis.availableTimeMin.toFixed(0),
+                      bottleneckTime: kpis.bottleneckCycleMin.toFixed(1),
+                      result: kpis.throughputPerDay,
                     })}
                   </p>
                 </TooltipContent>
@@ -252,9 +284,32 @@ export default function KpiPanel() {
         {/* CARD 4 — Eficiencia de balanceo */}
         <Card>
           <CardContent className="pt-5">
-            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-              <BarChart3 className="h-3.5 w-3.5 text-primary" />
-              {t("balancing")}
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                <BarChart3 className="h-3.5 w-3.5 text-primary" />
+                {t("balancing")}
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">
+                    <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-xs p-3 text-xs space-y-1.5 shadow-lg border backdrop-blur-md">
+                  <p className="font-semibold text-foreground">{t("efficiencyFormulaTitle")}</p>
+                  <div className="rounded bg-muted/80 p-1.5 font-mono text-[11px] text-center text-primary font-bold border">
+                    {t("efficiencyFormulaEq")}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {t("efficiencyFormulaCalc", {
+                      totalCycle: kpis.totalCycleMin.toFixed(1),
+                      count: scenario.stations.length,
+                      bottleneckTime: kpis.bottleneckCycleMin.toFixed(1),
+                      result: (kpis.balancingEfficiency * 100).toFixed(0),
+                    })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             </div>
             <div className="mt-2">
               <span className="text-2xl font-bold">
