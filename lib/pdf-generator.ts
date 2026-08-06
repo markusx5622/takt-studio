@@ -188,13 +188,15 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const reportId = `TST-${dateCompact}-${timeCompact}`
   const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
-  // --- Large Centered Logo on Cover Page (No background color) ---
+  // --- Large Centered Logo on Cover Page (Mathematically aligned) ---
   const pageCenter = 210 / 2
 
   const coverLogoW = 110
   const coverLogoH = 24.4
+  // 0.3833 is the ratio of the graphic center within the image canvas bounds
+  const coverLogoX = pageCenter - 0.3833 * coverLogoW
   try {
-    doc.addImage(LOGO_REPORT_BASE64, "PNG", pageCenter - coverLogoW / 2, 18, coverLogoW, coverLogoH)
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", coverLogoX, 18, coverLogoW, coverLogoH)
   } catch {
     setBlue()
     doc.setFont("helvetica", "bold")
@@ -1406,12 +1408,13 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.setFillColor(30, 64, 175)
   doc.rect(0, 0, 210, 5, "F")
 
-  // Centered logo (large, high presence)
+  // Centered logo (large, mathematically aligned to page center)
   const bpCenter = 210 / 2
   const bpLogoW = 110
   const bpLogoH = 24.4
+  const bpLogoX = bpCenter - 0.3833 * bpLogoW
   try {
-    doc.addImage(LOGO_REPORT_BASE64, "PNG", bpCenter - bpLogoW / 2, 80, bpLogoW, bpLogoH)
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", bpLogoX, 80, bpLogoW, bpLogoH)
   } catch {
     setBlue()
     doc.setFont("helvetica", "bold")
