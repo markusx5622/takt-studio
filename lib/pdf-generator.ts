@@ -188,56 +188,94 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const reportId = `TST-${dateCompact}-${timeCompact}`
   const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
-  // --- Top blue band ---
+  // --- Top blue band (taller & spacious) ---
+  const headerBandH = 54
   doc.setFillColor(30, 64, 175)
-  doc.rect(0, 0, 210, 38, "F")
-
-  // Logo on top band
-  try {
-    doc.addImage(LOGO_REPORT_BASE64, "PNG", 210 / 2 - 30, 10, 60, 13.3)
-  } catch {
-    doc.setTextColor(255, 255, 255)
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(22)
-    doc.text("TAKT STUDIO", 210 / 2, 22, { align: "center" })
-  }
+  doc.rect(0, 0, 210, headerBandH, "F")
 
   // Thin accent line under band
   doc.setDrawColor(59, 130, 246)
-  doc.setLineWidth(0.8)
-  doc.line(0, 38, 210, 38)
+  doc.setLineWidth(1.0)
+  doc.line(0, headerBandH, 210, headerBandH)
 
-  // --- Center block: Report Title ---
+  // --- Large, Centered Vector Logo on Cover Page ---
   const pageCenter = 210 / 2
+  const logoCenterY = 27
+
+  const iconSize = 22
+  const iconY = logoCenterY - iconSize / 2
+  const fontPt = 32
+
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(fontPt)
+  const wTakt = doc.getTextWidth("Takt")
+  const wStudio = doc.getTextWidth("Studio")
+  const gapIconText = 5
+  const gapTaktStudio = 2.5
+  const totalLogoW = iconSize + gapIconText + wTakt + gapTaktStudio + wStudio
+  const logoStartX = pageCenter - totalLogoW / 2
+
+  // 1. Icon (Rounded Blue Box with T-symbol, cyan curve & dots)
+  doc.setFillColor(37, 99, 235)
+  doc.roundedRect(logoStartX, iconY, iconSize, iconSize, 4.5, 4.5, "F")
+
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(1.8)
+  doc.line(logoStartX + 5.5, iconY + 7.5, logoStartX + 16.5, iconY + 7.5)
+  doc.line(logoStartX + 11, iconY + 7.5, logoStartX + 11, iconY + 14.5)
+
+  doc.setDrawColor(6, 182, 212)
+  doc.setLineWidth(1.2)
+  doc.line(logoStartX + 6, iconY + 13, logoStartX + 11, iconY + 15)
+  doc.line(logoStartX + 11, iconY + 15, logoStartX + 16, iconY + 13)
+
+  doc.setFillColor(255, 255, 255)
+  doc.circle(logoStartX + 6, iconY + 13, 0.8, "F")
+  doc.circle(logoStartX + 16, iconY + 13, 0.8, "F")
+  doc.setFillColor(34, 197, 94)
+  doc.circle(logoStartX + 11, iconY + 15, 1.0, "F")
+
+  // 2. Text "Takt" - WHITE
+  const textY = logoCenterY + 4.2
+  doc.setTextColor(255, 255, 255)
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(fontPt)
+  doc.text("Takt", logoStartX + iconSize + gapIconText, textY)
+
+  // 3. Text "Studio" - LIGHT BLUE
+  doc.setTextColor(96, 165, 250)
+  doc.text("Studio", logoStartX + iconSize + gapIconText + wTakt + gapTaktStudio, textY)
+
+  // --- Center block: Report Title & Metadata (Lowered for breathing room) ---
 
   setDark()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(22)
-  doc.text(t("reportTitle"), pageCenter, 75, { align: "center" })
+  doc.text(t("reportTitle"), pageCenter, 98, { align: "center" })
 
   // Subtitle
   setBlue()
   doc.setFont("helvetica", "normal")
   doc.setFontSize(13)
-  doc.text(t("coverSubtitle"), pageCenter, 85, { align: "center" })
+  doc.text(t("coverSubtitle"), pageCenter, 109, { align: "center" })
 
   // Decorative line
   doc.setDrawColor(30, 64, 175)
   doc.setLineWidth(0.5)
-  doc.line(pageCenter - 40, 92, pageCenter + 40, 92)
+  doc.line(pageCenter - 40, 117, pageCenter + 40, 117)
 
   // Scenario Name (large, prominent)
   setDark()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(16)
   const scenarioLines = doc.splitTextToSize(baseTitle, CW - 20) as string[]
-  const scenarioBlockY = 105
+  const scenarioBlockY = 132
   for (let i = 0; i < scenarioLines.length; i++) {
     doc.text(scenarioLines[i], pageCenter, scenarioBlockY + i * 8, { align: "center" })
   }
 
   // Improvements subtitle (if applicable)
-  let metaStartY = scenarioBlockY + scenarioLines.length * 8 + 5
+  let metaStartY = scenarioBlockY + scenarioLines.length * 8 + 6
   if (improvementSubtitle) {
     setGray()
     doc.setFont("helvetica", "normal")
@@ -248,9 +286,9 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     for (let i = 0; i < subLines.length; i++) {
       doc.text(subLines[i], pageCenter, metaStartY + i * 4, { align: "center" })
     }
-    metaStartY += subLines.length * 4 + 8
+    metaStartY += subLines.length * 4 + 10
   } else {
-    metaStartY += 8
+    metaStartY += 10
   }
 
   // --- Metadata card (centered) ---
