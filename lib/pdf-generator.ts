@@ -102,6 +102,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const scenario = state.scenarios.find((s) => s.id === scenarioId)
   if (!scenario) return
 
+  const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
   const kpis = calculateAllKPIs(scenario)
   const economicKpis = calculateEconomicKPIs(scenario, kpis)
   const stations = getStationsWithEffective(scenario.stations, kpis.taktTimeMin)
@@ -204,7 +205,6 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const timeCompact = `${now.getHours().toString().padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}`
   const dateCompact = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}`
   const reportId = `TST-${dateCompact}-${timeCompact}`
-  const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
   const pageCenter = 210 / 2
   const isEn = locale.toLowerCase().startsWith("en")
@@ -539,8 +539,6 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   doc.setFont("helvetica", "bold")
   doc.setFontSize(14)
   doc.text(t("reportTitle"), LM, 30)
-
-  const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
   setBlue()
   doc.setFont("helvetica", "bold")
