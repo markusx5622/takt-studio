@@ -596,7 +596,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   const vsmCols = 4
   const boxW = 38
-  const boxH = 17
+  const boxH = 19
   const gapX = (CW - (vsmCols * boxW)) / (vsmCols - 1)
   const gapY = 10
 
@@ -624,29 +624,32 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     }
     doc.rect(bx, by, boxW, boxH, "FD")
 
-    // Box Header: "#1 - Station Name"
+    // Box Header: "#1 Station Name" (Wrap up to 2 lines)
     doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
-    doc.setFontSize(6.5)
+    doc.setFontSize(6)
     setDark()
     const rawLines = doc.splitTextToSize(`#${i + 1} ${st.name}`, boxW - 3) as string[]
-    const nameStr = rawLines[0] + (rawLines.length > 1 ? "..." : "")
-    doc.text(nameStr, bx + boxW / 2, by + 4.5, { align: "center" })
-    
-    // Operator count (No emojis to prevent winansi encoding issues)
-    setGray()
-    doc.setFontSize(6)
-    const opText = `${st.operators} ${st.operators === 1 ? "op." : "ops."}`
-    doc.text(opText, bx + boxW / 2, by + 9, { align: "center" })
 
-    // Effective Time
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(6.5)
-    if (st.isBottleneck) {
-      doc.setTextColor(220, 38, 38)
+    if (rawLines.length === 1) {
+      doc.text(rawLines[0], bx + boxW / 2, by + 4.5, { align: "center" })
+      setGray()
+      doc.setFontSize(5.5)
+      doc.text(`${st.operators} ${st.operators === 1 ? "op." : "ops."}`, bx + boxW / 2, by + 9.5, { align: "center" })
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(6.5)
+      if (st.isBottleneck) doc.setTextColor(220, 38, 38); else setDark()
+      doc.text(`TE: ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, bx + boxW / 2, by + 14.8, { align: "center" })
     } else {
-      setDark()
+      doc.text(rawLines[0], bx + boxW / 2, by + 3.8, { align: "center" })
+      doc.text(rawLines[1], bx + boxW / 2, by + 7.2, { align: "center" })
+      setGray()
+      doc.setFontSize(5.5)
+      doc.text(`${st.operators} ${st.operators === 1 ? "op." : "ops."}`, bx + boxW / 2, by + 11.2, { align: "center" })
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(6.5)
+      if (st.isBottleneck) doc.setTextColor(220, 38, 38); else setDark()
+      doc.text(`TE: ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, bx + boxW / 2, by + 15.5, { align: "center" })
     }
-    doc.text(`TE: ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, bx + boxW / 2, by + 13.5, { align: "center" })
 
     // Draw Connector Arrow to next station
     if (i < stations.length - 1) {
@@ -702,7 +705,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const numCards = Math.min(3, sortedStations.length)
   const cardGap = 3
   const cardW = (CW - (numCards - 1) * cardGap) / numCards
-  const cardH = 19
+  const cardH = 21
 
   for (let k = 0; k < numCards; k++) {
     const st = sortedStations[k]
@@ -724,20 +727,25 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.setTextColor(255, 255, 255)
     doc.text(rBadges[k], cx + cardW / 2, cy + 3.2, { align: "center" })
 
-    // Station Name inside card
+    // Station Name inside card (Wrap up to 2 lines)
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(6.5)
+    doc.setFontSize(6.2)
     setDark()
     const nameLines = doc.splitTextToSize(st.name, cardW - 3) as string[]
-    const nameStr = nameLines[0] + (nameLines.length > 1 ? "..." : "")
-    doc.text(nameStr, cx + cardW / 2, cy + 9.5, { align: "center" })
+
+    if (nameLines.length === 1) {
+      doc.text(nameLines[0], cx + cardW / 2, cy + 10, { align: "center" })
+    } else {
+      doc.text(nameLines[0], cx + cardW / 2, cy + 8.2, { align: "center" })
+      doc.text(nameLines[1], cx + cardW / 2, cy + 11.8, { align: "center" })
+    }
 
     // Time & %
     doc.setFont("helvetica", "bold")
     doc.setFontSize(6.5)
     doc.setTextColor(style.text[0], style.text[1], style.text[2])
     const pct = ((st.effectiveCycleMin / totalEffTime) * 100).toFixed(1)
-    doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} (${pct}%)`, cx + cardW / 2, cy + 15.5, { align: "center" })
+    doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} (${pct}%)`, cx + cardW / 2, cy + 17, { align: "center" })
   }
 
   y += cardH + 7
@@ -798,7 +806,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   y += yamazumiH + 5
 
-  // Yamazumi Station Legend Table / Key
+  // Yamazumi Station Legend Table / Key (Dynamic Multiline Row Calculation)
   setDark()
   doc.setFont("helvetica", "bold")
   doc.setFontSize(6.5)
@@ -808,37 +816,49 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const legCols = 2
   const legColW = CW / legCols
 
-  for (let i = 0; i < stations.length; i++) {
-    const st = stations[i]
-    const color = stationColors[i]
-    const cCol = i % legCols
-    const cRow = Math.floor(i / legCols)
-    const lx = LM + cCol * legColW
-    const ly = y + cRow * 4.5
-
-    // Color Swatch
-    doc.setFillColor(color[0], color[1], color[2])
-    doc.rect(lx, ly, 2.5, 2.5, "F")
-
-    // Label: #i Station Name (X.X min - Y.Y%) [Cuello de Botella]
-    doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
-    doc.setFontSize(6.5)
-    if (st.isBottleneck) {
-      doc.setTextColor(220, 38, 38)
-    } else {
-      setDark()
-    }
+  for (let rowIdx = 0; rowIdx < Math.ceil(stations.length / 2); rowIdx++) {
+    const i1 = rowIdx * 2
+    const i2 = rowIdx * 2 + 1
     
-    const pct = ((st.effectiveCycleMin / totalEffTime) * 100).toFixed(1)
-    const lineLabel = fitText(
-      doc,
-      `#${i + 1} ${st.name}: ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} (${pct}%)${st.isBottleneck ? ` - ${t("chartLegendBottleneck")}` : ""}`,
-      legColW - 5
-    )
-    doc.text(lineLabel, lx + 4, ly + 2.2)
+    let maxLinesInRow = 1
+    const items = [i1, i2].filter(idx => idx < stations.length)
+    
+    const parsedItems = items.map(idx => {
+      const st = stations[idx]
+      const pct = ((st.effectiveCycleMin / totalEffTime) * 100).toFixed(1)
+      const fullText = `#${idx + 1} ${st.name}: ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} (${pct}%)${st.isBottleneck ? ` - ${t("chartLegendBottleneck")}` : ""}`
+      doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
+      doc.setFontSize(6.2)
+      const lines = doc.splitTextToSize(fullText, legColW - 6) as string[]
+      if (lines.length > maxLinesInRow) maxLinesInRow = lines.length
+      return { idx, st, color: stationColors[idx], lines }
+    })
+
+    const rowH = maxLinesInRow * 3.6 + 1.5
+    checkPageBreak(rowH)
+
+    for (let c = 0; c < parsedItems.length; c++) {
+      const item = parsedItems[c]
+      const lx = LM + c * legColW
+      const ly = y
+      
+      // Color Swatch
+      doc.setFillColor(item.color[0], item.color[1], item.color[2])
+      doc.rect(lx, ly, 2.5, 2.5, "F")
+      
+      doc.setFont("helvetica", item.st.isBottleneck ? "bold" : "normal")
+      doc.setFontSize(6.2)
+      if (item.st.isBottleneck) doc.setTextColor(220, 38, 38); else setDark()
+      
+      for (let l = 0; l < item.lines.length; l++) {
+        doc.text(item.lines[l], lx + 4, ly + 2.2 + l * 3.4)
+      }
+    }
+
+    y += rowH
   }
 
-  y += Math.ceil(stations.length / legCols) * 4.5 + 8
+  y += 6
 
   // ── 7. TABLA DETALLADA DE ESTACIONES (MULTILÍNEA Y BOUNDARY SAFE) ─────────────
 
