@@ -342,6 +342,7 @@
       "guide": "Line Balancing Guide",
       "templatesGuide": "Templates Guide",
       "tutorial": "Step-by-Step Tutorial",
+      "comparison": "Tool Comparison",
       "preset": "Monobath Template",
       "monteCarlo": "Sensitivity Lab",
       "sensitivity": "Sensitivity Analysis",
@@ -1274,6 +1275,36 @@
           "action": "In the top bar, click the PDF Export icon. An A4 corporate document will be generated with all mathematical graphs and tables."
         }
       }
+    },
+    "comparison": {
+      "title": "Takt Studio vs Spreadsheets vs DES Software",
+      "subtitle": "Discover where Takt Studio fits in the landscape of industrial engineering and simulation software.",
+      "taktStudio": "Takt Studio",
+      "excel": "Spreadsheets (Excel)",
+      "des": "DES Software (FlexSim, Arena)",
+      "features": {
+        "learningCurve": "Learning Curve",
+        "learningCurve_takt": "Fast (Minutes)",
+        "learningCurve_excel": "Medium (Hours)",
+        "learningCurve_des": "Slow (Weeks/Months)",
+        "monteCarlo": "Monte Carlo Simulation (Stochastic)",
+        "monteCarlo_takt": "Built-in (2000 automatic iterations)",
+        "monteCarlo_excel": "Requires complex plugins or VBA",
+        "monteCarlo_des": "Highly advanced and customizable",
+        "kpis": "Automatic KPI Calculation",
+        "kpis_takt": "Native Takt Time, OEE, Throughput",
+        "kpis_excel": "Requires building formulas from scratch",
+        "kpis_des": "Extremely detailed but complex setup",
+        "cost": "License Cost",
+        "cost_takt": "Free / Open Source",
+        "cost_excel": "Included in office suites",
+        "cost_des": "Thousands of dollars per license",
+        "offline": "Offline Support (PWA)",
+        "offline_takt": "Yes (Installable in browser, no server)",
+        "offline_excel": "Yes (Local desktop app)",
+        "offline_des": "Yes (Requires high-end local PC)"
+      },
+      "cta": "Try Simulator Now"
     }
   }
 }

@@ -17,6 +17,7 @@ import {
   Sparkles,
   Sliders,
   Map,
+  Scale,
 } from "lucide-react"
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -136,6 +137,12 @@ export default function LandingFooter() {
                 <Link href="/recursos/tutorial" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
                   <Map className="h-3.5 w-3.5 text-primary/70" />
                   {t("tutorial")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/recursos/comparativa" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
+                  <Scale className="h-3.5 w-3.5 text-primary/70" />
+                  {t("comparison")}
                 </Link>
               </li>
 

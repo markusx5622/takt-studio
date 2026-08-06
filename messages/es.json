@@ -342,6 +342,7 @@
       "guide": "Guía de Balanceo",
       "templatesGuide": "Guía de Plantillas",
       "tutorial": "Tutorial Paso a Paso",
+      "comparison": "Comparativa de Herramientas",
       "preset": "Plantilla Monobath",
       "monteCarlo": "Lab. de Sensibilidad",
       "sensitivity": "Sensibilidad",
@@ -1274,6 +1275,36 @@
           "action": "En la barra superior, haz clic en el icono de Exportar PDF. Se generará un documento A4 corporativo con todas las gráficas y tablas matemáticas."
         }
       }
+    },
+    "comparison": {
+      "title": "Takt Studio vs Hojas de Cálculo vs Software DES",
+      "subtitle": "Descubre dónde encaja Takt Studio en el panorama del software de ingeniería industrial y simulación.",
+      "taktStudio": "Takt Studio",
+      "excel": "Hoja de Cálculo (Excel)",
+      "des": "Software DES (FlexSim, Arena)",
+      "features": {
+        "learningCurve": "Curva de aprendizaje",
+        "learningCurve_takt": "Rápida (Minutos)",
+        "learningCurve_excel": "Media (Horas)",
+        "learningCurve_des": "Lenta (Semanas/Meses)",
+        "monteCarlo": "Simulación Monte Carlo (Estocástica)",
+        "monteCarlo_takt": "Integrada (2000 iteraciones automáticas)",
+        "monteCarlo_excel": "Requiere plugins complejos o VBA",
+        "monteCarlo_des": "Altamente avanzada y personalizable",
+        "kpis": "Cálculo automático de KPIs",
+        "kpis_takt": "Takt Time, OEE, Throughput nativos",
+        "kpis_excel": "Requiere programar fórmulas desde cero",
+        "kpis_des": "Extremadamente detallado pero complejo",
+        "cost": "Coste de Licencia",
+        "cost_takt": "Gratuito / Open Source",
+        "cost_excel": "Incluido en licencias ofimáticas",
+        "cost_des": "Miles de euros por licencia",
+        "offline": "Funcionamiento Offline (PWA)",
+        "offline_takt": "Sí (Instalable en navegador, sin servidor)",
+        "offline_excel": "Sí (App de escritorio local)",
+        "offline_des": "Sí (Requiere PC potente local)"
+      },
+      "cta": "Probar Simulador Ahora"
     }
   }
 }
