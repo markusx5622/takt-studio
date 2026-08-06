@@ -596,23 +596,20 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   const vsmCols = 4
   const boxW = 38
-  const boxH = 18
+  const boxH = 17
   const gapX = (CW - (vsmCols * boxW)) / (vsmCols - 1)
-  const gapY = 12
-  const vsmStartY = y
+  const gapY = 10
 
   for (let i = 0; i < stations.length; i++) {
     const st = stations[i]
     const col = i % vsmCols
     const row = Math.floor(i / vsmCols)
     
-    // Handle page break in the middle of VSM rows if needed (rare but safe)
     if (col === 0 && checkPageBreak(boxH + gapY + 5)) {
-      // y is updated by checkPageBreak
+      // y is updated by checkPageBreak if page breaks mid-VSM
     }
 
     const bx = LM + col * (boxW + gapX)
-    // Recalculate 'by' based on current 'y' for the row
     const by = y + row * (boxH + gapY)
 
     // Draw Box
@@ -627,24 +624,29 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     }
     doc.rect(bx, by, boxW, boxH, "FD")
 
-    // Box Title
+    // Box Header: "#1 - Station Name"
     doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
-    doc.setFontSize(7)
+    doc.setFontSize(6.5)
     setDark()
-    const rawLines = doc.splitTextToSize(st.name, boxW - 4) as string[]
+    const rawLines = doc.splitTextToSize(`#${i + 1} ${st.name}`, boxW - 3) as string[]
     const nameStr = rawLines[0] + (rawLines.length > 1 ? "..." : "")
-    doc.text(nameStr, bx + boxW / 2, by + 5, { align: "center" })
+    doc.text(nameStr, bx + boxW / 2, by + 4.5, { align: "center" })
     
-    // Operator count
+    // Operator count (No emojis to prevent winansi encoding issues)
     setGray()
     doc.setFontSize(6)
-    doc.text(`👤 ${st.operators} ops.`, bx + boxW / 2, by + 9.5, { align: "center" })
+    const opText = `${st.operators} ${st.operators === 1 ? "op." : "ops."}`
+    doc.text(opText, bx + boxW / 2, by + 9, { align: "center" })
 
     // Effective Time
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(7)
-    if (st.isBottleneck) doc.setTextColor(220, 38, 38)
-    doc.text(`⏱ ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, bx + boxW / 2, by + 14.5, { align: "center" })
+    doc.setFontSize(6.5)
+    if (st.isBottleneck) {
+      doc.setTextColor(220, 38, 38)
+    } else {
+      setDark()
+    }
+    doc.text(`TE: ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, bx + boxW / 2, by + 13.5, { align: "center" })
 
     // Draw Connector Arrow to next station
     if (i < stations.length - 1) {
@@ -659,7 +661,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
         doc.line(startX, startY, endX - 1.5, startY)
         doc.triangle(endX, startY, endX - 2, startY - 1, endX - 2, startY + 1, "F")
       } else {
-        // Wrap around arrow (down, left, down)
+        // Wrap around arrow
         const startX = bx + boxW / 2
         const startY = by + boxH
         const endX = LM + boxW / 2
@@ -672,76 +674,171 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     }
   }
 
-  y += Math.ceil(stations.length / vsmCols) * (boxH + gapY)
+  y += Math.ceil(stations.length / vsmCols) * (boxH + gapY) + 4
 
   // ── 6. MAPA DE RESTRICCIONES Y CARGA DE TRABAJO (YAMAZUMI) ─────────────
   
-  checkPageBreak(50)
+  checkPageBreak(65)
   sectionTitle(t("secWorkload"))
+
+  // Subtitle
+  setGray()
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(7)
+  doc.text(t("workloadSub"), LM, y)
+  y += 5
 
   const sortedStations = [...stations].sort((a, b) => b.effectiveCycleMin - a.effectiveCycleMin)
   const totalEffTime = sortedStations.reduce((sum, st) => sum + st.effectiveCycleMin, 0)
   
-  // Top 3 restrictions
-  const rLabels = [t("primaryRestriction"), t("secondaryRestriction"), t("tertiaryRestriction")]
-  for (let i = 0; i < Math.min(3, sortedStations.length); i++) {
-    const st = sortedStations[i]
-    setDark()
+  // Top 3 restrictions visual cards
+  const rBadges = [t("primaryBadge"), t("secondaryBadge"), t("tertiaryBadge")]
+  const rStyles = [
+    { bg: [254, 242, 242], border: [239, 68, 68], badgeBg: [239, 68, 68], text: [185, 28, 28] }, // Red
+    { bg: [254, 243, 199], border: [245, 158, 11], badgeBg: [245, 158, 11], text: [180, 83, 9] },  // Orange
+    { bg: [239, 246, 255], border: [59, 130, 246], badgeBg: [59, 130, 246], text: [29, 78, 216] }  // Blue
+  ]
+
+  const numCards = Math.min(3, sortedStations.length)
+  const cardGap = 3
+  const cardW = (CW - (numCards - 1) * cardGap) / numCards
+  const cardH = 19
+
+  for (let k = 0; k < numCards; k++) {
+    const st = sortedStations[k]
+    const style = rStyles[k]
+    const cx = LM + k * (cardW + cardGap)
+    const cy = y
+
+    // Card background & border
+    doc.setFillColor(style.bg[0], style.bg[1], style.bg[2])
+    doc.setDrawColor(style.border[0], style.border[1], style.border[2])
+    doc.setLineWidth(0.3)
+    doc.rect(cx, cy, cardW, cardH, "FD")
+
+    // Top Badge Header inside card
+    doc.setFillColor(style.badgeBg[0], style.badgeBg[1], style.badgeBg[2])
+    doc.rect(cx, cy, cardW, 4.5, "F")
     doc.setFont("helvetica", "bold")
-    doc.setFontSize(7)
-    doc.text(rLabels[i] + ":", LM, y + 4)
-    
-    setGray()
-    doc.setFont("helvetica", "normal")
+    doc.setFontSize(5.5)
+    doc.setTextColor(255, 255, 255)
+    doc.text(rBadges[k], cx + cardW / 2, cy + 3.2, { align: "center" })
+
+    // Station Name inside card
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(6.5)
+    setDark()
+    const nameLines = doc.splitTextToSize(st.name, cardW - 3) as string[]
+    const nameStr = nameLines[0] + (nameLines.length > 1 ? "..." : "")
+    doc.text(nameStr, cx + cardW / 2, cy + 9.5, { align: "center" })
+
+    // Time & %
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(6.5)
+    doc.setTextColor(style.text[0], style.text[1], style.text[2])
     const pct = ((st.effectiveCycleMin / totalEffTime) * 100).toFixed(1)
-    doc.text(`${st.name} (${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} - ${pct}%)`, LM + 55, y + 4)
-    y += 5
+    doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} (${pct}%)`, cx + cardW / 2, cy + 15.5, { align: "center" })
   }
 
-  y += 5
+  y += cardH + 7
 
-  // Yamazumi Stacked Bar
+  // Yamazumi Stacked Bar Title
   setDark()
   doc.setFont("helvetica", "bold")
-  doc.text(t("workloadDistribution") + ":", LM, y + 4)
-  y += 8
+  doc.setFontSize(7.5)
+  doc.text(t("workloadDistribution") + ":", LM, y)
+  y += 4
 
-  const yamazumiH = 8
+  // Draw Stacked Bar
+  const yamazumiH = 9
   let currentX = LM
   
   let colorIdx = 0
   const blueShades = [
-    [59, 130, 246], // blue-500
-    [96, 165, 250], // blue-400
-    [147, 197, 253] // blue-300
+    [59, 130, 246],  // blue-500
+    [96, 165, 250],  // blue-400
+    [147, 197, 253], // blue-300
+    [37, 99, 235],   // blue-600
+    [29, 78, 216]    // blue-700
   ]
+
+  const stationColors: number[][] = []
 
   for (let i = 0; i < stations.length; i++) {
     const st = stations[i]
     const w = (st.effectiveCycleMin / totalEffTime) * CW
     
+    let color: number[]
     if (st.isBottleneck) {
-      doc.setFillColor(239, 68, 68) // red-500
+      color = [239, 68, 68]
     } else {
-      const c = blueShades[colorIdx % blueShades.length]
-      doc.setFillColor(c[0], c[1], c[2])
+      color = blueShades[colorIdx % blueShades.length]
       colorIdx++
     }
-    
+    stationColors.push(color)
+
+    doc.setFillColor(color[0], color[1], color[2])
     doc.rect(currentX, y, w, yamazumiH, "F")
     
-    if (w > 12) {
+    const pct = Math.round((st.effectiveCycleMin / totalEffTime) * 100) + "%"
+    if (w >= 14) {
       doc.setFont("helvetica", "bold")
       doc.setFontSize(6)
       doc.setTextColor(255, 255, 255)
-      const pct = Math.round((st.effectiveCycleMin / totalEffTime) * 100) + "%"
-      doc.text(pct, currentX + w / 2, y + 5.5, { align: "center" })
+      doc.text(`#${i + 1} (${pct})`, currentX + w / 2, y + 5.5, { align: "center" })
+    } else if (w >= 7) {
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(6)
+      doc.setTextColor(255, 255, 255)
+      doc.text(`#${i + 1}`, currentX + w / 2, y + 5.5, { align: "center" })
     }
     
     currentX += w
   }
 
-  y += yamazumiH + 12
+  y += yamazumiH + 5
+
+  // Yamazumi Station Legend Table / Key
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(6.5)
+  doc.text(t("totalWorkloadLegend"), LM, y)
+  y += 4
+
+  const legCols = 2
+  const legColW = CW / legCols
+
+  for (let i = 0; i < stations.length; i++) {
+    const st = stations[i]
+    const color = stationColors[i]
+    const cCol = i % legCols
+    const cRow = Math.floor(i / legCols)
+    const lx = LM + cCol * legColW
+    const ly = y + cRow * 4.5
+
+    // Color Swatch
+    doc.setFillColor(color[0], color[1], color[2])
+    doc.rect(lx, ly, 2.5, 2.5, "F")
+
+    // Label: #i Station Name (X.X min - Y.Y%) [Cuello de Botella]
+    doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
+    doc.setFontSize(6.5)
+    if (st.isBottleneck) {
+      doc.setTextColor(220, 38, 38)
+    } else {
+      setDark()
+    }
+    
+    const pct = ((st.effectiveCycleMin / totalEffTime) * 100).toFixed(1)
+    const lineLabel = fitText(
+      doc,
+      `#${i + 1} ${st.name}: ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} (${pct}%)${st.isBottleneck ? ` - ${t("chartLegendBottleneck")}` : ""}`,
+      legColW - 5
+    )
+    doc.text(lineLabel, lx + 4, ly + 2.2)
+  }
+
+  y += Math.ceil(stations.length / legCols) * 4.5 + 8
 
   // ── 7. TABLA DETALLADA DE ESTACIONES (MULTILÍNEA Y BOUNDARY SAFE) ─────────────
 
