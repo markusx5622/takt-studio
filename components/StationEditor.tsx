@@ -1,13 +1,12 @@
 "use client"
 
-import { useTranslations, useLocale } from "next-intl"
+import { useTranslations } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
-import { createPresetFromSector, INDUSTRY_PRESETS_DATA, type IndustrySectorKey } from "@/lib/presets"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronUp, ChevronDown, Trash2, Plus, Sparkles, AlertTriangle } from "lucide-react"
+import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle } from "lucide-react"
 import { findBottleneck } from "@/lib/calculations"
 import { cn } from "@/lib/utils"
 import type { Station } from "@/types"
@@ -311,12 +310,10 @@ function StationCard({
 
 export default function StationEditor() {
   const t = useTranslations("simulator.stations")
-  const locale = useLocale()
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
     state.scenarios.find((sc) => sc.id === state.activeScenarioId)
   )
-  const updateScenario = useTaktStore((state) => state.updateScenario)
   const updateStation = useTaktStore((state) => state.updateStation)
   const removeStation = useTaktStore((state) => state.removeStation)
   const moveStation = useTaktStore((state) => state.moveStation)
@@ -325,24 +322,6 @@ export default function StationEditor() {
   if (!hydrated) return <StationEditorSkeleton />
 
   const stations = scenario?.stations ?? []
-
-  function handleLoadPreset(sector: IndustrySectorKey) {
-    if (!scenario) return
-    const presetData = INDUSTRY_PRESETS_DATA[sector]
-    if (!presetData) return
-
-    const isEn = locale.toLowerCase().startsWith("en")
-    const confirmName = isEn ? presetData.nameEn : presetData.nameEs
-    if (confirm(t("presetConfirm", { name: confirmName }))) {
-      const newStations = createPresetFromSector(sector, locale)
-      updateScenario(scenario.id, {
-        stations: newStations,
-        demandPerDay: presetData.demandPerDay,
-        shiftHours: presetData.shiftHours,
-        shiftsPerDay: presetData.shiftsPerDay,
-      })
-    }
-  }
 
   function handleAddStation() {
     addStation({ name: t("newStationName"), cycleTimeMin: 30, operators: 1, failureRate: 0 })
@@ -390,41 +369,9 @@ export default function StationEditor() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between space-y-0 pb-4">
-        <div className="flex items-center gap-3">
-          <CardTitle className="text-lg">{t("title")}</CardTitle>
-          <Badge variant="secondary">{t("countBadge", { count: stations.length })}</Badge>
-        </div>
-
-        {/* Preset Selector */}
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-blue-600 shrink-0" />
-          <span className="text-xs font-medium text-muted-foreground hidden md:inline">
-            {t("presetLabel")}
-          </span>
-          <select
-            defaultValue=""
-            onChange={(e) => {
-              const val = e.target.value as IndustrySectorKey
-              if (val) {
-                handleLoadPreset(val)
-                e.target.value = ""
-              }
-            }}
-            className="h-8 rounded-md border border-slate-200/80 bg-background px-2.5 text-xs font-medium text-foreground shadow-2xs focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            <option value="" disabled>
-              {t("presetSelectPlaceholder")}
-            </option>
-            <option value="monobath">{t("presetMonobath")}</option>
-            <option value="ceramics">{t("presetCeramics")}</option>
-            <option value="automotive">{t("presetAutomotive")}</option>
-            <option value="electronics">{t("presetElectronics")}</option>
-            <option value="logistics">{t("presetLogistics")}</option>
-            <option value="food_pharma">{t("presetFoodPharma")}</option>
-            <option value="machinery">{t("presetMachinery")}</option>
-          </select>
-        </div>
+      <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
+        <CardTitle className="text-lg">{t("title")}</CardTitle>
+        <Badge variant="secondary">{t("countBadge", { count: stations.length })}</Badge>
       </CardHeader>
 
       <CardContent className="p-0">

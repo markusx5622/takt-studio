@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { encodeScenarioToHash } from "@/lib/share"
 import { useTaktStore, useHydrated } from "@/lib/store"
+import { createPresetFromSector, INDUSTRY_PRESETS_DATA, type IndustrySectorKey } from "@/lib/presets"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Copy, Plus, Trash2, Share2, Check } from "lucide-react"
+import { Copy, Plus, Trash2, Share2, Check, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ExportPdfButton from "@/components/ExportPdfButton"
 
@@ -42,6 +43,8 @@ function ScenarioControlsSkeleton() {
 
 export default function ScenarioControls() {
   const t = useTranslations("simulator.controls")
+  const tStations = useTranslations("simulator.stations")
+  const locale = useLocale()
   const hydrated = useHydrated()
   const scenarios = useTaktStore((s) => s.scenarios)
   const activeScenarioId = useTaktStore((s) => s.activeScenarioId)
@@ -55,6 +58,24 @@ export default function ScenarioControls() {
   const removeScenario = useTaktStore((s) => s.removeScenario)
 
   const [copied, setCopied] = useState(false)
+
+  function handleLoadPreset(sector: IndustrySectorKey) {
+    if (!scenario) return
+    const presetData = INDUSTRY_PRESETS_DATA[sector]
+    if (!presetData) return
+
+    const isEn = locale.toLowerCase().startsWith("en")
+    const confirmName = isEn ? presetData.nameEn : presetData.nameEs
+    if (confirm(tStations("presetConfirm", { name: confirmName }))) {
+      const newStations = createPresetFromSector(sector, locale)
+      updateScenario(scenario.id, {
+        stations: newStations,
+        demandPerDay: presetData.demandPerDay,
+        shiftHours: presetData.shiftHours,
+        shiftsPerDay: presetData.shiftsPerDay,
+      })
+    }
+  }
 
   async function handleShare() {
     if (!scenario) return
@@ -94,8 +115,38 @@ export default function ScenarioControls() {
 
   return (
     <Card>
-      <CardHeader className="pb-4">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between space-y-0 pb-4">
         <CardTitle className="text-lg">{t("title")}</CardTitle>
+
+        {/* Preset Selector */}
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+          <span className="text-xs font-medium text-muted-foreground hidden sm:inline">
+            {tStations("presetLabel")}
+          </span>
+          <select
+            defaultValue=""
+            onChange={(e) => {
+              const val = e.target.value as IndustrySectorKey
+              if (val) {
+                handleLoadPreset(val)
+                e.target.value = ""
+              }
+            }}
+            className="h-8 rounded-md border border-slate-200/80 bg-background px-2.5 text-xs font-medium text-foreground shadow-2xs focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="" disabled>
+              {tStations("presetSelectPlaceholder")}
+            </option>
+            <option value="monobath">{tStations("presetMonobath")}</option>
+            <option value="ceramics">{tStations("presetCeramics")}</option>
+            <option value="automotive">{tStations("presetAutomotive")}</option>
+            <option value="electronics">{tStations("presetElectronics")}</option>
+            <option value="logistics">{tStations("presetLogistics")}</option>
+            <option value="food_pharma">{tStations("presetFoodPharma")}</option>
+            <option value="machinery">{tStations("presetMachinery")}</option>
+          </select>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
