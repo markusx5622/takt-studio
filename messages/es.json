@@ -928,7 +928,7 @@
     "pdf": {
       "button": "Informe PDF",
       "generating": "Generando PDF...",
-      "footer": "Takt Studio · Ingeniería de Organización Industrial",
+      "footer": "Takt Studio · Sistema de Simulación y Balanceo de Líneas Industriales",
       "page": "Pág. {current} de {total}",
       "reportTitle": "INFORME INDUSTRIAL DE LÍNEA DE PRODUCCIÓN",
       "generatedOn": "Emisión: {date} · ID: {id}",

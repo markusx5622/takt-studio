@@ -223,9 +223,10 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.setFont("helvetica", "normal")
     doc.setFontSize(7.5)
     const label = locale.toLowerCase().startsWith("en") ? "Applied improvements" : "Mejoras aplicadas"
-    const cleanSubTitle = fitText(doc, `${label}: ${improvementSubtitle}`, CW)
-    doc.text(cleanSubTitle, LM, 40.5)
-    headerLineY = 44.5
+    const fullSubText = `${label}: ${improvementSubtitle}`
+    const subLines = doc.splitTextToSize(fullSubText, CW) as string[]
+    doc.text(subLines, LM, 40.5)
+    headerLineY = 40.5 + subLines.length * 3.6 + 0.5
   }
 
   doc.setDrawColor(226, 232, 240)

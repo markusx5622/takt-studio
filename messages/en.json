@@ -928,7 +928,7 @@
     "pdf": {
       "button": "PDF Report",
       "generating": "Generating PDF...",
-      "footer": "Takt Studio · Industrial Organization Engineering",
+      "footer": "Takt Studio · Industrial Line Simulation & Balancing System",
       "page": "Page {current} of {total}",
       "reportTitle": "PRODUCTION LINE INDUSTRIAL REPORT",
       "generatedOn": "Issued: {date} · ID: {id}",
