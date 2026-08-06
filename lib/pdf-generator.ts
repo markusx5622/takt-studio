@@ -334,7 +334,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const kpiCardW = (CW - (3 * kpiCardGap)) / 4
   const kpiCardH = 20
 
-  const deltaVal = Math.abs(kpis.demandDelta)
+  const coverDeltaVal = Math.abs(kpis.demandDelta)
   const kpiSnapshot = [
     {
       label: isEn ? "TARGET DEMAND" : "DEMANDA OBJETIVO",
@@ -346,7 +346,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     {
       label: isEn ? "CAPACITY" : "THROUGHPUT",
       val: `${formatNumber(kpis.throughputPerDay, locale)}`,
-      unit: kpis.meetsDemand ? `+${formatNumber(deltaVal, locale)}` : `-${formatNumber(deltaVal, locale)}`,
+      unit: kpis.meetsDemand ? `+${formatNumber(coverDeltaVal, locale)}` : `-${formatNumber(coverDeltaVal, locale)}`,
       color: kpis.meetsDemand ? [22, 163, 74] : [220, 38, 38], // green / red
       bg: kpis.meetsDemand ? [240, 253, 244] : [254, 242, 242]
     },
