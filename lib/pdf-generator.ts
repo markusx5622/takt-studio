@@ -589,7 +589,161 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   y += 9
 
-  // ── 6. TABLA DETALLADA DE ESTACIONES (MULTILÍNEA Y BOUNDARY SAFE) ─────────────
+  // ── 5. MAPA DE FLUJO DE VALOR (VSM) ─────────────
+  
+  checkPageBreak(50)
+  sectionTitle(t("secVsm"))
+
+  const vsmCols = 4
+  const boxW = 38
+  const boxH = 18
+  const gapX = (CW - (vsmCols * boxW)) / (vsmCols - 1)
+  const gapY = 12
+  const vsmStartY = y
+
+  for (let i = 0; i < stations.length; i++) {
+    const st = stations[i]
+    const col = i % vsmCols
+    const row = Math.floor(i / vsmCols)
+    
+    // Handle page break in the middle of VSM rows if needed (rare but safe)
+    if (col === 0 && checkPageBreak(boxH + gapY + 5)) {
+      // y is updated by checkPageBreak
+    }
+
+    const bx = LM + col * (boxW + gapX)
+    // Recalculate 'by' based on current 'y' for the row
+    const by = y + row * (boxH + gapY)
+
+    // Draw Box
+    if (st.isBottleneck) {
+      doc.setFillColor(254, 242, 242)
+      doc.setDrawColor(220, 38, 38)
+      doc.setLineWidth(0.4)
+    } else {
+      doc.setFillColor(255, 255, 255)
+      doc.setDrawColor(203, 213, 225)
+      doc.setLineWidth(0.2)
+    }
+    doc.rect(bx, by, boxW, boxH, "FD")
+
+    // Box Title
+    doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
+    doc.setFontSize(7)
+    setDark()
+    const rawLines = doc.splitTextToSize(st.name, boxW - 4) as string[]
+    const nameStr = rawLines[0] + (rawLines.length > 1 ? "..." : "")
+    doc.text(nameStr, bx + boxW / 2, by + 5, { align: "center" })
+    
+    // Operator count
+    setGray()
+    doc.setFontSize(6)
+    doc.text(`👤 ${st.operators} ops.`, bx + boxW / 2, by + 9.5, { align: "center" })
+
+    // Effective Time
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(7)
+    if (st.isBottleneck) doc.setTextColor(220, 38, 38)
+    doc.text(`⏱ ${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, bx + boxW / 2, by + 14.5, { align: "center" })
+
+    // Draw Connector Arrow to next station
+    if (i < stations.length - 1) {
+      doc.setDrawColor(148, 163, 184)
+      doc.setFillColor(148, 163, 184)
+      doc.setLineWidth(0.3)
+      if (col < vsmCols - 1) {
+        // Right arrow
+        const startX = bx + boxW
+        const startY = by + boxH / 2
+        const endX = startX + gapX
+        doc.line(startX, startY, endX - 1.5, startY)
+        doc.triangle(endX, startY, endX - 2, startY - 1, endX - 2, startY + 1, "F")
+      } else {
+        // Wrap around arrow (down, left, down)
+        const startX = bx + boxW / 2
+        const startY = by + boxH
+        const endX = LM + boxW / 2
+        const endY = by + boxH + gapY
+        doc.line(startX, startY, startX, startY + gapY / 2)
+        doc.line(startX, startY + gapY / 2, endX, startY + gapY / 2)
+        doc.line(endX, startY + gapY / 2, endX, endY - 1.5)
+        doc.triangle(endX, endY, endX - 1, endY - 2, endX + 1, endY - 2, "F")
+      }
+    }
+  }
+
+  y += Math.ceil(stations.length / vsmCols) * (boxH + gapY)
+
+  // ── 6. MAPA DE RESTRICCIONES Y CARGA DE TRABAJO (YAMAZUMI) ─────────────
+  
+  checkPageBreak(50)
+  sectionTitle(t("secWorkload"))
+
+  const sortedStations = [...stations].sort((a, b) => b.effectiveCycleMin - a.effectiveCycleMin)
+  const totalEffTime = sortedStations.reduce((sum, st) => sum + st.effectiveCycleMin, 0)
+  
+  // Top 3 restrictions
+  const rLabels = [t("primaryRestriction"), t("secondaryRestriction"), t("tertiaryRestriction")]
+  for (let i = 0; i < Math.min(3, sortedStations.length); i++) {
+    const st = sortedStations[i]
+    setDark()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(7)
+    doc.text(rLabels[i] + ":", LM, y + 4)
+    
+    setGray()
+    doc.setFont("helvetica", "normal")
+    const pct = ((st.effectiveCycleMin / totalEffTime) * 100).toFixed(1)
+    doc.text(`${st.name} (${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")} - ${pct}%)`, LM + 55, y + 4)
+    y += 5
+  }
+
+  y += 5
+
+  // Yamazumi Stacked Bar
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.text(t("workloadDistribution") + ":", LM, y + 4)
+  y += 8
+
+  const yamazumiH = 8
+  let currentX = LM
+  
+  let colorIdx = 0
+  const blueShades = [
+    [59, 130, 246], // blue-500
+    [96, 165, 250], // blue-400
+    [147, 197, 253] // blue-300
+  ]
+
+  for (let i = 0; i < stations.length; i++) {
+    const st = stations[i]
+    const w = (st.effectiveCycleMin / totalEffTime) * CW
+    
+    if (st.isBottleneck) {
+      doc.setFillColor(239, 68, 68) // red-500
+    } else {
+      const c = blueShades[colorIdx % blueShades.length]
+      doc.setFillColor(c[0], c[1], c[2])
+      colorIdx++
+    }
+    
+    doc.rect(currentX, y, w, yamazumiH, "F")
+    
+    if (w > 12) {
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(6)
+      doc.setTextColor(255, 255, 255)
+      const pct = Math.round((st.effectiveCycleMin / totalEffTime) * 100) + "%"
+      doc.text(pct, currentX + w / 2, y + 5.5, { align: "center" })
+    }
+    
+    currentX += w
+  }
+
+  y += yamazumiH + 12
+
+  // ── 7. TABLA DETALLADA DE ESTACIONES (MULTILÍNEA Y BOUNDARY SAFE) ─────────────
 
   checkPageBreak(30)
   sectionTitle(t("secStations"))
@@ -669,7 +823,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   y += 6
 
-  // ── 7. PLAN DE MEJORA Y RECOMENDACIONES (SI EXISTEN) ───────────────────────
+  // ── 8. PLAN DE MEJORA Y RECOMENDACIONES (SI EXISTEN) ───────────────────────
 
   if (recommendations.length > 0) {
     checkPageBreak(35)
@@ -759,7 +913,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     y += 6
   }
 
-  // ── 8. ANÁLISIS ECONÓMICO Y DE IMPACTO FINANCIERO ────────────────────────────
+  // ── 9. ANÁLISIS ECONÓMICO Y DE IMPACTO FINANCIERO ────────────────────────────
 
   checkPageBreak(30)
   sectionTitle(t("secEconomics"))
@@ -811,7 +965,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   y += econCardH * 2 + 9
 
-  // ── 8. ANÁLISIS DE RIESGO ESTOCÁSTICO (SIMULACIÓN MONTE CARLO) ───────────────
+  // ── 10. ANÁLISIS DE RIESGO ESTOCÁSTICO (SIMULACIÓN MONTE CARLO) ───────────────
 
   checkPageBreak(40)
   sectionTitle(t("secMonteCarlo"))
@@ -886,7 +1040,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   y += mcCardH + 9
 
-  // ── 9. DIAGNÓSTICO AUTOMÁTICO DE LÍNEA (INSIGHTS) ────────────────────────────
+  // ── 11. DIAGNÓSTICO AUTOMÁTICO DE LÍNEA (INSIGHTS) ────────────────────────────
 
   checkPageBreak(35)
   sectionTitle(t("secAnalysis"))
@@ -931,7 +1085,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   y += 4
 
-  // ── 10. METODOLOGÍA Y SUPUESTOS DEL MODELO ────────────────────────────────────
+  // ── 12. METODOLOGÍA Y SUPUESTOS DEL MODELO ────────────────────────────────────
 
   checkPageBreak(25)
   sectionTitle(t("secMethodology"))
