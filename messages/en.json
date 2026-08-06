@@ -1192,23 +1192,26 @@
   },
   "resources": {
     "templates": {
-      "title": "Templates Guide",
-      "subtitle": "Case studies and predefined configurations to understand the dynamics of production lines.",
-      "default": {
-        "title": "Sequential Line (Default)",
-        "desc": "The most standard use case. A sequential production line with 5 stations. Perfect to understand how a bottleneck restricts the whole flow and how variability (Monte Carlo) affects the Takt Time."
+      "title": "Industrial Templates Guide",
+      "subtitle": "Detailed technical data sheets for the 7 predefined sectors in Takt Studio. Analyze the base configuration, cycle times, and typical challenges of each industry.",
+      "metrics": {
+        "demand": "Demand",
+        "shiftHours": "Hours/Shift",
+        "shifts": "Shifts/Day",
+        "stations": "Stations",
+        "station": "Station",
+        "cycleTime": "Cycle Time",
+        "operators": "Operators",
+        "failureRate": "Failure Rate"
       },
-      "monobath": {
-        "title": "Monobath Process",
-        "desc": "An industrialized line based on the manufacturing of modular bathrooms. It includes high manual effort stations and lognormal times, ideal to test efficiency improvement scenarios."
-      },
-      "highRework": {
-        "title": "High Rework Rate",
-        "desc": "A stress environment for the simulator. This template simulates stations with high failure rates (up to 20%), forcing reworks that significantly alter the Lead Time and the Balancing Efficiency."
-      },
-      "single": {
-        "title": "Single Station",
-        "desc": "The most isolated environment. Ideal for academic training where the goal is to observe the pure behavior of the stochastic distribution without the interferences of adjacent stations."
+      "descriptions": {
+        "monobath": "Flagship template based on industrialized modular construction. It features high manual dependency, variable bottlenecks, and significant failure rates in the waterproofing and tiling phases, making it ideal for experimenting with Monte Carlo simulation.",
+        "automotive": "Highly balanced production line where Takt Time is strict. The bottleneck is usually found in the powertrain marriage, and variability is low, prioritizing continuous flow and automation.",
+        "electronics": "Process characterized by very short cycle times and high automation (Pick & Place). Performance constraints usually stem from baking times or optical inspection (AOI), where flow slows down.",
+        "logistics": "Environment with high human variability. Picking and packing rely heavily on operator fatigue and order complexity, showing very pronounced lognormal distributions in real times.",
+        "ceramics": "Capital-intensive continuous process industry. The bottleneck is rigidly set at the roller kiln and the hydraulic press. Efficiency depends on minimizing downtime at these critical stations.",
+        "food_pharma": "Sector subject to strict hygienic regulations. It features scheduled cleaning stops (C.I.P.) and the bottleneck is usually in the sterilization phase (autoclave) or packaging sealing.",
+        "machinery": "Make-to-Order or low-volume production. Long cycle times (measured in hours or days), high need for skilled labor, and high probability of reworks due to the complexity of pressure and quality testing."
       }
     }
   }

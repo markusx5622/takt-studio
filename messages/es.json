@@ -1192,23 +1192,26 @@
   },
   "resources": {
     "templates": {
-      "title": "Guía de Plantillas",
-      "subtitle": "Casos de estudio y configuraciones predefinidas para entender la dinámica de las líneas de producción.",
-      "default": {
-        "title": "Línea Secuencial (Por Defecto)",
-        "desc": "El caso de uso más estándar. Una línea de producción en serie con 5 estaciones. Perfecta para entender cómo un cuello de botella restringe todo el flujo y cómo la variabilidad (Monte Carlo) afecta al Takt Time."
+      "title": "Guía de Plantillas Industriales",
+      "subtitle": "Fichas técnicas detalladas de los 7 sectores predefinidos en Takt Studio. Analiza la configuración base, los tiempos de ciclo y los retos típicos de cada industria.",
+      "metrics": {
+        "demand": "Demanda",
+        "shiftHours": "Horas/Turno",
+        "shifts": "Turnos/Día",
+        "stations": "Estaciones",
+        "station": "Estación",
+        "cycleTime": "Tiempo de Ciclo",
+        "operators": "Operarios",
+        "failureRate": "Tasa de Fallo"
       },
-      "monobath": {
-        "title": "Proceso Monobaño",
-        "desc": "Una línea industrializada basada en la fabricación de baños modulares. Incluye estaciones de alto esfuerzo manual y tiempos lognormales, ideal para probar escenarios de mejora de eficiencia."
-      },
-      "highRework": {
-        "title": "Alta Tasa de Reproceso",
-        "desc": "Un entorno de estrés para el simulador. Esta plantilla simula estaciones con altas tasas de fallo (hasta 20%), forzando reprocesos que alteran significativamente el Lead Time y la Eficiencia de Balanceo."
-      },
-      "single": {
-        "title": "Estación Única",
-        "desc": "El entorno más aislado. Ideal para formaciones académicas donde se desea observar el comportamiento puro de la distribución estocástica sin las interferencias de estaciones adyacentes."
+      "descriptions": {
+        "monobath": "Plantilla insignia basada en la construcción modular industrializada. Presenta alta dependencia manual, cuellos de botella variables y tasas de fallo significativas en la fase de impermeabilización y alicatado, lo que la hace ideal para experimentar con la simulación Monte Carlo.",
+        "automotive": "Línea de producción altamente balanceada donde el Takt Time es estricto. El cuello de botella suele encontrarse en el matrimonio (powertrain marriage) y la variabilidad es baja, priorizando el flujo continuo y la automatización.",
+        "electronics": "Proceso caracterizado por tiempos de ciclo muy cortos y alta automatización (Pick & Place). Las limitaciones de rendimiento suelen derivar de los tiempos de horneado o de inspección óptica (AOI), donde el flujo se ralentiza.",
+        "logistics": "Entorno con alta variabilidad humana. El picking y empaquetado dependen fuertemente del cansancio del operario y de la complejidad del pedido, mostrando distribuciones lognormales muy marcadas en los tiempos reales.",
+        "ceramics": "Industria de proceso continuo intensiva en capital. El cuello de botella está rígidamente fijado en el horno monorrodillo y la prensa hidráulica. La eficiencia depende de minimizar los paros en estas estaciones críticas.",
+        "food_pharma": "Sector sujeto a estrictas normativas higiénicas. Presenta paradas programadas para limpieza (C.I.P.) y el cuello de botella suele estar en la fase de esterilización (autoclave) o en el sellado de los envases.",
+        "machinery": "Producción bajo pedido (Make-to-Order) o de bajo volumen. Tiempos de ciclo largos (medidos en horas o jornadas), gran necesidad de mano de obra cualificada y alta probabilidad de reprocesos debido a la complejidad de las pruebas de presión y calidad."
       }
     }
   }
