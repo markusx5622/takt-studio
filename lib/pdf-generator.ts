@@ -188,63 +188,24 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const reportId = `TST-${dateCompact}-${timeCompact}`
   const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
-  // --- Top blue band (taller & spacious) ---
-  const headerBandH = 54
+  // --- Top blue band ---
   doc.setFillColor(30, 64, 175)
-  doc.rect(0, 0, 210, headerBandH, "F")
+  doc.rect(0, 0, 210, 38, "F")
+
+  // Logo on top band
+  try {
+    doc.addImage(LOGO_REPORT_BASE64, "PNG", 210 / 2 - 30, 10, 60, 13.3)
+  } catch {
+    doc.setTextColor(255, 255, 255)
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(22)
+    doc.text("TAKT STUDIO", 210 / 2, 22, { align: "center" })
+  }
 
   // Thin accent line under band
   doc.setDrawColor(59, 130, 246)
-  doc.setLineWidth(1.0)
-  doc.line(0, headerBandH, 210, headerBandH)
-
-  // --- Large, Centered Vector Logo on Cover Page ---
-  const pageCenter = 210 / 2
-  const logoCenterY = 27
-
-  const iconSize = 22
-  const iconY = logoCenterY - iconSize / 2
-  const fontPt = 32
-
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(fontPt)
-  const wTakt = doc.getTextWidth("Takt")
-  const wStudio = doc.getTextWidth("Studio")
-  const gapIconText = 5
-  const gapTaktStudio = 2.5
-  const totalLogoW = iconSize + gapIconText + wTakt + gapTaktStudio + wStudio
-  const logoStartX = pageCenter - totalLogoW / 2
-
-  // 1. Icon (Rounded Blue Box with T-symbol, cyan curve & dots)
-  doc.setFillColor(37, 99, 235)
-  doc.roundedRect(logoStartX, iconY, iconSize, iconSize, 4.5, 4.5, "F")
-
-  doc.setDrawColor(255, 255, 255)
-  doc.setLineWidth(1.8)
-  doc.line(logoStartX + 5.5, iconY + 7.5, logoStartX + 16.5, iconY + 7.5)
-  doc.line(logoStartX + 11, iconY + 7.5, logoStartX + 11, iconY + 14.5)
-
-  doc.setDrawColor(6, 182, 212)
-  doc.setLineWidth(1.2)
-  doc.line(logoStartX + 6, iconY + 13, logoStartX + 11, iconY + 15)
-  doc.line(logoStartX + 11, iconY + 15, logoStartX + 16, iconY + 13)
-
-  doc.setFillColor(255, 255, 255)
-  doc.circle(logoStartX + 6, iconY + 13, 0.8, "F")
-  doc.circle(logoStartX + 16, iconY + 13, 0.8, "F")
-  doc.setFillColor(34, 197, 94)
-  doc.circle(logoStartX + 11, iconY + 15, 1.0, "F")
-
-  // 2. Text "Takt" - WHITE
-  const textY = logoCenterY + 4.2
-  doc.setTextColor(255, 255, 255)
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(fontPt)
-  doc.text("Takt", logoStartX + iconSize + gapIconText, textY)
-
-  // 3. Text "Studio" - LIGHT BLUE
-  doc.setTextColor(96, 165, 250)
-  doc.text("Studio", logoStartX + iconSize + gapIconText + wTakt + gapTaktStudio, textY)
+  doc.setLineWidth(0.8)
+  doc.line(0, 38, 210, 38)
 
   // --- Center block: Report Title & Metadata (Lowered for breathing room) ---
 
