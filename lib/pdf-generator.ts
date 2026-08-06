@@ -10,7 +10,7 @@ import {
 } from "@/lib/calculations"
 import { generateInsights } from "@/lib/insights"
 import { runMonteCarlo } from "@/lib/monte-carlo"
-import { LOGO_REPORT_BASE64 } from "@/lib/logo-base64"
+import { LOGO_REPORT_BASE64, LOGO_HORIZONTAL_SVG } from "@/lib/logo-base64"
 
 const APP_VERSION = "0.1.0"
 
@@ -173,7 +173,7 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.text(t("page", { current, total }), RM, FOOTER_Y + 5, { align: "right" })
   }
 
-  // ── PORTADA CORPORATIVA (PÁGINA 1) ──────────────────────────────────────────
+  // ── PORTADA CORPORATIVA PRO (PÁGINA 1) ──────────────────────────────────────
 
   // Report Date & Unique Identifier
   const now = new Date()
@@ -188,118 +188,273 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   const reportId = `TST-${dateCompact}-${timeCompact}`
   const { baseTitle, improvementSubtitle } = parseCleanScenarioTitle(scenario.name)
 
-  // --- Top blue band ---
-  doc.setFillColor(30, 64, 175)
-  doc.rect(0, 0, 210, 38, "F")
-
-  // Logo on top band
-  try {
-    doc.addImage(LOGO_REPORT_BASE64, "PNG", 210 / 2 - 30, 10, 60, 13.3)
-  } catch {
-    doc.setTextColor(255, 255, 255)
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(22)
-    doc.text("TAKT STUDIO", 210 / 2, 22, { align: "center" })
-  }
-
-  // Thin accent line under band
-  doc.setDrawColor(59, 130, 246)
-  doc.setLineWidth(0.8)
-  doc.line(0, 38, 210, 38)
-
-  // --- Center block: Report Title ---
   const pageCenter = 210 / 2
 
-  setDark()
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(22)
-  doc.text(t("reportTitle"), pageCenter, 75, { align: "center" })
+  // 1. Top Decorative Accent Bands
+  doc.setFillColor(30, 64, 175) // Primary corporate blue
+  doc.rect(0, 0, 210, 6, "F")
+  doc.setFillColor(6, 182, 212) // Accent cyan line
+  doc.rect(0, 6, 210, 1.2, "F")
 
-  // Subtitle
-  setBlue()
-  doc.setFont("helvetica", "normal")
-  doc.setFontSize(13)
-  doc.text(t("coverSubtitle"), pageCenter, 85, { align: "center" })
+  // 2. Prominent Main Brand Logo (logo-horizontal.svg)
+  const logoW = 90
+  const logoH = 24
+  const logoX = pageCenter - logoW / 2
+  const logoY = 16
 
-  // Decorative line
-  doc.setDrawColor(30, 64, 175)
-  doc.setLineWidth(0.5)
-  doc.line(pageCenter - 40, 92, pageCenter + 40, 92)
+  try {
+    doc.addImage(LOGO_HORIZONTAL_SVG, "SVG", logoX, logoY, logoW, logoH)
+  } catch {
+    // Vector Fallback if SVG parsing fails
+    const iconX = logoX
+    const iconY = logoY
+    const iconSize = 22
 
-  // Scenario Name (large, prominent)
-  setDark()
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(16)
-  const scenarioLines = doc.splitTextToSize(baseTitle, CW - 20) as string[]
-  const scenarioBlockY = 105
-  for (let i = 0; i < scenarioLines.length; i++) {
-    doc.text(scenarioLines[i], pageCenter, scenarioBlockY + i * 8, { align: "center" })
-  }
+    doc.setFillColor(37, 99, 235)
+    doc.roundedRect(iconX, iconY, iconSize, iconSize, 4.5, 4.5, "F")
 
-  // Improvements subtitle (if applicable)
-  let metaStartY = scenarioBlockY + scenarioLines.length * 8 + 5
-  if (improvementSubtitle) {
-    setGray()
+    // White T inside vector fallback
+    doc.setDrawColor(255, 255, 255)
+    doc.setLineWidth(1.6)
+    doc.line(iconX + 5.5, iconY + 7.5, iconX + 16.5, iconY + 7.5)
+    doc.line(iconX + 11, iconY + 7.5, iconX + 11, iconY + 14.5)
+
+    // Wave path
+    doc.setDrawColor(6, 182, 212)
+    doc.setLineWidth(1.1)
+    doc.line(iconX + 6, iconY + 13, iconX + 11, iconY + 15)
+    doc.line(iconX + 11, iconY + 15, iconX + 16, iconY + 13)
+
+    // Green bottleneck dot
+    doc.setFillColor(34, 197, 94)
+    doc.circle(iconX + 11, iconY + 15, 0.9, "F")
+
+    // Text: Takt Studio
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(22)
+    doc.setTextColor(15, 23, 42)
+    doc.text("Takt", iconX + 26, iconY + 14)
+    doc.setTextColor(37, 99, 235)
+    doc.text("Studio", iconX + 46, iconY + 14)
+
     doc.setFont("helvetica", "normal")
-    doc.setFontSize(8.5)
-    const label = locale.toLowerCase().startsWith("en") ? "Applied improvements" : "Mejoras aplicadas"
-    const fullSubText = `${label}: ${improvementSubtitle}`
-    const subLines = doc.splitTextToSize(fullSubText, CW - 30) as string[]
-    for (let i = 0; i < subLines.length; i++) {
-      doc.text(subLines[i], pageCenter, metaStartY + i * 4, { align: "center" })
-    }
-    metaStartY += subLines.length * 4 + 8
-  } else {
-    metaStartY += 8
+    doc.setFontSize(7.5)
+    doc.setTextColor(100, 116, 139)
+    doc.text("Simulación y análisis de líneas de producción", iconX + 26, iconY + 19)
   }
 
-  // --- Metadata card (centered) ---
-  const metaCardW = 100
-  const metaCardX = pageCenter - metaCardW / 2
-  const metaCardH = 38
+  // 3. Official Document Pill Tag
+  const pillY = 46
+  const pillW = 120
+  const pillX = pageCenter - pillW / 2
+  const isEn = locale.toLowerCase().startsWith("en")
 
+  doc.setFillColor(239, 246, 255)
+  doc.setDrawColor(37, 99, 235)
+  doc.setLineWidth(0.3)
+  doc.roundedRect(pillX, pillY, pillW, 6.5, 3.25, 3.25, "FD")
+
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(6.5)
+  doc.setTextColor(30, 64, 175)
+  const pillText = isEn
+    ? "OFFICIAL PRODUCTION LINE SIMULATION REPORT"
+    : "INFORME OFICIAL DE SIMULACIÓN Y BALANCEO DE LÍNEA"
+  doc.text(pillText, pageCenter, pillY + 4.3, { align: "center" })
+
+  // 4. Main Document Title & Subtitle
+  const titleY = 62
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(18)
+  doc.text(t("reportTitle"), pageCenter, titleY, { align: "center" })
+
+  setGray()
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(9)
+  doc.text(t("coverSubtitle"), pageCenter, titleY + 6, { align: "center" })
+
+  // Decorative Accent Separator
+  doc.setDrawColor(37, 99, 235)
+  doc.setLineWidth(0.5)
+  doc.line(pageCenter - 30, titleY + 10, pageCenter + 30, titleY + 10)
+
+  // 5. Scenario Card Container (High Presence Box with Left Primary Accent Bar)
+  const scCardY = titleY + 15
+  const scCardW = CW
+  const scCardX = LM
+
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(14)
+  const scLines = doc.splitTextToSize(baseTitle, scCardW - 14) as string[]
+
+  let scCardH = 14 + (scLines.length - 1) * 6
+  let impLines: string[] = []
+  if (improvementSubtitle) {
+    const label = isEn ? "Applied improvements" : "Mejoras aplicadas"
+    const fullSubText = `${label}: ${improvementSubtitle}`
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(8)
+    impLines = doc.splitTextToSize(fullSubText, scCardW - 14) as string[]
+    scCardH += impLines.length * 4 + 4
+  }
+
+  // Card Background
   doc.setFillColor(248, 250, 252)
   doc.setDrawColor(226, 232, 240)
   doc.setLineWidth(0.3)
-  doc.roundedRect(metaCardX, metaStartY, metaCardW, metaCardH, 2, 2, "FD")
+  doc.roundedRect(scCardX, scCardY, scCardW, scCardH, 2, 2, "FD")
+
+  // Left Blue Accent Bar
+  doc.setFillColor(37, 99, 235)
+  doc.rect(scCardX, scCardY, 3.5, scCardH, "F")
+
+  // Scenario Title inside card
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(13)
+  for (let i = 0; i < scLines.length; i++) {
+    doc.text(scLines[i], scCardX + 8, scCardY + 7 + i * 6)
+  }
+
+  // Improvements text inside card
+  if (impLines.length > 0) {
+    setBlue()
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(8)
+    const impStartY = scCardY + 7 + scLines.length * 6
+    for (let i = 0; i < impLines.length; i++) {
+      doc.text(impLines[i], scCardX + 8, impStartY + i * 4)
+    }
+  }
+
+  // 6. EXECUTIVE SNAPSHOT METRICS ROW (4 Quick KPI Cards)
+  const kpiRowY = scCardY + scCardH + 9
+  const kpiCardGap = 3.5
+  const kpiCardW = (CW - (3 * kpiCardGap)) / 4
+  const kpiCardH = 20
+
+  const deltaVal = Math.abs(kpis.demandDelta)
+  const kpiSnapshot = [
+    {
+      label: isEn ? "TARGET DEMAND" : "DEMANDA OBJETIVO",
+      val: `${formatNumber(scenario.demandPerDay, locale)}`,
+      unit: isEn ? "units/day" : "uds/día",
+      color: [30, 64, 175], // blue
+      bg: [239, 246, 255]
+    },
+    {
+      label: isEn ? "CAPACITY" : "THROUGHPUT",
+      val: `${formatNumber(kpis.throughputPerDay, locale)}`,
+      unit: kpis.meetsDemand ? `+${formatNumber(deltaVal, locale)}` : `-${formatNumber(deltaVal, locale)}`,
+      color: kpis.meetsDemand ? [22, 163, 74] : [220, 38, 38], // green / red
+      bg: kpis.meetsDemand ? [240, 253, 244] : [254, 242, 242]
+    },
+    {
+      label: isEn ? "TAKT TIME" : "TAKT TIME",
+      val: `${kpis.taktTimeMin.toFixed(1)}`,
+      unit: t("minUnit"),
+      color: [180, 83, 9], // amber
+      bg: [254, 243, 199]
+    },
+    {
+      label: isEn ? "BOTTLENECK" : "CUELLO BOTELLA",
+      val: fitText(doc, kpis.bottleneckStationName || "—", kpiCardW - 4),
+      unit: `${kpis.bottleneckCycleMin.toFixed(1)} ${t("minUnit")}`,
+      color: [185, 28, 28], // red
+      bg: [254, 242, 242]
+    }
+  ]
+
+  for (let k = 0; k < 4; k++) {
+    const item = kpiSnapshot[k]
+    const kx = LM + k * (kpiCardW + kpiCardGap)
+    const ky = kpiRowY
+
+    // Card BG
+    doc.setFillColor(item.bg[0], item.bg[1], item.bg[2])
+    doc.setDrawColor(item.color[0], item.color[1], item.color[2])
+    doc.setLineWidth(0.3)
+    doc.roundedRect(kx, ky, kpiCardW, kpiCardH, 1.5, 1.5, "FD")
+
+    // Label
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(5.5)
+    doc.setTextColor(item.color[0], item.color[1], item.color[2])
+    doc.text(item.label, kx + kpiCardW / 2, ky + 4.5, { align: "center" })
+
+    // Primary Value
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(10)
+    setDark()
+    doc.text(item.val, kx + kpiCardW / 2, ky + 11.5, { align: "center" })
+
+    // Subtext / Unit
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(6)
+    setGray()
+    doc.text(item.unit, kx + kpiCardW / 2, ky + 16.5, { align: "center" })
+  }
+
+  // 7. Document Metadata & Control Card (Ficha Técnica Centrada)
+  const metaCardY = kpiRowY + kpiCardH + 9
+  const metaCardW = 120
+  const metaCardX = pageCenter - metaCardW / 2
+  const metaCardH = 34
+
+  doc.setFillColor(255, 255, 255)
+  doc.setDrawColor(203, 213, 225)
+  doc.setLineWidth(0.3)
+  doc.roundedRect(metaCardX, metaCardY, metaCardW, metaCardH, 2, 2, "FD")
+
+  // Header strip of metadata card
+  doc.setFillColor(241, 245, 249)
+  doc.rect(metaCardX, metaCardY, metaCardW, 5.5, "F")
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(6)
+  setGray()
+  doc.text(isEn ? "DOCUMENT CONTROL & METADATA" : "FICHA TÉCNICA Y METADATOS DE SIMULACIÓN", pageCenter, metaCardY + 3.8, { align: "center" })
 
   const metaItems = [
     { label: t("coverDate"), value: dateStr },
     { label: t("coverId"), value: reportId },
     { label: t("coverVersion"), value: `Takt Studio v${APP_VERSION}` },
-    { label: t("coverStations"), value: String(stations.length) },
-    { label: t("coverDemand"), value: t("coverUnits", { value: formatNumber(scenario.demandPerDay, locale) }) },
+    { label: t("coverStations"), value: `${stations.length} ${isEn ? "stations" : "estaciones"}` },
   ]
 
-  const metaRowH = metaCardH / metaItems.length
+  const metaGridCols = 2
+  const colW = metaCardW / metaGridCols
+
   for (let i = 0; i < metaItems.length; i++) {
-    const my = metaStartY + i * metaRowH + metaRowH / 2 + 1.5
+    const mc = i % metaGridCols
+    const mr = Math.floor(i / metaGridCols)
+    const mx = metaCardX + mc * colW
+    const my = metaCardY + 7 + mr * 12
 
     setGray()
     doc.setFont("helvetica", "normal")
-    doc.setFontSize(7.5)
-    doc.text(metaItems[i].label, metaCardX + 8, my)
+    doc.setFontSize(7)
+    doc.text(metaItems[i].label + ":", mx + 8, my + 4)
 
     setDark()
     doc.setFont("helvetica", "bold")
     doc.setFontSize(7.5)
-    doc.text(metaItems[i].value, metaCardX + metaCardW - 8, my, { align: "right" })
-
-    if (i < metaItems.length - 1) {
-      doc.setDrawColor(226, 232, 240)
-      doc.setLineWidth(0.15)
-      doc.line(metaCardX + 4, metaStartY + (i + 1) * metaRowH, metaCardX + metaCardW - 4, metaStartY + (i + 1) * metaRowH)
-    }
+    doc.text(metaItems[i].value, mx + colW - 8, my + 4, { align: "right" })
   }
 
-  // --- Bottom blue band with confidentiality notice ---
-  doc.setFillColor(30, 64, 175)
-  doc.rect(0, 280, 210, 17, "F")
+  // 8. Bottom Confidentiality Footer Band
+  doc.setFillColor(15, 23, 42) // Slate-900
+  doc.rect(0, 278, 210, 19, "F")
+  doc.setFillColor(6, 182, 212) // Cyan top border line
+  doc.rect(0, 278, 210, 0.8, "F")
 
   doc.setTextColor(255, 255, 255)
-  doc.setFont("helvetica", "normal")
+  doc.setFont("helvetica", "bold")
   doc.setFontSize(7)
-  doc.text(t("coverConfidential"), pageCenter, 290, { align: "center" })
+  const confText = isEn
+    ? "TAKT STUDIO INDUSTRIAL SYSTEMS · CONFIDENTIAL & PROPRIETARY DOCUMENT"
+    : "TAKT STUDIO INDUSTRIAL SYSTEMS · DOCUMENTO DE USO INTERNO Y CONFIDENCIAL"
+  doc.text(confText, pageCenter, 289, { align: "center" })
 
   // ── CONTENT PAGES START (Page 2+) ──────────────────────────────────────────
 
