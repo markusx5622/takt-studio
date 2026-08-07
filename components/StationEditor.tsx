@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle } from "lucide-react"
+import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download } from "lucide-react"
 import { findBottleneck } from "@/lib/calculations"
 import { cn } from "@/lib/utils"
 import type { Station } from "@/types"
@@ -365,13 +365,59 @@ export default function StationEditor() {
     onDelete: () => handleDelete(station.id),
   })
 
+  function handleExportCSV() {
+    if (stations.length === 0) return
+
+    const headers = [
+      t("colName"),
+      t("colCycle"),
+      t("colOperators"),
+      t("colFailure"),
+      t("colEffective")
+    ]
+
+    const rows = stations.map((st) => {
+      const effectiveTime = st.cycleTimeMin / (st.operators * (1 - st.failureRate))
+      return [
+        `"${st.name.replace(/"/g, '""')}"`,
+        st.cycleTimeMin,
+        st.operators,
+        `${(st.failureRate * 100).toFixed(1)}%`,
+        effectiveTime.toFixed(2)
+      ].join(",")
+    })
+
+    const csvContent = [headers.join(","), ...rows].join("\n")
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `estaciones_${scenario?.name || "export"}_${new Date().toISOString().split("T")[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   const bottleneckId = stations.length > 0 ? findBottleneck(stations).stationId : ""
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4">
-        <CardTitle className="text-lg">{t("title")}</CardTitle>
-        <Badge variant="secondary">{t("countBadge", { count: stations.length })}</Badge>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <div className="flex items-center gap-3">
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
+          <Badge variant="secondary">{t("countBadge", { count: stations.length })}</Badge>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleExportCSV}
+          disabled={stations.length === 0}
+          className="hidden gap-2 sm:flex"
+        >
+          <Download className="h-4 w-4" />
+          {t("exportCSV")}
+        </Button>
       </CardHeader>
 
       <CardContent className="p-0">
