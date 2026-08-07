@@ -35,7 +35,7 @@ const STEPS = [
   { id: "s5", icon: Coins, color: "bg-yellow-100/50 text-yellow-700", borderColor: "border-yellow-200" },
   { id: "s6", icon: GitCompare, color: "bg-amber-100/50 text-amber-600", borderColor: "border-amber-200" },
   { id: "s7", icon: FileText, color: "bg-slate-200/50 text-slate-700", borderColor: "border-slate-300" },
-]
+] as const
 
 export default async function TutorialPage({
   params,
@@ -92,14 +92,14 @@ export default async function TutorialPage({
                       Paso {index + 1}
                     </div>
                     <CardTitle className="text-xl font-bold tracking-tight text-foreground/90">
-                      {t(`steps.${step.id}.title` as any)}
+                      {t(`steps.${step.id}.title`)}
                     </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
                   {/* Desc */}
                   <p className="text-base leading-relaxed text-foreground/90 font-medium">
-                    {t(`steps.${step.id}.desc` as any)}
+                    {t(`steps.${step.id}.desc`)}
                   </p>
 
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -110,7 +110,7 @@ export default async function TutorialPage({
                         <h4 className="text-xs font-bold uppercase tracking-wider">{t("labels.theory")}</h4>
                       </div>
                       <p className="text-sm text-indigo-900/80 leading-relaxed">
-                        {t(`steps.${step.id}.theory` as any)}
+                        {t(`steps.${step.id}.theory`)}
                       </p>
                     </div>
 
@@ -121,7 +121,7 @@ export default async function TutorialPage({
                         <h4 className="text-xs font-bold uppercase tracking-wider">{t("labels.tip")}</h4>
                       </div>
                       <p className="text-sm text-amber-900/80 leading-relaxed">
-                        {t(`steps.${step.id}.tip` as any)}
+                        {t(`steps.${step.id}.tip`)}
                       </p>
                     </div>
                   </div>
@@ -133,7 +133,7 @@ export default async function TutorialPage({
                       <h4 className="text-xs font-bold uppercase tracking-wider">{t("labels.action")}</h4>
                     </div>
                     <p className="text-sm text-emerald-900/80 leading-relaxed font-medium">
-                      {t(`steps.${step.id}.action` as any)}
+                      {t(`steps.${step.id}.action`)}
                     </p>
                   </div>
                   

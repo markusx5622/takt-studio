@@ -104,7 +104,7 @@ export default async function ComparisonPage({
       desIcon: Check,
       desColor: "text-emerald-500",
     }
-  ]
+  ] as const;
 
   return (
     <div className="relative flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
@@ -157,7 +157,7 @@ export default async function ComparisonPage({
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background shadow-sm border border-border/50 text-foreground/70 group-hover:text-primary transition-colors">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <span className="font-semibold text-foreground/90">{t(`features.${feat.id}` as any)}</span>
+                    <span className="font-semibold text-foreground/90">{t(`features.${feat.id}`)}</span>
                   </div>
 
                   {/* Takt Studio */}
