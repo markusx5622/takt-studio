@@ -487,7 +487,19 @@
     "introTitle": "What Takt Studio is, methodologically",
     "introP1": "Takt Studio is a deterministic analytical model of industrialized production lines. It uses cycle times, number of operators, demand and shifts to calculate key operational metrics: takt time, throughput, lead time and balancing efficiency.",
     "introP2": "The tool is neither a full discrete event simulation (DES) nor a definitive financial validation. Its value lies in pre-validating improvement decisions before intervening on the shop floor, providing a fast and rigorous first quantitative approximation.",
-    "introWarning": "Results are indicative. For real investment decisions, they must be calibrated with real operational and financial data from the line.",
+    "introWarning": "The results are indicative. For real investment decisions, they should be calibrated with actual line operational and financial data.",
+    "playground": {
+      "title": "⚡ Interactive Mini-Lab: Real-time Takt Time",
+      "subtitle": "Adjust the parameters to observe how the required production pace changes instantly.",
+      "shiftHours": "Hours per shift",
+      "shiftsPerDay": "Shifts per day",
+      "demand": "Daily demand",
+      "availableTime": "Available time",
+      "taktResult": "Resulting Takt Time",
+      "paceAggressive": "🔥 High Cadence (Demanding)",
+      "paceStandard": "⚡ Standard Industrial Cadence",
+      "paceRelaxed": "🟢 Moderate Cadence"
+    },
     "kpisTitle": "Operational KPIs",
     "kpiCards": [
       {
