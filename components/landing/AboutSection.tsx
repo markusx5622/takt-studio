@@ -53,7 +53,7 @@ export default function AboutSection() {
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-foreground/70">
                 <p>
                   {t("p1A")}{" "}
-                  <em className="not-italic font-medium text-foreground/80">what-if</em>{" "}
+                  <em className="italic font-medium text-foreground/80">what-if</em>{" "}
                   {t("p1B")}
                 </p>
                 <p>
