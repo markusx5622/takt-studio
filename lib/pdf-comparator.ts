@@ -360,29 +360,51 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
     
     // Rows
     rows.forEach((r, i) => {
-      const rowHeight = r.sublabel ? 11 : 8
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(8)
+      const labelLines = doc.splitTextToSize(r.label, colLabelW - 6) as string[]
+      
+      let subLines: string[] = []
+      if (r.sublabel) {
+        doc.setFontSize(6.5)
+        subLines = doc.splitTextToSize(r.sublabel, colLabelW - 6) as string[]
+      }
+      
+      const labelBlockHeight = labelLines.length * 3.8
+      const subBlockHeight = subLines.length > 0 ? subLines.length * 3.2 + 1.5 : 0
+      const contentHeight = labelBlockHeight + subBlockHeight
+      const rowHeight = Math.max(8, contentHeight + 4)
+
       checkPageBreak(rowHeight)
+
       if (i % 2 === 1) {
         doc.setFillColor(248, 250, 252) // slate-50
         doc.rect(LM, y, cw, rowHeight, "F")
       }
       
+      // Render main label lines
       setGray()
       doc.setFont("helvetica", "normal")
       doc.setFontSize(8)
-      doc.text(r.label, xLabel + 3, y + (r.sublabel ? 4.5 : 5.5))
+      labelLines.forEach((lLine, idx) => {
+        doc.text(lLine, xLabel + 3, y + 4.5 + idx * 3.8)
+      })
       
-      if (r.sublabel) {
+      // Render sublabel lines
+      if (subLines.length > 0) {
         doc.setFontSize(6.5)
         doc.setTextColor(148, 163, 184) // slate-400
-        const cleanSublabel = fitText(doc, r.sublabel, colLabelW - 6)
-        doc.text(cleanSublabel, xLabel + 3, y + 8.5)
+        const subStartY = y + 4.5 + labelLines.length * 3.8
+        subLines.forEach((sLine, idx) => {
+          doc.text(sLine, xLabel + 3, subStartY + idx * 3.2)
+        })
       }
       
+      // Center values vertically in the row
       setDark()
       doc.setFont("helvetica", "bold")
       doc.setFontSize(8)
-      const valY = y + (r.sublabel ? 6 : 5.5)
+      const valY = y + rowHeight / 2 + 1.5
       doc.text(r.a, xA + colAW - 3, valY, { align: "right" })
       doc.text(r.b, xB + colBW - 3, valY, { align: "right" })
       
