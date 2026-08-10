@@ -1073,6 +1073,7 @@
     "scenarioA": "Escenario A",
     "scenarioB": "Escenario B",
     "duplicateAtoB": "Duplicar A en B",
+    "swapScenarios": "Invertir A y B",
     "sameScenarioWarning": "Estás comparando el mismo escenario consigo mismo. Selecciona dos escenarios distintos o usa “Duplicar A en B”.",
     "noChange": "Sin cambio",
     "minPerUnit": "min/ud",

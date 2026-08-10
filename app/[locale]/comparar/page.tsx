@@ -19,6 +19,7 @@ import {
   ArrowDownRight,
   Minus,
   DollarSign,
+  ArrowLeftRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { KPIs, Scenario } from "@/types"
@@ -373,6 +374,11 @@ export default function CompararPage() {
   const kpisA = calculateAllKPIs(scenarioA)
   const kpisB = calculateAllKPIs(scenarioB)
 
+  function handleSwapAB() {
+    setCompareA(scenarioB.id)
+    setCompareB(scenarioA.id)
+  }
+
   function handleDuplicateAtoB() {
     const store = useTaktStore.getState()
     const original = store.scenarios.find((s) => s.id === compareAId)
@@ -406,7 +412,18 @@ export default function CompararPage() {
               />
             </div>
 
-            <div className="flex shrink-0 items-end">
+            <div className="flex shrink-0 flex-wrap items-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSwapAB}
+                className="gap-2"
+                title={t("swapScenarios")}
+              >
+                <ArrowLeftRight className="h-3.5 w-3.5" />
+                {t("swapScenarios")}
+              </Button>
+
               <Button
                 variant="outline"
                 size="sm"
