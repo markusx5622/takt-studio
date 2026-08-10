@@ -33,6 +33,8 @@ test.describe("ES (locale por defecto)", () => {
     page,
   }) => {
     await page.goto("/simulador")
+    await page.getByRole("button", { name: /Crear mi primer escenario/i }).click()
+    await page.getByRole("button", { name: /Cargar plantilla seleccionada/i }).click()
     await expect(page.getByText(/7 estaciones/)).toBeVisible()
     await page.getByRole("button", { name: /añadir estación/i }).click()
     await expect(page.getByText(/8 estaciones/)).toBeVisible()

@@ -23,6 +23,8 @@ test.describe("ES (locale por defecto)", () => {
   test("simulador: KPIs visibles y añadir estación", async ({ page }) => {
     await page.goto("/simulador")
     await expect(page.getByRole("heading", { name: /^Simulador$/ })).toBeVisible()
+    await page.getByRole("button", { name: /Crear mi primer escenario/i }).click()
+    await page.getByRole("button", { name: /Cargar plantilla seleccionada/i }).click()
     await expect(page.getByText("Takt Time").first()).toBeVisible()
 
     await expect(page.getByText(/7 estaciones/)).toBeVisible()
@@ -56,6 +58,8 @@ test.describe("EN (/en)", () => {
   test("simulador EN renderiza", async ({ page }) => {
     await page.goto("/en/simulador")
     await expect(page.getByRole("heading", { name: /^Simulator$/ })).toBeVisible()
+    await page.getByRole("button", { name: /Create My First Scenario/i }).click()
+    await page.getByRole("button", { name: /Load Selected Template/i }).click()
     await expect(page.getByText(/7 stations/)).toBeVisible()
   })
 

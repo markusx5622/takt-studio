@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest"
 import { useTaktStore } from "./store"
 import type { Scenario } from "@/types"
+import { createMonobathPreset, getPresetNames } from "./presets"
 
 function state() {
   return useTaktStore.getState()
@@ -15,10 +16,27 @@ function active(): Scenario {
 beforeEach(() => {
   localStorage.clear()
   state().resetToPreset()
+  const names = getPresetNames()
+  const scenarioA = { ...createMonobathPreset(names), name: names.scenarioAName }
+  const scenarioB = { ...createMonobathPreset(names), name: names.scenarioBName }
+  useTaktStore.setState({
+    scenarios: [scenarioA, scenarioB],
+    activeScenarioId: scenarioA.id,
+    compareScenarioAId: scenarioA.id,
+    compareScenarioBId: scenarioB.id,
+    snapshots: [],
+  })
 })
 
 describe("estado inicial / resetToPreset", () => {
   it("arranca limpio sin escenarios precreados y sin snapshots", () => {
+    useTaktStore.setState({
+      scenarios: [],
+      activeScenarioId: "",
+      compareScenarioAId: "",
+      compareScenarioBId: "",
+      snapshots: [],
+    })
     const s = state()
     expect(s.scenarios).toHaveLength(0)
     expect(s.activeScenarioId).toBe("")
@@ -27,7 +45,7 @@ describe("estado inicial / resetToPreset", () => {
 
   it("resetToPreset restaura el estado inicial limpio tras modificaciones", () => {
     state().addScenario("Extra")
-    expect(state().scenarios).toHaveLength(1)
+    expect(state().scenarios).toHaveLength(3)
     state().resetToPreset()
     expect(state().scenarios).toHaveLength(0)
   })
