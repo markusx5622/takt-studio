@@ -32,6 +32,16 @@ function formatNumber(val: number, locale: string, fractionDigits = 0): string {
   }).format(val)
 }
 
+function fitText(doc: { getTextWidth: (s: string) => number }, text: string, maxWidth: number): string {
+  if (!text) return ""
+  if (doc.getTextWidth(text) <= maxWidth) return text
+  let truncated = text
+  while (truncated.length > 0 && doc.getTextWidth(truncated + "…") > maxWidth) {
+    truncated = truncated.slice(0, -1)
+  }
+  return truncated ? truncated + "…" : ""
+}
+
 // ─── Types & i18n Interfaces ──────────────────────────────────────────────────
 
 export type PdfTranslator = (key: string, values?: Record<string, string | number>) => string
@@ -300,7 +310,17 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
 
   // ── Helper to draw a Comparison Table ───────────────────────────────────────
   
-  type Row = { label: string; a: string; b: string; deltaNum: number; deltaStr: string; higherIsBetter: boolean }
+  type Row = { 
+    label: string
+    sublabel?: string
+    a: string
+    b: string
+    deltaNum: number
+    deltaStr: string
+    higherIsBetter: boolean 
+  }
+
+  const colDeltaHeader = locale.toLowerCase().startsWith("en") ? "Diff (B - A)" : "Dif (B - A)"
 
   function drawComparisonTable(title: string, subtitle: string | undefined, rows: Row[]) {
     sectionTitle(title)
@@ -334,40 +354,50 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
     doc.text(tCompare("colMetric"), xLabel + 3, y + 5.5)
     doc.text(tCompare("colA"), xA + colAW - 3, y + 5.5, { align: "right" })
     doc.text(tCompare("colB"), xB + colBW - 3, y + 5.5, { align: "right" })
-    doc.text(tCompare("colDelta"), xDelta + colDeltaW - 3, y + 5.5, { align: "right" })
+    doc.text(colDeltaHeader, xDelta + colDeltaW - 3, y + 5.5, { align: "right" })
     
     y += 8
     
     // Rows
     rows.forEach((r, i) => {
-      checkPageBreak(8)
+      const rowHeight = r.sublabel ? 11 : 8
+      checkPageBreak(rowHeight)
       if (i % 2 === 1) {
         doc.setFillColor(248, 250, 252) // slate-50
-        doc.rect(LM, y, cw, 8, "F")
+        doc.rect(LM, y, cw, rowHeight, "F")
       }
       
       setGray()
       doc.setFont("helvetica", "normal")
       doc.setFontSize(8)
-      doc.text(r.label, xLabel + 3, y + 5.5)
+      doc.text(r.label, xLabel + 3, y + (r.sublabel ? 4.5 : 5.5))
+      
+      if (r.sublabel) {
+        doc.setFontSize(6.5)
+        doc.setTextColor(148, 163, 184) // slate-400
+        const cleanSublabel = fitText(doc, r.sublabel, colLabelW - 6)
+        doc.text(cleanSublabel, xLabel + 3, y + 8.5)
+      }
       
       setDark()
       doc.setFont("helvetica", "bold")
-      doc.text(r.a, xA + colAW - 3, y + 5.5, { align: "right" })
-      doc.text(r.b, xB + colBW - 3, y + 5.5, { align: "right" })
+      doc.setFontSize(8)
+      const valY = y + (r.sublabel ? 6 : 5.5)
+      doc.text(r.a, xA + colAW - 3, valY, { align: "right" })
+      doc.text(r.b, xB + colBW - 3, valY, { align: "right" })
       
       if (r.deltaNum !== 0) {
         setDeltaColor(r.deltaNum, r.higherIsBetter)
       } else {
         setGray()
       }
-      doc.text(r.deltaStr, xDelta + colDeltaW - 3, y + 5.5, { align: "right" })
+      doc.text(r.deltaStr, xDelta + colDeltaW - 3, valY, { align: "right" })
       
       doc.setDrawColor(241, 245, 249)
       doc.setLineWidth(0.2)
-      doc.line(LM, y + 8, RM, y + 8)
+      doc.line(LM, y + rowHeight, RM, y + rowHeight)
       
-      y += 8
+      y += rowHeight
     })
     
     y += 8
@@ -394,8 +424,9 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
     },
     {
       label: tCompare("rowBottleneck"),
-      a: `${formatNumber(kpisA.bottleneckCycleMin, locale, 1)} ${tCompare("minPerUnit")} (${kpisA.bottleneckStationName})`,
-      b: `${formatNumber(kpisB.bottleneckCycleMin, locale, 1)} ${tCompare("minPerUnit")} (${kpisB.bottleneckStationName})`,
+      sublabel: `A: ${kpisA.bottleneckStationName} | B: ${kpisB.bottleneckStationName}`,
+      a: `${formatNumber(kpisA.bottleneckCycleMin, locale, 1)} ${tCompare("minPerUnit")}`,
+      b: `${formatNumber(kpisB.bottleneckCycleMin, locale, 1)} ${tCompare("minPerUnit")}`,
       deltaNum: kpisB.bottleneckCycleMin - kpisA.bottleneckCycleMin,
       deltaStr: `${formatNumber(kpisB.bottleneckCycleMin - kpisA.bottleneckCycleMin, locale, 1)} ${tCompare("minPerUnit")}`,
       higherIsBetter: false
@@ -500,18 +531,27 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
 
   drawComparisonTable(tCompare("mcTableTitle"), tCompare("mcDisclaimer"), mcRows)
 
-  // Add footers loop
+  // Add footers loop only for content pages (starting from page 2)
   const totalPages = doc.getCurrentPageInfo().pageNumber
-  for (let i = 2; i <= totalPages; i++) {
-    doc.setPage(i)
-    drawFooter(i, totalPages)
+  const contentPageCount = totalPages - 1
+  for (let pageIdx = 2; pageIdx <= totalPages; pageIdx++) {
+    doc.setPage(pageIdx)
+    const displayPageNum = pageIdx - 1
+    drawFooter(displayPageNum, contentPageCount)
   }
-  
-  // Back to cover to draw footer
-  doc.setPage(1)
-  drawFooter(1, totalPages)
 
-  // Save the file
-  const filename = `Takt_Comparative_${dateCompact}.pdf`
+  // Sanitized scenario name for PDF filename
+  const sanitize = (name: string) =>
+    name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9_-]/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/^_+|_+$/g, "")
+
+  const nameA = sanitize(scenarioA.name)
+  const nameB = sanitize(scenarioB.name)
+
+  const filename = `Takt_Comparativa_${nameA}_vs_${nameB}_${dateCompact}.pdf`
   doc.save(filename)
 }
