@@ -18,40 +18,38 @@ beforeEach(() => {
 })
 
 describe("estado inicial / resetToPreset", () => {
-  it("arranca con dos escenarios, activo A, comparación A/B y sin snapshots", () => {
+  it("arranca limpio sin escenarios precreados y sin snapshots", () => {
     const s = state()
-    expect(s.scenarios).toHaveLength(2)
-    expect(s.activeScenarioId).toBe(s.scenarios[0].id)
-    expect(s.compareScenarioAId).toBe(s.scenarios[0].id)
-    expect(s.compareScenarioBId).toBe(s.scenarios[1].id)
+    expect(s.scenarios).toHaveLength(0)
+    expect(s.activeScenarioId).toBe("")
     expect(s.snapshots).toHaveLength(0)
-    expect(s.scenarios[0].stations.length).toBeGreaterThan(0)
   })
 
-  it("resetToPreset restaura el estado inicial tras modificaciones", () => {
+  it("resetToPreset restaura el estado inicial limpio tras modificaciones", () => {
     state().addScenario("Extra")
-    expect(state().scenarios).toHaveLength(3)
+    expect(state().scenarios).toHaveLength(1)
     state().resetToPreset()
-    expect(state().scenarios).toHaveLength(2)
+    expect(state().scenarios).toHaveLength(0)
   })
 })
 
 describe("escenarios", () => {
-  it("addScenario crea escenario vacío sin cambiar el activo", () => {
-    const activeId = state().activeScenarioId
+  it("addScenario crea escenario vacío y lo activa si era el primero", () => {
     state().addScenario("Nuevo")
     const created = state().scenarios.at(-1)!
-    expect(state().scenarios).toHaveLength(3)
+    expect(state().scenarios).toHaveLength(1)
     expect(created.name).toBe("Nuevo")
     expect(created.stations).toHaveLength(0)
-    expect(state().activeScenarioId).toBe(activeId)
+    expect(state().activeScenarioId).toBe(created.id)
   })
 
   it("removeScenario elimina y reasigna el activo si era el eliminado", () => {
+    state().addScenario("A")
+    state().addScenario("B")
     const first = state().scenarios[0]
-    state().removeScenario(first.id)
+    state().removeScenario(state().activeScenarioId)
     expect(state().scenarios).toHaveLength(1)
-    expect(state().activeScenarioId).toBe(state().scenarios[0].id)
+    expect(state().activeScenarioId).toBe(first.id)
   })
 
   it("removeScenario mantiene el activo si elimina otro", () => {

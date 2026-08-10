@@ -649,7 +649,10 @@
       "delete": "Delete",
       "deleteConfirm": "Delete scenario \"{name}\"? This action cannot be undone.",
       "share": "Share",
-      "copied": "Link Copied!"
+      "copied": "Link Copied!",
+      "emptyStateTitle": "No Active Scenarios",
+      "emptyStateSubtitle": "To start simulating and optimizing your production line, create your first scenario or load a predefined industry template.",
+      "createFirstScenario": "Create My First Scenario"
     },
     "onboarding": {
       "title": "New Scenario Created!",

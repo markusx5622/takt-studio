@@ -124,7 +124,38 @@ export default function ScenarioControls() {
   }
 
   if (!hydrated) return <ScenarioControlsSkeleton />
-  if (!scenario) return null
+  if (!scenario) {
+    return (
+      <Card className="border-dashed border-2 border-blue-200/80 bg-gradient-to-br from-blue-50/40 via-background to-slate-50/50 p-8 sm:p-12 text-center shadow-xs">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100/80 text-blue-600 mb-4 shadow-2xs">
+          <Sparkles className="h-7 w-7" />
+        </div>
+        <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+          {t("emptyStateTitle")}
+        </h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground leading-relaxed">
+          {t("emptyStateSubtitle")}
+        </p>
+        <div className="mt-6 flex items-center justify-center">
+          <Button
+            size="lg"
+            onClick={handleCreateNewScenario}
+            className="gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 shadow-md cursor-pointer"
+          >
+            <Plus className="h-5 w-5" />
+            <span>{t("createFirstScenario")}</span>
+          </Button>
+        </div>
+
+        <NewScenarioModal
+          isOpen={showOnboarding}
+          onClose={() => setShowOnboarding(false)}
+          onSelectPreset={handleDirectPresetLoad}
+          locale={locale}
+        />
+      </Card>
+    )
+  }
 
   function handleDemandChange(value: string) {
     const n = parseInt(value, 10)

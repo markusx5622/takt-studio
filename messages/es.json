@@ -649,7 +649,10 @@
       "delete": "Eliminar",
       "deleteConfirm": "¿Eliminar el escenario \"{name}\"? Esta acción no se puede deshacer.",
       "share": "Compartir",
-      "copied": "¡Enlace copiado!"
+      "copied": "¡Enlace copiado!",
+      "emptyStateTitle": "Sin escenarios activos",
+      "emptyStateSubtitle": "Para comenzar a simular y optimizar tu línea de producción, crea tu primer escenario o carga una plantilla industrial predefinida.",
+      "createFirstScenario": "Crear mi primer escenario"
     },
     "onboarding": {
       "title": "¡Nuevo Escenario Creado!",
