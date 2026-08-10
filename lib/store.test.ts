@@ -52,14 +52,13 @@ describe("estado inicial / resetToPreset", () => {
 })
 
 describe("escenarios", () => {
-  it("addScenario crea escenario vacío sin cambiar el activo si ya existía", () => {
-    const activeId = state().activeScenarioId
+  it("addScenario crea escenario vacío y lo activa", () => {
     state().addScenario("Nuevo")
     const created = state().scenarios.at(-1)!
     expect(state().scenarios).toHaveLength(3)
     expect(created.name).toBe("Nuevo")
     expect(created.stations).toHaveLength(0)
-    expect(state().activeScenarioId).toBe(activeId)
+    expect(state().activeScenarioId).toBe(created.id)
   })
 
   it("removeScenario elimina y reasigna el activo si era el eliminado", () => {

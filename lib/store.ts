@@ -67,7 +67,7 @@ export const useTaktStore = create<TaktStore>()(
         const scenario = createEmptyScenario(name)
         set((state) => ({
           scenarios: [...state.scenarios, scenario],
-          activeScenarioId: state.activeScenarioId || scenario.id,
+          activeScenarioId: scenario.id,
         }))
       },
 

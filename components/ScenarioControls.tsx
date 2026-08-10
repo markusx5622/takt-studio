@@ -310,11 +310,11 @@ export default function ScenarioControls() {
             {t("new")}
           </Button>
 
-          {scenarios.length > 1 && (
+          {scenarios.length >= 1 && (
             <Button
               variant="outline"
               size="sm"
-              className="text-destructive hover:text-destructive"
+              className="text-destructive hover:text-destructive cursor-pointer"
               onClick={handleDelete}
             >
               <Trash2 className="mr-2 h-4 w-4" />
