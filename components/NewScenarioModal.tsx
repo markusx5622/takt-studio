@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { createPortal } from "react-dom"
 import { useTranslations } from "next-intl"
+import { useHydrated } from "@/lib/store"
 import { type IndustrySectorKey, INDUSTRY_PRESETS_DATA } from "@/lib/presets"
 import { Button } from "@/components/ui/button"
 import { Sparkles, Factory, Layers, Car, Cpu, Package, Droplet, Settings, ArrowRight, X } from "lucide-react"
@@ -32,8 +34,9 @@ export default function NewScenarioModal({
 }: NewScenarioModalProps) {
   const t = useTranslations("simulator.onboarding")
   const [selectedSector, setSelectedSector] = useState<IndustrySectorKey>("monobath")
+  const hydrated = useHydrated()
 
-  if (!isOpen) return null
+  if (!isOpen || !hydrated) return null
 
   const isEn = locale.toLowerCase().startsWith("en")
   const sectors = Object.entries(INDUSTRY_PRESETS_DATA) as [IndustrySectorKey, typeof INDUSTRY_PRESETS_DATA[IndustrySectorKey]][]
@@ -43,8 +46,8 @@ export default function NewScenarioModal({
     onClose()
   }
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-200">
       <div 
         className="relative w-full max-w-xl rounded-2xl border bg-background p-6 sm:p-8 shadow-2xl space-y-6 animate-in zoom-in-95 duration-200"
         role="dialog"
@@ -142,6 +145,7 @@ export default function NewScenarioModal({
           {t("tip")}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

@@ -74,10 +74,11 @@ export default function ScenarioControls() {
     if (!presetData) return
 
     const isEn = locale.toLowerCase().startsWith("en")
-    const confirmName = isEn ? presetData.nameEn : presetData.nameEs
-    if (confirm(tStations("presetConfirm", { name: confirmName }))) {
+    const presetName = isEn ? presetData.nameEn : presetData.nameEs
+    if (confirm(tStations("presetConfirm", { name: presetName }))) {
       const newStations = createPresetFromSector(sector, locale)
       updateScenario(scenario.id, {
+        name: presetName,
         stations: newStations,
         demandPerDay: presetData.demandPerDay,
         shiftHours: presetData.shiftHours,
@@ -114,8 +115,12 @@ export default function ScenarioControls() {
     const presetData = INDUSTRY_PRESETS_DATA[sector]
     if (!presetData) return
 
+    const isEn = locale.toLowerCase().startsWith("en")
+    const presetName = isEn ? presetData.nameEn : presetData.nameEs
+
     const newStations = createPresetFromSector(sector, locale)
     updateScenario(scenario.id, {
+      name: presetName,
       stations: newStations,
       demandPerDay: presetData.demandPerDay,
       shiftHours: presetData.shiftHours,
