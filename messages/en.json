@@ -1066,6 +1066,11 @@
   },
   "compare": {
     "title": "Compare scenarios",
+    "quickCompareTitle": "Quick Comparison (A vs B)",
+    "secChartTitle": "Takt Time Diagrams",
+    "chartLegendNormal": "Station (Effective Cycle)",
+    "chartLegendBottleneck": "Bottleneck",
+    "chartLegendTakt": "Takt Time ({value})",
     "subtitleShort": "Compare two configurations side by side.",
     "subtitleFull": "Compare metrics, charts and diagrams between two scenarios in parallel.",
     "emptyText": "You need at least 2 scenarios to compare.",

@@ -2,9 +2,11 @@ import { useTaktStore } from "@/lib/store"
 import {
   calculateAllKPIs,
   calculateEconomicKPIs,
+  getStationsWithEffective
 } from "@/lib/calculations"
 import { runMonteCarlo } from "@/lib/monte-carlo"
 import { LOGO_REPORT_BASE64 } from "@/lib/logo-base64"
+import type { KPIs, Scenario } from "@/types"
 
 const APP_VERSION = "0.1.0"
 
@@ -289,7 +291,7 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
   drawHeaderRightMetadata(13)
   doc.setDrawColor(226, 232, 240)
   doc.setLineWidth(0.3)
-  doc.line(LM, 18, RM, 18)
+    doc.line(LM, 18, RM, 18)
 
   setDark()
   doc.setFont("helvetica", "bold")
@@ -297,6 +299,244 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
   doc.text(tCompare("pdfReportTitle"), LM, 25)
 
   y = 35
+
+  function fitText(text: string, maxWidth: number): string {
+    if (!text) return ""
+    if (doc.getTextWidth(text) <= maxWidth) return text
+    let truncated = text
+    while (truncated.length > 0 && doc.getTextWidth(truncated + "…") > maxWidth) {
+      truncated = truncated.slice(0, -1)
+    }
+    return truncated + "…"
+  }
+
+  // ── 0. COMPARATIVA RÁPIDA (MINI KPIS) ───────────────────────────────────────
+  
+  function drawMiniKpis() {
+    sectionTitle(tCompare("quickCompareTitle"))
+    
+    const gap = 4
+    const cols = 5
+    const cardW = (CW - (cols - 1) * gap) / cols
+    const cardH = 24
+    
+    const kpiData = [
+      {
+        title: "Takt Time",
+        unit: tCompare("minPerUnit"),
+        valA: kpisA.taktTimeMin,
+        valB: kpisB.taktTimeMin,
+        delta: kpisB.taktTimeMin - kpisA.taktTimeMin,
+        higherIsBetter: false,
+        fmt: (v: number) => formatNumber(v, locale, 1)
+      },
+      {
+        title: "Throughput",
+        unit: tCompare("unitsPerDay"),
+        valA: kpisA.throughputPerDay,
+        valB: kpisB.throughputPerDay,
+        delta: kpisB.throughputPerDay - kpisA.throughputPerDay,
+        higherIsBetter: true,
+        fmt: (v: number) => formatNumber(v, locale, 0)
+      },
+      {
+        title: tCompare("rowBottleneck"),
+        unit: tCompare("minPerUnit"),
+        valA: kpisA.bottleneckCycleMin,
+        valB: kpisB.bottleneckCycleMin,
+        delta: kpisB.bottleneckCycleMin - kpisA.bottleneckCycleMin,
+        higherIsBetter: false,
+        fmt: (v: number) => formatNumber(v, locale, 1)
+      },
+      {
+        title: tCompare("rowBalancing"),
+        unit: "%",
+        valA: kpisA.balancingEfficiency * 100,
+        valB: kpisB.balancingEfficiency * 100,
+        delta: (kpisB.balancingEfficiency - kpisA.balancingEfficiency) * 100,
+        higherIsBetter: true,
+        fmt: (v: number) => formatNumber(v, locale, 1)
+      },
+      {
+        title: "Lead Time",
+        unit: tCompare("minUnit"),
+        valA: kpisA.leadTimeMin,
+        valB: kpisB.leadTimeMin,
+        delta: kpisB.leadTimeMin - kpisA.leadTimeMin,
+        higherIsBetter: false,
+        fmt: (v: number) => formatNumber(v, locale, 1)
+      }
+    ]
+
+    for (let i = 0; i < cols; i++) {
+      const data = kpiData[i]
+      const bx = LM + i * (cardW + gap)
+      const by = y
+      
+      doc.setFillColor(255, 255, 255)
+      doc.setDrawColor(226, 232, 240)
+      doc.setLineWidth(0.3)
+      doc.roundedRect(bx, by, cardW, cardH, 2, 2, "FD")
+      
+      // Title
+      setGray()
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(7)
+      const titleClean = fitText(data.title, cardW - 4)
+      doc.text(titleClean, bx + 2, by + 4.5)
+      
+      // Values B
+      setDark()
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(10.5)
+      doc.text(`${data.fmt(data.valB)}`, bx + cardW / 2, by + 10.5, { align: "center" })
+      
+      // Values A vs B string
+      setGray()
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(6.5)
+      doc.text(`A: ${data.fmt(data.valA)} | B: ${data.fmt(data.valB)}`, bx + cardW / 2, by + 15, { align: "center" })
+      
+      // Delta
+      if (Math.abs(data.delta) > 0.01) {
+        setDeltaColor(data.delta, data.higherIsBetter)
+      } else {
+        setGray()
+      }
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(7.5)
+      const sign = data.delta > 0 ? "+" : ""
+      doc.text(`${sign}${data.fmt(data.delta)}`, bx + cardW / 2, by + 20, { align: "center" })
+    }
+    
+    y += cardH + 8
+  }
+
+  // ── 0.5 DIAGRAMAS TAKT TIME ────────────────────────────────────────────────
+  
+  function drawTaktChart(scenario: Scenario, kpis: KPIs, label: string) {
+    checkPageBreak(50)
+    
+    const effectiveStations = getStationsWithEffective(scenario.stations, kpis.taktTimeMin)
+    
+    setDark()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(8)
+    doc.text(label, LM, y)
+    y += 4
+
+    const chartH = 28
+    const chartW = CW
+    const chartY = y
+    
+    doc.setFillColor(248, 250, 252)
+    doc.setDrawColor(226, 232, 240)
+    doc.setLineWidth(0.3)
+    doc.rect(LM, chartY, chartW, chartH, "FD")
+    
+    const maxCycle = Math.max(...effectiveStations.map((s) => s.effectiveCycleMin), kpis.taktTimeMin, 1)
+    const yMaxScale = maxCycle * 1.25
+    
+    const axisX = LM + 12
+    const axisBottomY = chartY + chartH - 5
+    const axisTopY = chartY + 4
+    const chartPlotH = axisBottomY - axisTopY
+    
+    doc.setDrawColor(240, 242, 245)
+    doc.setLineWidth(0.1)
+    const gridSteps = [0.25, 0.5, 0.75]
+    for (const step of gridSteps) {
+      const gridY = axisBottomY - chartPlotH * step
+      doc.line(axisX, gridY, LM + chartW - 4, gridY)
+    }
+    
+    doc.setDrawColor(203, 213, 225)
+    doc.setLineWidth(0.3)
+    doc.line(axisX, axisTopY, axisX, axisBottomY)
+    doc.line(axisX, axisBottomY, LM + chartW - 4, axisBottomY)
+    
+    setGray()
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(6.5)
+    doc.text(tCompare("minUnit") || "min", LM + 2, axisTopY - 1)
+    
+    const taktY = axisBottomY - (kpis.taktTimeMin / yMaxScale) * chartPlotH
+    doc.setDrawColor(220, 38, 38)
+    doc.setLineWidth(0.4)
+    doc.setLineDashPattern([1.5, 1.5], 0)
+    doc.line(axisX, taktY, LM + chartW - 4, taktY)
+    doc.setLineDashPattern([], 0)
+    
+    const numStations = effectiveStations.length
+    const availW = chartW - 20
+    const barSpacing = Math.max(1.5, Math.min(6, (availW / numStations) * 0.25))
+    const barW = Math.max(3, Math.min(16, (availW - barSpacing * (numStations + 1)) / numStations))
+    
+    for (let i = 0; i < numStations; i++) {
+      const st = effectiveStations[i]
+      const bx = axisX + barSpacing + i * (barW + barSpacing)
+      const bHeight = Math.max(1, (st.effectiveCycleMin / yMaxScale) * chartPlotH)
+      const by = axisBottomY - bHeight
+      
+      if (st.isBottleneck) {
+        doc.setFillColor(220, 38, 38)
+        doc.setDrawColor(185, 28, 28)
+      } else {
+        doc.setFillColor(30, 64, 175)
+        doc.setDrawColor(29, 78, 216)
+      }
+      doc.setLineWidth(0.2)
+      doc.rect(bx, by, barW, bHeight, "FD")
+      
+      setDark()
+      doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
+      doc.setFontSize(5.5)
+      doc.text(`${st.effectiveCycleMin.toFixed(1)}`, bx + barW / 2, by - 1, { align: "center" })
+      
+      setGray()
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(6)
+      doc.text(`#${i + 1}`, bx + barW / 2, axisBottomY + 3.5, { align: "center" })
+    }
+    
+    y = chartY + chartH + 4
+    
+    const legendY = y
+    doc.setFillColor(30, 64, 175)
+    doc.rect(LM + 4, legendY, 2.5, 2.5, "F")
+    setGray()
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(6.5)
+    const legNormal = fitText(tCompare("chartLegendNormal") || "Estación (Ciclo Efectivo)", 40)
+    doc.text(legNormal, LM + 8, legendY + 2)
+    
+    const legendOffset1 = LM + 8 + doc.getTextWidth(legNormal) + 8
+    doc.setFillColor(220, 38, 38)
+    doc.rect(legendOffset1, legendY, 2.5, 2.5, "F")
+    const legBottleneck = fitText(tCompare("chartLegendBottleneck") || "Cuello de Botella", 40)
+    doc.text(legBottleneck, legendOffset1 + 4, legendY + 2)
+    
+    const legendOffset2 = legendOffset1 + 4 + doc.getTextWidth(legBottleneck) + 8
+    if (legendOffset2 + 25 <= RM) {
+      doc.setDrawColor(220, 38, 38)
+      doc.setLineWidth(0.4)
+      doc.setLineDashPattern([1.5, 1.5], 0)
+      doc.line(legendOffset2, legendY + 1.2, legendOffset2 + 6, legendY + 1.2)
+      doc.setLineDashPattern([], 0)
+      const taktLegendStr = fitText(tCompare("chartLegendTakt", { value: kpis.taktTimeMin.toFixed(1) }) || `Takt Time (${kpis.taktTimeMin.toFixed(1)})`, RM - (legendOffset2 + 8))
+      doc.text(taktLegendStr, legendOffset2 + 8, legendY + 2)
+    }
+    
+    y += 8
+  }
+
+  drawMiniKpis()
+  
+  sectionTitle(tCompare("secChartTitle"))
+  drawTaktChart(scenarioA, kpisA, `Escenario A: ${scenarioA.name}`)
+  drawTaktChart(scenarioB, kpisB, `Escenario B: ${scenarioB.name}`)
+  
+  y += 6
 
   // ── Helper to draw a Comparison Table ───────────────────────────────────────
   

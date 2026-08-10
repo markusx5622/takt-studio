@@ -1066,6 +1066,11 @@
   },
   "compare": {
     "title": "Comparar escenarios",
+    "quickCompareTitle": "Comparativa rápida (A vs B)",
+    "secChartTitle": "Diagramas de Takt Time",
+    "chartLegendNormal": "Estación (Ciclo Efectivo)",
+    "chartLegendBottleneck": "Cuello de Botella",
+    "chartLegendTakt": "Takt Time ({value})",
     "subtitleShort": "Compara dos configuraciones lado a lado.",
     "subtitleFull": "Compara métricas, gráficos y diagramas entre dos escenarios en paralelo.",
     "emptyText": "Necesitas al menos 2 escenarios para comparar.",
