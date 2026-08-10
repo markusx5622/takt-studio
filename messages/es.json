@@ -1115,7 +1115,10 @@
     "rowP5": "Percentil P5 (Escenario pesimista)",
     "rowP50": "Percentil P50 (Mediana simulada)",
     "rowP95": "Percentil P95 (Escenario optimista)",
-    "rowMean": "Throughput medio simulado (μ)"
+    "rowMean": "Throughput medio simulado (μ)",
+    "pdfButton": "Exportar a PDF",
+    "pdfGenerating": "Generando PDF...",
+    "pdfReportTitle": "Análisis Comparativo"
   },
   "history": {
     "title": "Historial de escenarios",

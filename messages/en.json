@@ -1115,7 +1115,10 @@
     "rowP5": "P5 Percentile (Pessimistic scenario)",
     "rowP50": "P50 Percentile (Simulated median)",
     "rowP95": "P95 Percentile (Optimistic scenario)",
-    "rowMean": "Simulated mean throughput (μ)"
+    "rowMean": "Simulated mean throughput (μ)",
+    "pdfButton": "Export to PDF",
+    "pdfGenerating": "Generating PDF...",
+    "pdfReportTitle": "Comparative Analysis"
   },
   "history": {
     "title": "Scenario history",

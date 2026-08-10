@@ -30,6 +30,7 @@ import type { KPIs, Scenario } from "@/types"
 const TaktChart = dynamic(() => import("@/components/TaktChart"), { ssr: false })
 const LineDiagram = dynamic(() => import("@/components/LineDiagram"), { ssr: false })
 import ConsultingBackground from "@/components/ConsultingBackground"
+import ExportComparePdfButton from "@/components/ExportComparePdfButton"
 
 import {
   Select,
@@ -394,11 +395,14 @@ export default function CompararPage() {
     <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
       <ConsultingBackground />
       <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 pt-2 pb-24 md:pb-8">
-        <div className="page-header-rule pb-4 mb-2">
-          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("subtitleFull")}
-          </p>
+        <div className="page-header-rule pb-4 mb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+            <p className="text-sm text-muted-foreground">
+              {t("subtitleFull")}
+            </p>
+          </div>
+          <ExportComparePdfButton scenarioAId={scenarioA.id} scenarioBId={scenarioB.id} />
         </div>
 
         {/* Selectors */}
