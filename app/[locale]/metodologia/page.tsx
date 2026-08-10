@@ -4,7 +4,7 @@ import { BlockMath } from "react-katex"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import ConsultingBackground from "@/components/ConsultingBackground"
-import TaktPlayground from "@/components/TaktPlayground"
+import TaktPlayground, { type PlaygroundLabels } from "@/components/TaktPlayground"
 import {
   BookOpen,
   Clock,
@@ -65,7 +65,7 @@ export default async function MetodologiaPage({
   const costItems = t.raw("costItems") as { label: string; formula: string }[]
   const limits = t.raw("limits") as { label: string; text: string }[]
   const noteItems = t.raw("noteItems") as string[]
-  const playgroundLabels = t.raw("playground") as any
+  const playgroundLabels = t.raw("playground") as PlaygroundLabels
 
   return (
     <div className="relative flex min-h-[calc(100vh-4rem)] flex-col bg-slate-50/50">
