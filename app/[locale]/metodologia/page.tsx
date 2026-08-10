@@ -217,11 +217,11 @@ export default async function MetodologiaPage({
               </div>
               <div>
                 <h2 className="text-xl font-bold tracking-tight">{t("limitsTitle")}</h2>
-                <p className="text-xs text-muted-foreground">Alcance del modelo, condiciones de contorno y premisas de cálculo</p>
+                <p className="text-xs text-muted-foreground">{t("limitsSubtitle")}</p>
               </div>
             </div>
             <Badge variant="outline" className="hidden sm:inline-flex bg-blue-50/50 border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1">
-              6 Alcances de Modelo
+              {t("limitsBadge")}
             </Badge>
           </div>
 

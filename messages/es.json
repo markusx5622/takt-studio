@@ -574,7 +574,9 @@
     "mcPercentiles": "A partir de las 2.000 iteraciones se extraen los percentiles P10 (escenario conservador), P50 (mediana esperada) y P90 (escenario optimista), ofreciendo una matriz de riesgo probabilístico del Throughput real.",
     "sensitivityTitle": "Laboratorio de Sensibilidad",
     "sensitivityText": "Permite proyectar el comportamiento de la línea ante barridos continuos de demanda (±50%) y variaciones de mano de obra, identificando visualmente los puntos de inflexión donde la línea entra en déficit.",
-    "limitsTitle": "Supuestos y limitaciones",
+    "limitsTitle": "Supuestos y limitaciones del modelo",
+    "limitsSubtitle": "Alcance del modelo, condiciones de contorno y premisas de cálculo",
+    "limitsBadge": "6 Alcances de Modelo",
     "limits": [
       {
         "label": "Dualidad Determinista / Estocástica",

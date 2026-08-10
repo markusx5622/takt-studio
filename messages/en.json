@@ -575,6 +575,8 @@
     "sensitivityTitle": "Sensitivity Laboratory",
     "sensitivityText": "Projects line performance across continuous demand sweeps (±50%) and labor variations, visually highlighting the inflection points where the line enters deficit.",
     "limitsTitle": "Assumptions & Limitations",
+    "limitsSubtitle": "Model scope, boundary conditions, and calculation premises",
+    "limitsBadge": "6 Model Scopes",
     "limits": [
       {
         "label": "Deterministic / Stochastic Duality",
