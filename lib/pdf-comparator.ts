@@ -32,16 +32,6 @@ function formatNumber(val: number, locale: string, fractionDigits = 0): string {
   }).format(val)
 }
 
-function fitText(doc: any, text: string, maxWidth: number): string {
-  if (!text) return ""
-  if (doc.getTextWidth(text) <= maxWidth) return text
-  let truncated = text
-  while (truncated.length > 0 && doc.getTextWidth(truncated + "…") > maxWidth) {
-    truncated = truncated.slice(0, -1)
-  }
-  return truncated ? truncated + "…" : ""
-}
-
 // ─── Types & i18n Interfaces ──────────────────────────────────────────────────
 
 export type PdfTranslator = (key: string, values?: Record<string, string | number>) => string
