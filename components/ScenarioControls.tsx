@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Copy, Plus, Trash2, Share2, Check, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ExportPdfButton from "@/components/ExportPdfButton"
+import NewScenarioModal from "@/components/NewScenarioModal"
 import {
   Select,
   SelectContent,
@@ -65,6 +66,7 @@ export default function ScenarioControls() {
   const removeScenario = useTaktStore((s) => s.removeScenario)
 
   const [copied, setCopied] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   function handleLoadPreset(sector: IndustrySectorKey) {
     if (!scenario) return
@@ -101,6 +103,26 @@ export default function ScenarioControls() {
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
+
+  function handleCreateNewScenario() {
+    addScenario(t("newScenarioName"))
+    setShowOnboarding(true)
+  }
+
+  function handleDirectPresetLoad(sector: IndustrySectorKey) {
+    if (!scenario) return
+    const presetData = INDUSTRY_PRESETS_DATA[sector]
+    if (!presetData) return
+
+    const newStations = createPresetFromSector(sector, locale)
+    updateScenario(scenario.id, {
+      stations: newStations,
+      demandPerDay: presetData.demandPerDay,
+      shiftHours: presetData.shiftHours,
+      shiftsPerDay: presetData.shiftsPerDay,
+    })
+  }
+
   if (!hydrated) return <ScenarioControlsSkeleton />
   if (!scenario) return null
 
@@ -246,7 +268,7 @@ export default function ScenarioControls() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => addScenario(t("newScenarioName"))}
+            onClick={handleCreateNewScenario}
           >
             <Plus className="mr-2 h-4 w-4" />
             {t("new")}
@@ -273,6 +295,13 @@ export default function ScenarioControls() {
           </div>
         </div>
       </CardContent>
+
+      <NewScenarioModal
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onSelectPreset={handleDirectPresetLoad}
+        locale={locale}
+      />
     </Card>
   )
 }

@@ -651,6 +651,14 @@
       "share": "Compartir",
       "copied": "¡Enlace copiado!"
     },
+    "onboarding": {
+      "title": "¡Nuevo Escenario Creado!",
+      "subtitle": "Has iniciado una nueva configuración de línea. Para obtener resultados inmediatos y probar la potencia del simulador, te recomendamos cargar una plantilla:",
+      "presetHeading": "Selecciona una plantilla de industria:",
+      "loadPresetBtn": "Cargar plantilla seleccionada",
+      "manualBtn": "Empezar desde cero (Manual)",
+      "tip": "💡 Tip: En cualquier momento podrás cambiar de plantilla o ajustar los parámetros y estaciones desde el panel de control."
+    },
     "stations": {
       "title": "Estaciones de la línea",
       "countBadge": "{count} estaciones",

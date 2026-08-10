@@ -636,20 +636,28 @@
     "title": "Simulator",
     "subtitle": "Configure the line, adjust parameters and watch the KPIs in real time.",
     "controls": {
-      "title": "Scenario parameters",
-      "nameLabel": "Scenario name",
-      "namePlaceholder": "Scenario name",
-      "demandLabel": "Daily demand (units/day)",
-      "hoursLabel": "Hours per shift",
-      "shiftsLabel": "Shifts per day",
+      "title": "Scenario Parameters",
+      "nameLabel": "Scenario Name",
+      "namePlaceholder": "Scenario Name",
+      "demandLabel": "Daily Demand (units/day)",
+      "hoursLabel": "Hours per Shift",
+      "shiftsLabel": "Shifts per Day",
       "duplicate": "Duplicate",
-      "new": "New scenario",
-      "newScenarioName": "New scenario",
+      "new": "New Scenario",
+      "newScenarioName": "New Scenario",
       "copySuffix": "(copy)",
       "delete": "Delete",
       "deleteConfirm": "Delete scenario \"{name}\"? This action cannot be undone.",
       "share": "Share",
-      "copied": "Link copied!"
+      "copied": "Link Copied!"
+    },
+    "onboarding": {
+      "title": "New Scenario Created!",
+      "subtitle": "You have initialized a new line configuration. To get instant results and test Takt Studio's simulation engine, we recommend loading a template:",
+      "presetHeading": "Select an industry template:",
+      "loadPresetBtn": "Load Selected Template",
+      "manualBtn": "Start from Scratch (Manual)",
+      "tip": "💡 Tip: You can always change the template or adjust parameters and stations later from the control panel."
     },
     "stations": {
       "title": "Line stations",
