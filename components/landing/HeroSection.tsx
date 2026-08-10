@@ -61,22 +61,17 @@ export default function HeroSection() {
       </Button>
     </div>
 
-    {/* Metadata strip */}
-    <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-foreground/60">
-      <span className="inline-flex items-center gap-1.5">
-        <CheckCircle2 className="h-3 w-3" />
-        {badges[0]}
-      </span>
-      <span aria-hidden="true" className="hidden h-px w-4 bg-border sm:block" />
-      <span className="inline-flex items-center gap-1.5">
-        <CheckCircle2 className="h-3 w-3" />
-        {badges[1]}
-      </span>
-      <span aria-hidden="true" className="hidden h-px w-4 bg-border sm:block" />
-      <span className="inline-flex items-center gap-1.5">
-        <CheckCircle2 className="h-3 w-3" />
-        {badges[2]}
-      </span>
+    {/* Metadata strip (Micro-Badges) */}
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 text-xs">
+      {badges.map((badge, i) => (
+        <span
+          key={i}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/60 px-3.5 py-1.5 text-foreground/80 shadow-2xs backdrop-blur-md transition-colors hover:border-emerald-500/40 hover:bg-background/90"
+        >
+          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+          <span className="font-medium">{badge}</span>
+        </span>
+      ))}
     </div>
 
     {/* UI Mockup */}
