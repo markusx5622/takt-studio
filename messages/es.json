@@ -315,13 +315,13 @@
         },
         {
           "phase": "Fase 3",
-          "status": "Q3 2026",
+          "status": "Visión 2027",
           "title": "IoT Sync",
           "desc": "Conectividad con sensores en planta para captura de tiempos de ciclo en tiempo real."
         },
         {
           "phase": "Fase 4",
-          "status": "Visión 2027",
+          "status": "A futuro",
           "title": "Takt Cloud AI",
           "desc": "Optimización de líneas basada en IA y colaboración multi-usuario en la nube."
         }
