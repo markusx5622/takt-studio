@@ -52,22 +52,20 @@ describe("estado inicial / resetToPreset", () => {
 })
 
 describe("escenarios", () => {
-  it("addScenario crea escenario vacío y lo activa si era el primero", () => {
+  it("addScenario crea escenario vacío", () => {
     state().addScenario("Nuevo")
     const created = state().scenarios.at(-1)!
-    expect(state().scenarios).toHaveLength(1)
+    expect(state().scenarios).toHaveLength(3)
     expect(created.name).toBe("Nuevo")
     expect(created.stations).toHaveLength(0)
     expect(state().activeScenarioId).toBe(created.id)
   })
 
   it("removeScenario elimina y reasigna el activo si era el eliminado", () => {
-    state().addScenario("A")
-    state().addScenario("B")
     const first = state().scenarios[0]
-    state().removeScenario(state().activeScenarioId)
+    state().removeScenario(first.id)
     expect(state().scenarios).toHaveLength(1)
-    expect(state().activeScenarioId).toBe(first.id)
+    expect(state().activeScenarioId).toBe(state().scenarios[0].id)
   })
 
   it("removeScenario mantiene el activo si elimina otro", () => {
