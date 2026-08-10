@@ -11,6 +11,13 @@ import { Input } from "@/components/ui/input"
 import { Copy, Plus, Trash2, Share2, Check, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ExportPdfButton from "@/components/ExportPdfButton"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -124,28 +131,27 @@ export default function ScenarioControls() {
           <span className="text-xs font-medium text-muted-foreground hidden sm:inline">
             {tStations("presetLabel")}
           </span>
-          <select
-            defaultValue=""
-            onChange={(e) => {
-              const val = e.target.value as IndustrySectorKey
+          <Select
+            value=""
+            onValueChange={(val) => {
               if (val) {
-                handleLoadPreset(val)
-                e.target.value = ""
+                handleLoadPreset(val as IndustrySectorKey)
               }
             }}
-            className="h-8 rounded-md border border-slate-200/80 bg-background px-2.5 text-xs font-medium text-foreground shadow-2xs focus:outline-none focus:ring-1 focus:ring-primary"
           >
-            <option value="" disabled>
-              {tStations("presetSelectPlaceholder")}
-            </option>
-            <option value="monobath">{tStations("presetMonobath")}</option>
-            <option value="ceramics">{tStations("presetCeramics")}</option>
-            <option value="automotive">{tStations("presetAutomotive")}</option>
-            <option value="electronics">{tStations("presetElectronics")}</option>
-            <option value="logistics">{tStations("presetLogistics")}</option>
-            <option value="food_pharma">{tStations("presetFoodPharma")}</option>
-            <option value="machinery">{tStations("presetMachinery")}</option>
-          </select>
+            <SelectTrigger className="h-8 w-[210px] text-xs font-medium">
+              <SelectValue placeholder={tStations("presetSelectPlaceholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="monobath">{tStations("presetMonobath")}</SelectItem>
+              <SelectItem value="ceramics">{tStations("presetCeramics")}</SelectItem>
+              <SelectItem value="automotive">{tStations("presetAutomotive")}</SelectItem>
+              <SelectItem value="electronics">{tStations("presetElectronics")}</SelectItem>
+              <SelectItem value="logistics">{tStations("presetLogistics")}</SelectItem>
+              <SelectItem value="food_pharma">{tStations("presetFoodPharma")}</SelectItem>
+              <SelectItem value="machinery">{tStations("presetMachinery")}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </CardHeader>
 

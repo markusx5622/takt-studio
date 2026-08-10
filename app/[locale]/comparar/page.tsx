@@ -28,6 +28,14 @@ const TaktChart = dynamic(() => import("@/components/TaktChart"), { ssr: false }
 const LineDiagram = dynamic(() => import("@/components/LineDiagram"), { ssr: false })
 import ConsultingBackground from "@/components/ConsultingBackground"
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 // ─── Scenario selector ─────────────────────────────────────────────────────────
 
 function ScenarioSelect({
@@ -42,21 +50,22 @@ function ScenarioSelect({
   scenarios: Scenario[]
 }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
-      >
-        {scenarios.map((sc) => (
-          <option key={sc.id} value={sc.id}>
-            {sc.name}
-          </option>
-        ))}
-      </select>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="w-full font-medium">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {scenarios.map((sc) => (
+            <SelectItem key={sc.id} value={sc.id}>
+              {sc.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
 }
