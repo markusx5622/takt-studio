@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import ConsultingBackground from "@/components/ConsultingBackground"
+import BrandLogo from "@/components/BrandLogo"
 import {
   Check,
   X,
@@ -13,6 +14,7 @@ import {
   WifiOff,
   BookOpen,
   ArrowRight,
+  ArrowLeft,
 } from "lucide-react"
 
 export async function generateMetadata({
@@ -112,13 +114,26 @@ export default async function ComparisonPage({
       
       {/* ── Encabezado ───────────────────────────────────────────────────────── */}
       <section className="relative z-10 px-4 pb-8 pt-4 text-center md:pt-6">
-        <div className="mx-auto max-w-3xl">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            {t("title")}
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-foreground/70 sm:text-lg">
-            {t("subtitle")}
-          </p>
+        <div className="mx-auto max-w-4xl space-y-6">
+          <div className="flex items-center justify-between border-b border-border/40 pb-6 text-left">
+            <Button asChild variant="outline" size="sm" className="gap-2 bg-background/60 backdrop-blur-md shadow-xs hover:bg-accent">
+              <Link href="/">
+                <ArrowLeft className="h-4 w-4 text-primary" />
+                <span>{t("back")}</span>
+              </Link>
+            </Button>
+            <Link href="/" className="inline-flex items-center hover:opacity-90 transition-opacity" title="Takt Studio">
+              <BrandLogo variant="horizontalLight" className="h-10 sm:h-11 w-auto" priority />
+            </Link>
+          </div>
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              {t("title")}
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+              {t("subtitle")}
+            </p>
+          </div>
         </div>
       </section>
 

@@ -1242,6 +1242,7 @@
   },
   "resources": {
     "templates": {
+      "back": "Volver al inicio",
       "title": "Guía de Plantillas Industriales",
       "subtitle": "Fichas técnicas detalladas de los 7 sectores predefinidos en Takt Studio. Analiza la configuración base, los tiempos de ciclo y los retos típicos de cada industria.",
       "metrics": {
@@ -1265,6 +1266,7 @@
       }
     },
     "tutorial": {
+      "back": "Volver al inicio",
       "title": "Tutorial Paso a Paso",
       "subtitle": "Aprende a simular, diagnosticar y optimizar tu línea de producción industrial en 6 pasos secuenciales.",
       "labels": {
@@ -1325,6 +1327,7 @@
       }
     },
     "comparison": {
+      "back": "Volver al inicio",
       "title": "Takt Studio vs Hojas de Cálculo vs Software DES",
       "subtitle": "Descubre dónde encaja Takt Studio en el panorama del software de ingeniería industrial y simulación.",
       "taktStudio": "Takt Studio",

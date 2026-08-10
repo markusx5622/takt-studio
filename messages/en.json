@@ -1242,6 +1242,7 @@
   },
   "resources": {
     "templates": {
+      "back": "Back to home",
       "title": "Industrial Templates Guide",
       "subtitle": "Detailed technical data sheets for the 7 predefined sectors in Takt Studio. Analyze the base configuration, cycle times, and typical challenges of each industry.",
       "metrics": {
@@ -1265,6 +1266,7 @@
       }
     },
     "tutorial": {
+      "back": "Back to home",
       "title": "Step-by-Step Tutorial",
       "subtitle": "Learn to simulate, diagnose, and optimize your industrial production line in 6 sequential steps.",
       "labels": {
@@ -1325,6 +1327,7 @@
       }
     },
     "comparison": {
+      "back": "Back to home",
       "title": "Takt Studio vs Spreadsheets vs DES Software",
       "subtitle": "Discover where Takt Studio fits in the landscape of industrial engineering and simulation software.",
       "taktStudio": "Takt Studio",
