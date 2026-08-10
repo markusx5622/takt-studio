@@ -1,12 +1,14 @@
 "use client"
 
+import { useRef } from "react"
+
 import { useTranslations } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download } from "lucide-react"
+import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download, Upload } from "lucide-react"
 import { findBottleneck } from "@/lib/calculations"
 import { cn } from "@/lib/utils"
 import type { Station } from "@/types"
@@ -318,6 +320,9 @@ export default function StationEditor() {
   const removeStation = useTaktStore((state) => state.removeStation)
   const moveStation = useTaktStore((state) => state.moveStation)
   const addStation = useTaktStore((state) => state.addStation)
+  const updateScenario = useTaktStore((state) => state.updateScenario)
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   if (!hydrated) return <StationEditorSkeleton />
 
@@ -399,6 +404,83 @@ export default function StationEditor() {
     URL.revokeObjectURL(url)
   }
 
+  function parseCSVLine(text: string): string[] {
+    const result: string[] = []
+    let current = ""
+    let inQuotes = false
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i]
+      if (char === '"') {
+        if (inQuotes && text[i + 1] === '"') {
+          current += '"'
+          i++
+        } else {
+          inQuotes = !inQuotes
+        }
+      } else if (char === ',' && !inQuotes) {
+        result.push(current)
+        current = ""
+      } else {
+        current += char
+      }
+    }
+    result.push(current)
+    return result
+  }
+
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file || !scenario) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string
+        const lines = content.split(/\r?\n/).filter(line => line.trim().length > 0)
+        if (lines.length <= 1) throw new Error("Empty or invalid CSV")
+
+        const newStations: Station[] = []
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i])
+          if (cols.length < 4) continue // basic validation
+          
+          const name = cols[0].replace(/^"|"$/g, '').replace(/""/g, '"').trim()
+          const cycleTimeMin = parseFloat(cols[1])
+          const operators = parseInt(cols[2], 10)
+          
+          let failureRate = 0
+          if (cols[3].includes('%')) {
+            failureRate = parseFloat(cols[3].replace('%', '')) / 100
+          } else {
+            failureRate = parseFloat(cols[3])
+          }
+
+          if (!name || isNaN(cycleTimeMin) || isNaN(operators) || isNaN(failureRate)) continue
+
+          newStations.push({
+            id: crypto.randomUUID(),
+            name,
+            cycleTimeMin,
+            operators,
+            failureRate,
+          })
+        }
+
+        if (newStations.length === 0) throw new Error("No valid stations found")
+        
+        if (confirm(t("importConfirm", { current: stations.length, new: newStations.length }))) {
+          updateScenario(scenario.id, { stations: newStations })
+        }
+      } catch (err) {
+        alert(t("importError"))
+        console.error(err)
+      } finally {
+        if (fileInputRef.current) fileInputRef.current.value = ""
+      }
+    }
+    reader.readAsText(file)
+  }
+
   const bottleneckId = stations.length > 0 ? findBottleneck(stations).stationId : ""
 
   return (
@@ -408,16 +490,34 @@ export default function StationEditor() {
           <CardTitle className="text-lg">{t("title")}</CardTitle>
           <Badge variant="secondary">{t("countBadge", { count: stations.length })}</Badge>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportCSV}
-          disabled={stations.length === 0}
-          className="hidden gap-2 sm:flex"
-        >
-          <Download className="h-4 w-4" />
-          {t("exportCSV")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <input 
+            type="file" 
+            accept=".csv" 
+            className="hidden" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            className="hidden gap-2 sm:flex"
+          >
+            <Upload className="h-4 w-4" />
+            {t("importCSV")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCSV}
+            disabled={stations.length === 0}
+            className="hidden gap-2 sm:flex"
+          >
+            <Download className="h-4 w-4" />
+            {t("exportCSV")}
+          </Button>
+        </div>
       </CardHeader>
 
       <CardContent className="p-0">
