@@ -20,7 +20,9 @@ import {
   Minus,
   DollarSign,
   ArrowLeftRight,
+  Gauge,
 } from "lucide-react"
+import { runMonteCarlo } from "@/lib/monte-carlo"
 import { cn } from "@/lib/utils"
 import type { KPIs, Scenario } from "@/types"
 
@@ -502,6 +504,12 @@ export default function CompararPage() {
         kpisA={kpisA}
         kpisB={kpisB}
       />
+
+      {/* Monte Carlo Risk Comparison table */}
+      <MonteCarloComparisonTable
+        scenarioA={scenarioA}
+        scenarioB={scenarioB}
+      />
       </div>
     </div>
   )
@@ -625,6 +633,134 @@ function EconComparisonTable({
             <CardTitle className="text-lg">{t("econTableTitle")}</CardTitle>
             <CardDescription className="text-xs">
               {t("econDisclaimer")}
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/40">
+                <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
+                  {t("colMetric")}
+                </th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                  {t("colA")}
+                </th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                  {t("colB")}
+                </th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                  {t("colDelta")}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr
+                  key={row.label}
+                  className={cn("border-b last:border-0", i % 2 === 0 ? "bg-background" : "bg-muted/20")}
+                >
+                  <td className="px-4 py-2.5 text-xs font-medium text-foreground/80">{row.label}</td>
+                  <td className="px-4 py-2.5 text-right font-medium tabular-nums">{row.a}</td>
+                  <td className="px-4 py-2.5 text-right font-medium tabular-nums">{row.b}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">
+                    <DeltaBadge
+                      delta={row.delta}
+                      higherIsBetter={row.higherIsBetter}
+                      fmt={row.fmtDelta}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ─── Monte Carlo comparison table ───────────────────────────────────────────────
+
+function buildMonteCarloRows(
+  scenarioA: Scenario,
+  scenarioB: Scenario,
+  t: (key: string) => string
+): TableRow[] {
+  const optionsA = scenarioA.monteCarloOptions ?? {}
+  const optionsB = scenarioB.monteCarloOptions ?? {}
+
+  const resultA = runMonteCarlo(scenarioA, { runs: 2000, cv: optionsA.cv ?? 0.1, seed: optionsA.seed ?? 42 })
+  const resultB = runMonteCarlo(scenarioB, { runs: 2000, cv: optionsB.cv ?? 0.1, seed: optionsB.seed ?? 42 })
+
+  const probA = resultA.probabilityMeetDemand * 100
+  const probB = resultB.probabilityMeetDemand * 100
+
+  return [
+    {
+      label: t("rowProbMeet"),
+      a: `${probA.toFixed(1)}%`,
+      b: `${probB.toFixed(1)}%`,
+      delta: probB - probA,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("ppUnit")}`,
+    },
+    {
+      label: t("rowP5"),
+      a: `${resultA.throughput.p5.toFixed(0)} ${t("unitsUds")}`,
+      b: `${resultB.throughput.p5.toFixed(0)} ${t("unitsUds")}`,
+      delta: resultB.throughput.p5 - resultA.throughput.p5,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${Math.abs(Math.round(v))} ${t("unitsUds")}`,
+    },
+    {
+      label: t("rowP50"),
+      a: `${resultA.throughput.median.toFixed(0)} ${t("unitsUds")}`,
+      b: `${resultB.throughput.median.toFixed(0)} ${t("unitsUds")}`,
+      delta: resultB.throughput.median - resultA.throughput.median,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${Math.abs(Math.round(v))} ${t("unitsUds")}`,
+    },
+    {
+      label: t("rowP95"),
+      a: `${resultA.throughput.p95.toFixed(0)} ${t("unitsUds")}`,
+      b: `${resultB.throughput.p95.toFixed(0)} ${t("unitsUds")}`,
+      delta: resultB.throughput.p95 - resultA.throughput.p95,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${Math.abs(Math.round(v))} ${t("unitsUds")}`,
+    },
+    {
+      label: t("rowMean"),
+      a: `${resultA.throughput.mean.toFixed(1)} ${t("unitsUds")}`,
+      b: `${resultB.throughput.mean.toFixed(1)} ${t("unitsUds")}`,
+      delta: resultB.throughput.mean - resultA.throughput.mean,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("unitsUds")}`,
+    },
+  ]
+}
+
+function MonteCarloComparisonTable({
+  scenarioA,
+  scenarioB,
+}: {
+  scenarioA: Scenario
+  scenarioB: Scenario
+}) {
+  const t = useTranslations("compare")
+  const rows = buildMonteCarloRows(scenarioA, scenarioB, t)
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <Gauge className="h-5 w-5 text-primary" />
+          <div>
+            <CardTitle className="text-lg">{t("mcTableTitle")}</CardTitle>
+            <CardDescription className="text-xs">
+              {t("mcDisclaimer")}
             </CardDescription>
           </div>
         </div>

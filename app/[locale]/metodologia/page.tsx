@@ -1,4 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import "katex/dist/katex.min.css"
+import { BlockMath } from "react-katex"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import ConsultingBackground from "@/components/ConsultingBackground"
@@ -19,9 +21,10 @@ import {
 } from "lucide-react"
 
 function Formula({ children, className }: { children: React.ReactNode; className?: string }) {
+  if (typeof children !== 'string') return null
   return (
-    <div className={`my-3 overflow-x-auto rounded-md border bg-muted/40 px-4 py-2.5 font-mono text-sm text-foreground/90 ${className ?? ""}`}>
-      {children}
+    <div className={`my-3 overflow-x-auto rounded-md border bg-muted/40 px-4 py-2 text-foreground/90 ${className ?? ""}`}>
+      <BlockMath math={children} />
     </div>
   )
 }

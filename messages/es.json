@@ -493,37 +493,37 @@
       {
         "title": "Takt Time",
         "p": "Ritmo al que hay que producir para satisfacer la demanda. Expresa el tiempo máximo permitido por unidad.",
-        "formula": "taktTime = (shiftHours × 60 × shiftsPerDay) / demandPerDay",
+        "formula": "T_{takt} = \\frac{Horas_{turno} \\times 60 \\times Turnos_{dia}}{Demanda_{diaria}}",
         "note": "Un takt time bajo indica una demanda agresiva; un takt time alto, una demanda relajada."
       },
       {
         "title": "Tiempo de ciclo efectivo",
         "p": "Tiempo real que consume una estación por unidad, considerando operarios paralelos y tasa de reproceso.",
-        "formula": "effectiveCycle = (cycleTimeMin / operators) × (1 + failureRate)",
+        "formula": "T_{efectivo} = \\frac{T_{ciclo}}{Operarios} \\times (1 + \\%_{fallo})",
         "note": "Más operarios reducen el tiempo efectivo; más fallos lo aumentan por el retrabajo inherente."
       },
       {
         "title": "Cuello de botella",
         "p": "Estación que limita el ritmo global de la línea: aquella con el mayor tiempo de ciclo efectivo.",
-        "formula": "bottleneck = max(effectiveCycle₁, effectiveCycle₂, …)",
+        "formula": "T_{cuello} = \\max(T_{ef,1}, T_{ef,2}, \\dots)",
         "note": "Aliviar el bottleneck es la acción de mayor impacto sobre el throughput global."
       },
       {
         "title": "Throughput",
         "p": "Unidades máximas que la línea puede producir por día, limitada por el bottleneck.",
-        "formula": "throughput = ⌊availableTimeMin / bottleneckEffectiveCycle⌋",
+        "formula": "Throughput = \\left\\lfloor \\frac{T_{disponible}}{T_{cuello}} \\right\\rfloor",
         "note": "El throughput nunca supera la capacidad del cuello de botella, independientemente del rendimiento del resto de estaciones."
       },
       {
         "title": "Lead Time",
         "p": "Tiempo total estimado que tarda una unidad en recorrer toda la línea desde la entrada hasta la salida.",
-        "formula": "leadTime = Σ effectiveCycleᵢ",
+        "formula": "Lead\\ Time = \\sum_{i=1}^{n} T_{ef,i}",
         "note": "No modela colas ni esperas en buffer; es una aproximación del tiempo de recorrido puro."
       },
       {
         "title": "Eficiencia de balanceo",
         "p": "Medida de qué tan equilibrados están los tiempos efectivos entre estaciones.",
-        "formula": "balance = Σ effectiveCycleᵢ / (nStations × maxEffectiveCycle)",
+        "formula": "Eficiencia = \\frac{\\sum T_{ef,i}}{N_{estaciones} \\times T_{cuello}}",
         "note": "Un valor de 1.0 indica una línea perfectamente balanceada. Valores por debajo de 0.7 sugieren oportunidad de redistribución de cargas."
       }
     ],
@@ -533,32 +533,32 @@
     "costItems": [
       {
         "label": "Laboral",
-        "formula": "operarios × horas × turnos × costeHora"
+        "formula": "Coste = O \\times h \\times T \\times Tarifa"
       },
       {
         "label": "Turnos",
-        "formula": "turnos × costeFijoTurno"
+        "formula": "Coste = T \\times Coste_{fijo}"
       },
       {
         "label": "Reproceso",
-        "formula": "uds × tasaFallo × costeReproceso"
+        "formula": "Coste = Uds \\times \\%_{fallo} \\times Coste_{rep}"
       }
     ],
     "proxyTitle": "Proxy de margen",
     "proxyText": "Diferencia entre la contribución generada por las unidades servidas y el coste operativo total diario.",
-    "proxyFormula": "profitProxy = (udsServidas × margenUnidad) − costeOperativoTotal",
+    "proxyFormula": "Margen_{proxy} = (Uds_{servidas} \\times Margen_{ud}) - Coste_{op}",
     "impactTitle": "Impacto neto de una recomendación",
     "impactText": "Para cada acción de mejora propuesta, se calcula el cambio estimado en contribución menos el cambio en costes operativos.",
-    "impactFormula": "netImpact = Δcontribución − Δlabor − Δturnos − Δreproceso",
+    "impactFormula": "Impacto_{neto} = \\Delta Contribucion - \\Delta Costes",
     "paybackTitle": "Payback",
     "paybackText": "Si la recomendación conlleva una inversión inicial one-off (mejora de método o de calidad), se estima el tiempo de recuperación.",
-    "paybackFormula": "payback = inversiónInicial / impactoNetoDiario",
+    "paybackFormula": "Payback = \\frac{Inversion}{Impacto_{neto}}",
     "econWarning": "La capa económica es una estimación orientativa bajo supuestos configurables. No sustituye un análisis financiero detallado ni la validación contable real de la empresa.",
     "stochasticTitle": "Motor Estocástico Monte Carlo & Sensibilidad",
     "stochasticIntro": "Para complementar el cálculo analítico determinista en tiempo real, Takt Studio incorpora un motor de simulación de Monte Carlo con 2.000 iteraciones estocásticas y un laboratorio de sensibilidad de parámetros.",
     "mcTitle": "Simulación Monte Carlo (Riesgo y Variabilidad)",
     "mcText": "Cada estación de la línea simula variabilidad aleatoria en su tiempo de ciclo siguiendo una distribución normal truncada calculada mediante la transformada de Box-Muller y el generador PRNG Mulberry32.",
-    "mcFormula": "T_ef,i ~ Normal(μ = T_base,i / O_i, σ = 0.10 × μ) × (1 + p_i)",
+    "mcFormula": "T_{ef,i} \\sim \\mathcal{N}\\left(\\mu = \\frac{T_{c,i}}{O_i}, \\sigma = 0.10\\mu\\right) \\times (1 + p_i)",
     "mcPercentiles": "A partir de las 2.000 iteraciones se extraen los percentiles P10 (escenario conservador), P50 (mediana esperada) y P90 (escenario optimista), ofreciendo una matriz de riesgo probabilístico del Throughput real.",
     "sensitivityTitle": "Laboratorio de Sensibilidad",
     "sensitivityText": "Permite proyectar el comportamiento de la línea ante barridos continuos de demanda (±50%) y variaciones de mano de obra, identificando visualmente los puntos de inflexión donde la línea entra en déficit.",
@@ -1108,7 +1108,14 @@
     "rowProfitProxyDay": "Proxy de margen (€/día)",
     "rowProfitProxyMonth": "Proxy de margen (€/mes)",
     "euroPerDay": "€/día",
-    "euroPerMonth": "€/mes"
+    "euroPerMonth": "€/mes",
+    "mcTableTitle": "Análisis de riesgo estocástico y Monte Carlo",
+    "mcDisclaimer": "Simulación estocástica (2.000 ejecuciones con distribución lognormal y 10% de variabilidad) para evaluar la confiabilidad real en planta.",
+    "rowProbMeet": "Confianza P(Cumplir demanda)",
+    "rowP5": "Percentil P5 (Escenario pesimista)",
+    "rowP50": "Percentil P50 (Mediana simulada)",
+    "rowP95": "Percentil P95 (Escenario optimista)",
+    "rowMean": "Throughput medio simulado (μ)"
   },
   "history": {
     "title": "Historial de escenarios",
