@@ -15,10 +15,14 @@ import {
   Activity,
   Layers,
   Timer,
-  Zap,
   Euro,
   CheckCircle2,
   Sliders,
+  ShieldAlert,
+  Sparkles,
+  GitBranch,
+  Target,
+  Coins,
 } from "lucide-react"
 
 function Formula({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -206,22 +210,57 @@ export default async function MetodologiaPage({
 
         {/* ── Supuestos y limitaciones ────────────────────────────────────────── */}
         <section>
-          <div className="mb-4 flex items-center gap-2">
-            <Zap className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold tracking-tight">{t("limitsTitle")}</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-blue-100/80 p-2 text-blue-700 shadow-2xs">
+                <ShieldAlert className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold tracking-tight">{t("limitsTitle")}</h2>
+                <p className="text-xs text-muted-foreground">Alcance del modelo, condiciones de contorno y premisas de cálculo</p>
+              </div>
+            </div>
+            <Badge variant="outline" className="hidden sm:inline-flex bg-blue-50/50 border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1">
+              6 Alcances de Modelo
+            </Badge>
           </div>
-          <Card>
-            <CardContent className="space-y-3 pt-6">
-              {limits.map((item) => (
-                <div key={item.label} className="flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2.5">
-                  <Badge variant="outline" className="mt-0.5 shrink-0 text-[10px]">
-                    {item.label}
-                  </Badge>
-                  <p className="text-xs leading-relaxed text-foreground/70">{item.text}</p>
+
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+            {limits.map((item, i) => {
+              const icons = [Sparkles, Layers, GitBranch, Target, Coins, Clock]
+              const colors = [
+                "bg-blue-50 text-blue-600 border-blue-200/80",
+                "bg-indigo-50 text-indigo-600 border-indigo-200/80",
+                "bg-purple-50 text-purple-600 border-purple-200/80",
+                "bg-amber-50 text-amber-600 border-amber-200/80",
+                "bg-emerald-50 text-emerald-600 border-emerald-200/80",
+                "bg-cyan-50 text-cyan-600 border-cyan-200/80",
+              ]
+              const Icon = icons[i % icons.length]
+              const colorClass = colors[i % colors.length]
+
+              return (
+                <div
+                  key={item.label}
+                  className="group relative flex flex-col justify-between rounded-xl border bg-background p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-blue-300/80"
+                >
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`rounded-lg border p-2 shrink-0 ${colorClass}`}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <span className="text-xs font-bold text-foreground group-hover:text-blue-600 transition-colors">
+                        {item.label}
+                      </span>
+                    </div>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      {item.text}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+              )
+            })}
+          </div>
         </section>
 
         {/* ── Nota de uso profesional ─────────────────────────────────────────── */}
