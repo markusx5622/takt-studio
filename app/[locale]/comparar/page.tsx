@@ -2,10 +2,10 @@
 
 import dynamic from "next/dynamic"
 import { Link } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { useTaktStore, useHydrated } from "@/lib/store"
-import { calculateAllKPIs } from "@/lib/calculations"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { calculateAllKPIs, calculateEconomicKPIs, normalizeEconomics } from "@/lib/calculations"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,6 +18,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Minus,
+  DollarSign,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { KPIs, Scenario } from "@/types"
@@ -467,7 +468,182 @@ export default function CompararPage() {
         kpisA={kpisA}
         kpisB={kpisB}
       />
+
+      {/* Economic Comparison table */}
+      <EconComparisonTable
+        scenarioA={scenarioA}
+        scenarioB={scenarioB}
+        kpisA={kpisA}
+        kpisB={kpisB}
+      />
       </div>
     </div>
+  )
+}
+
+// ─── Economic comparison table ──────────────────────────────────────────────────
+
+function formatMoney(amount: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(amount)
+}
+
+function buildEconRows(
+  scenarioA: Scenario,
+  scenarioB: Scenario,
+  kpisA: KPIs,
+  kpisB: KPIs,
+  locale: string,
+  t: (key: string) => string
+): TableRow[] {
+  const econKpisA = calculateEconomicKPIs(scenarioA, kpisA)
+  const econKpisB = calculateEconomicKPIs(scenarioB, kpisB)
+  const econA = normalizeEconomics(scenarioA.economics)
+  const econB = normalizeEconomics(scenarioB.economics)
+
+  const monthA = econKpisA.profitProxyPerDay * econA.workingDaysPerMonth
+  const monthB = econKpisB.profitProxyPerDay * econB.workingDaysPerMonth
+
+  return [
+    {
+      label: t("rowTotalOpCost"),
+      a: formatMoney(econKpisA.totalOperatingCostPerDay, locale),
+      b: formatMoney(econKpisB.totalOperatingCostPerDay, locale),
+      delta: econKpisB.totalOperatingCostPerDay - econKpisA.totalOperatingCostPerDay,
+      higherIsBetter: false,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerDay")}`,
+    },
+    {
+      label: t("rowLaborCost"),
+      a: formatMoney(econKpisA.laborCostPerDay, locale),
+      b: formatMoney(econKpisB.laborCostPerDay, locale),
+      delta: econKpisB.laborCostPerDay - econKpisA.laborCostPerDay,
+      higherIsBetter: false,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerDay")}`,
+    },
+    {
+      label: t("rowReworkCost"),
+      a: formatMoney(econKpisA.reworkCostPerDay, locale),
+      b: formatMoney(econKpisB.reworkCostPerDay, locale),
+      delta: econKpisB.reworkCostPerDay - econKpisA.reworkCostPerDay,
+      higherIsBetter: false,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerDay")}`,
+    },
+    {
+      label: t("rowShiftCost"),
+      a: formatMoney(econKpisA.shiftCostPerDay, locale),
+      b: formatMoney(econKpisB.shiftCostPerDay, locale),
+      delta: econKpisB.shiftCostPerDay - econKpisA.shiftCostPerDay,
+      higherIsBetter: false,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerDay")}`,
+    },
+    {
+      label: t("rowContribution"),
+      a: formatMoney(econKpisA.fulfilledContributionPerDay, locale),
+      b: formatMoney(econKpisB.fulfilledContributionPerDay, locale),
+      delta: econKpisB.fulfilledContributionPerDay - econKpisA.fulfilledContributionPerDay,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerDay")}`,
+    },
+    {
+      label: t("rowOpportunityGap"),
+      a: formatMoney(econKpisA.opportunityGapValuePerDay, locale),
+      b: formatMoney(econKpisB.opportunityGapValuePerDay, locale),
+      delta: econKpisB.opportunityGapValuePerDay - econKpisA.opportunityGapValuePerDay,
+      higherIsBetter: false,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerDay")}`,
+    },
+    {
+      label: t("rowProfitProxyDay"),
+      a: formatMoney(econKpisA.profitProxyPerDay, locale),
+      b: formatMoney(econKpisB.profitProxyPerDay, locale),
+      delta: econKpisB.profitProxyPerDay - econKpisA.profitProxyPerDay,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerDay")}`,
+    },
+    {
+      label: t("rowProfitProxyMonth"),
+      a: formatMoney(monthA, locale),
+      b: formatMoney(monthB, locale),
+      delta: monthB - monthA,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${formatMoney(Math.abs(v), locale)} ${t("euroPerMonth")}`,
+    },
+  ]
+}
+
+function EconComparisonTable({
+  scenarioA,
+  scenarioB,
+  kpisA,
+  kpisB,
+}: {
+  scenarioA: Scenario
+  scenarioB: Scenario
+  kpisA: KPIs
+  kpisB: KPIs
+}) {
+  const t = useTranslations("compare")
+  const locale = useLocale()
+  const rows = buildEconRows(scenarioA, scenarioB, kpisA, kpisB, locale, t)
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-5 w-5 text-primary" />
+          <div>
+            <CardTitle className="text-lg">{t("econTableTitle")}</CardTitle>
+            <CardDescription className="text-xs">
+              {t("econDisclaimer")}
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/40">
+                <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
+                  {t("colMetric")}
+                </th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                  {t("colA")}
+                </th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                  {t("colB")}
+                </th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                  {t("colDelta")}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr
+                  key={row.label}
+                  className={cn("border-b last:border-0", i % 2 === 0 ? "bg-background" : "bg-muted/20")}
+                >
+                  <td className="px-4 py-2.5 text-xs font-medium text-foreground/80">{row.label}</td>
+                  <td className="px-4 py-2.5 text-right font-medium tabular-nums">{row.a}</td>
+                  <td className="px-4 py-2.5 text-right font-medium tabular-nums">{row.b}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">
+                    <DeltaBadge
+                      delta={row.delta}
+                      higherIsBetter={row.higherIsBetter}
+                      fmt={row.fmtDelta}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

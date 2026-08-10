@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download, Upload } from "lucide-react"
+import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download, Upload, Wand2 } from "lucide-react"
 import { findBottleneck } from "@/lib/calculations"
 import { cn } from "@/lib/utils"
 import type { Station } from "@/types"
@@ -481,6 +481,20 @@ export default function StationEditor() {
     reader.readAsText(file)
   }
 
+  function handleAutoBalance() {
+    if (!scenario || stations.length === 0) return
+    if (!confirm(t("autoBalanceConfirm"))) return
+    
+    const taktTime = (scenario.shiftHours * 60 * scenario.shiftsPerDay) / scenario.demandPerDay
+    
+    const newStations = stations.map(st => {
+      const requiredOperators = Math.max(1, Math.ceil((st.cycleTimeMin * (1 + st.failureRate)) / taktTime))
+      return { ...st, operators: requiredOperators }
+    })
+    
+    updateScenario(scenario.id, { stations: newStations })
+  }
+
   const bottleneckId = stations.length > 0 ? findBottleneck(stations).stationId : ""
 
   return (
@@ -498,6 +512,16 @@ export default function StationEditor() {
             ref={fileInputRef} 
             onChange={handleFileChange} 
           />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAutoBalance}
+            disabled={stations.length === 0}
+            className="hidden gap-2 sm:flex border-blue-200 bg-blue-50/50 text-blue-700 hover:bg-blue-100 hover:text-blue-800"
+          >
+            <Wand2 className="h-4 w-4" />
+            {t("autoBalance")}
+          </Button>
           <Button
             variant="outline"
             size="sm"
