@@ -41,6 +41,8 @@ export type Scenario = {
   economics: EconomicInputs
   /** Opciones de la simulación Monte Carlo (variabilidad, semilla) */
   monteCarloOptions?: MonteCarloOptions
+  /** OEE (Eficiencia General de los Equipos) histórico o demostrado de la planta (porcentaje 0-100). Default 85 */
+  historicalOEE?: number
 }
 
 /** Supuestos económicos configurables por escenario */
@@ -115,6 +117,12 @@ export type KPIs = {
   meetsDemand: boolean
   /** Déficit o superávit de unidades respecto a la demanda */
   demandDelta: number
+  /** OEE Requerido para cumplir con la demanda (0-1) */
+  requiredOEE: number
+  /** OEE Histórico de este escenario (0-1) */
+  historicalOEE: number
+  /** Si el OEE Requerido supera al OEE Histórico */
+  isOEEStressed: boolean
 }
 
 /**

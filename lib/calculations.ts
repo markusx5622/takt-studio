@@ -133,6 +133,10 @@ export function calculateAllKPIs(scenario: Scenario): KPIs {
   const meetsDemand = throughputPerDay >= scenario.demandPerDay
   const demandDelta = throughputPerDay - scenario.demandPerDay
 
+  const requiredOEE = throughputPerDay > 0 ? (scenario.demandPerDay / throughputPerDay) : 0
+  const historicalOEE = (scenario.historicalOEE ?? 85) / 100
+  const isOEEStressed = requiredOEE > historicalOEE
+
   return {
     taktTimeMin,
     bottleneckStationId: stationId,
@@ -145,6 +149,9 @@ export function calculateAllKPIs(scenario: Scenario): KPIs {
     availableTimeMin,
     meetsDemand,
     demandDelta,
+    requiredOEE,
+    historicalOEE,
+    isOEEStressed,
   }
 }
 

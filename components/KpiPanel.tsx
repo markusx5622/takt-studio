@@ -110,7 +110,63 @@ export default function KpiPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+
+        {/* CARD 5 — Estrés OEE */}
+        <Card className={cn("transition-all hover:shadow-md", kpis.isOEEStressed ? "border-red-300/80 bg-red-50/20 shadow-2xs ring-1 ring-red-500/20" : "border-emerald-200/80 bg-emerald-50/10")}>
+          <CardContent className="pt-5">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                <AlertTriangle
+                  className={cn(
+                    "h-3.5 w-3.5",
+                    kpis.isOEEStressed ? "text-destructive" : "text-emerald-500"
+                  )}
+                />
+                {t("oeeTitle") ?? "Estrés OEE"}
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-help">
+                    <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-muted-foreground" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-xs p-3 text-xs space-y-1.5 shadow-lg border backdrop-blur-md">
+                  <p className="font-semibold text-foreground">{t("oeeFormulaTitle") ?? "Cálculo de OEE Requerido"}</p>
+                  <div className="rounded bg-muted/80 p-1.5 font-mono text-[11px] text-center text-primary font-bold border">
+                    OEE Requerido = Demanda / Capacidad Teórica
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Demanda: {scenario.demandPerDay} uds. Capacidad máxima: {kpis.throughputPerDay} uds. OEE Histórico de planta: {(kpis.historicalOEE * 100).toFixed(0)}%.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            
+            <div className="mt-2 flex items-baseline justify-between">
+              <div>
+                <span className={cn("text-2xl font-bold tracking-tight", kpis.isOEEStressed ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400")}>
+                  {(kpis.requiredOEE * 100).toFixed(1)}
+                </span>
+                <span className="ml-1 text-xs text-muted-foreground">%</span>
+              </div>
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Req. para cumplir demanda
+            </p>
+            <div className="mt-2 flex flex-col gap-1.5">
+              <div className="flex items-center justify-between text-[10px] font-medium text-muted-foreground">
+                <span>Histórico (Demostrado):</span>
+                <span>{(kpis.historicalOEE * 100).toFixed(0)}%</span>
+              </div>
+              {kpis.isOEEStressed ? (
+                <Badge variant="destructive" className="text-xs">Riesgo Alto (Déficit)</Badge>
+              ) : (
+                <Badge variant="success" className="text-xs">Viable</Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* CARD 1 — Takt Time */}
         <Card>

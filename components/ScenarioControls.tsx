@@ -188,6 +188,11 @@ export default function ScenarioControls() {
     if (!isNaN(n) && n >= 0) updateScenario(scenario!.id, { changeoverTimeMin: n })
   }
 
+  function handleHistoricalOEEChange(value: string) {
+    const n = parseInt(value, 10)
+    if (!isNaN(n) && n >= 1 && n <= 100) updateScenario(scenario!.id, { historicalOEE: n })
+  }
+
   function handleDelete() {
     if (confirm(t("deleteConfirm", { name: scenario!.name }))) {
       removeScenario(scenario!.id)
@@ -337,6 +342,20 @@ export default function ScenarioControls() {
               step={5}
               value={scenario.changeoverTimeMin ?? 0}
               onChange={(e) => handleChangeoverTimeMinChange(e.target.value)}
+            />
+          </div>
+
+          {/* OEE Histórico */}
+          <div className="space-y-1.5">
+            <label htmlFor="sc-historical-oee" className="text-sm font-medium">{t("historicalOEELabel") ?? "OEE Histórico (%)"}</label>
+            <Input
+              id="sc-historical-oee"
+              type="number"
+              min={1}
+              max={100}
+              step={1}
+              value={scenario.historicalOEE ?? 85}
+              onChange={(e) => handleHistoricalOEEChange(e.target.value)}
             />
           </div>
         </div>
