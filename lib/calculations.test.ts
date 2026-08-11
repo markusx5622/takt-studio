@@ -90,10 +90,13 @@ describe("getEffectiveCycleTime", () => {
     expect(getEffectiveCycleTime(station)).toBe(30)
   })
 
-  it("failureRate incrementa el tiempo efectivo", () => {
-    // (60 / 2) * (1 + 0.1) = 30 * 1.1 = 33
+  it("demandMultiplier incrementa el tiempo efectivo", () => {
+    // 60 min, 2 operators = 30 base.
+    // Con 10% scrap, demandMultiplier = 1 / (1 - 0.1) = 1.1111...
+    // 30 * 1.1111... = 33.3333...
     const station = makeStation(60, 2, 0.1)
-    expect(getEffectiveCycleTime(station)).toBeCloseTo(33, 2)
+    const multiplier = 1 / (1 - 0.1)
+    expect(getEffectiveCycleTime(station, multiplier)).toBeCloseTo(33.33, 2)
   })
 })
 

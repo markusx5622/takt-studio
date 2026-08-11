@@ -1,11 +1,25 @@
 import { type Station, type Scenario, type KPIs, type StationWithEffective, type ImprovementRecommendation, type ImprovementType, type ImprovementPriority, type EconomicInputs, type EconomicKPIs, type RecommendationEconomicImpact } from "@/types"
 import { DEFAULT_ECONOMICS } from "@/lib/presets"
 
-/** Tiempo de ciclo efectivo considerando operarios y tasa de fallo */
-export function getEffectiveCycleTime(station: Station): number {
+/** Calcula el multiplicador de demanda acumulada de atrás hacia adelante en la línea */
+export function getYieldMultipliers(stations: Station[]): number[] {
+  const multipliers: number[] = new Array(stations.length).fill(1)
+  let cumulativeYield = 1
+  for (let i = stations.length - 1; i >= 0; i--) {
+    const s = stations[i]
+    // station.failureRate acts as scrap rate. Max 99% to avoid division by zero.
+    const stationYield = 1 - Math.min(s.failureRate, 0.99)
+    cumulativeYield *= stationYield
+    multipliers[i] = 1 / cumulativeYield
+  }
+  return multipliers
+}
+
+/** Tiempo de ciclo efectivo considerando operarios y multiplicador de demanda (propagación de scrap) */
+export function getEffectiveCycleTime(station: Station, demandMultiplier: number = 1): number {
   if (station.operators <= 0) return Infinity
   const units = station.unitsPerCycle ?? 1
-  return ((station.cycleTimeMin / units) / station.operators) * (1 + station.failureRate)
+  return ((station.cycleTimeMin / units) / station.operators) * demandMultiplier
 }
 
 export function getStationsWithEffective(
@@ -14,9 +28,12 @@ export function getStationsWithEffective(
 ): StationWithEffective[] {
   if (stations.length === 0) return []
 
-  const withEffective = stations.map((s) => ({
+  const multipliers = getYieldMultipliers(stations)
+
+  const withEffective = stations.map((s, index) => ({
     ...s,
-    effectiveCycleMin: getEffectiveCycleTime(s),
+    demandMultiplier: multipliers[index],
+    effectiveCycleMin: getEffectiveCycleTime(s, multipliers[index]),
     isBottleneck: false,
     exceedsTakt: false,
   }))
@@ -56,11 +73,12 @@ export function findBottleneck(
     return { stationId: "", stationName: "", effectiveCycleMin: 0 }
   }
 
+  const multipliers = getYieldMultipliers(stations)
   let bottleneck = stations[0]
-  let maxCycle = getEffectiveCycleTime(stations[0])
+  let maxCycle = getEffectiveCycleTime(stations[0], multipliers[0])
 
   for (let i = 1; i < stations.length; i++) {
-    const cycle = getEffectiveCycleTime(stations[i])
+    const cycle = getEffectiveCycleTime(stations[i], multipliers[i])
     if (cycle > maxCycle) {
       maxCycle = cycle
       bottleneck = stations[i]
@@ -86,14 +104,16 @@ export function calculateThroughput(scenario: Scenario): number {
 }
 
 export function calculateLeadTime(stations: Station[]): number {
-  return stations.reduce((sum, s) => sum + getEffectiveCycleTime(s), 0)
+  const multipliers = getYieldMultipliers(stations)
+  return stations.reduce((sum, s, index) => sum + getEffectiveCycleTime(s, multipliers[index]), 0)
 }
 
 /** Eficiencia de balanceo. 1.0 = todas las estaciones tienen el mismo tiempo efectivo (línea perfectamente balanceada). */
 export function calculateBalancingEfficiency(stations: Station[]): number {
   if (stations.length === 0) return 0
 
-  const effectiveTimes = stations.map(getEffectiveCycleTime)
+  const multipliers = getYieldMultipliers(stations)
+  const effectiveTimes = stations.map((s, index) => getEffectiveCycleTime(s, multipliers[index]))
   const sum = effectiveTimes.reduce((a, b) => a + b, 0)
   const max = Math.max(...effectiveTimes)
 

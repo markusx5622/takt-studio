@@ -691,15 +691,16 @@
       "colOperators": "Operators",
       "colUnits": "Units/Cycle",
       "colFailure": "Scrap (%)",
+      "colFailure": "% Scrap",
       "colEffective": "Effective Time (min)",
       "colActions": "Actions",
       "bottleneckTag": "Bottleneck",
       "cycleMin": "Cycle (min/u)",
       "operators": "Operators",
       "units": "Units/Cycle",
-      "failurePct": "Scrap (%)",
+      "failurePct": "% Scrap",
       "emptyTitle": "Define your first station",
-      "emptyText": "Each station represents a line operation: name, cycle time, operators, and failure rate.",
+      "emptyText": "Each station represents a line operation: name, cycle time, operators, and % Scrap.",
       "add": "Add station",
       "newStationName": "New station",
       "presetLabel": "Load preset:",
@@ -1284,7 +1285,7 @@
         "station": "Station",
         "cycleTime": "Cycle Time",
         "operators": "Operators",
-        "failureRate": "Failure Rate"
+        "failureRate": "% Scrap"
       },
       "descriptions": {
         "monobath": "Flagship template based on industrialized modular construction. It features high manual dependency, variable bottlenecks, and significant failure rates in the waterproofing and tiling phases, making it ideal for experimenting with Monte Carlo simulation.",
@@ -1316,7 +1317,7 @@
         "s2": {
           "title": "Station Modeling",
           "desc": "Build your line by adding each station. Enter the timed cycle time, the number of assigned operators, and the failure rate.",
-          "theory": "The 'Cycle Time' (CT) is the actual time it takes a station to complete its task. The 'Failure Rate' introduces the probability of rework or scrap, which is vital for stochastic models.",
+          "theory": "The 'Cycle Time' (CT) is the actual time it takes a station to complete its task. The '% Scrap' introduces the probability of rework or scrap, which is vital for stochastic models.",
           "tip": "Avoid ideal times. Use direct time studies on the shop floor with rating techniques, and add an allowance for human fatigue (usually 10-15%).",
           "action": "In the central area, click 'Add Station'. Use the sliders to configure the time and watch how the capacity bar fills up against the Takt Time."
         },

@@ -122,8 +122,10 @@ export type KPIs = {
  * Usado para gráficos y diagramas.
  */
 export type StationWithEffective = Station & {
-  /** cycleTimeMin / operators, ajustado por failureRate */
+  /** cycleTimeMin / operators, ajustado por multiplicador de yield */
   effectiveCycleMin: number
+  /** Multiplicador de demanda acumulada debido al scrap downstream (1.0 = sin scrap) */
+  demandMultiplier: number
   /** Si esta estación es el cuello de botella */
   isBottleneck: boolean
   /** Si su tiempo efectivo excede el takt time */

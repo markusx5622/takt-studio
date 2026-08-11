@@ -69,6 +69,11 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
             {(s.failureRate * 100).toFixed(0)}%
           </span>
         </p>
+        {s.demandMultiplier > 1.001 && (
+          <p className="border-t border-muted/60 mt-1 pt-1 text-amber-600/90 font-medium">
+            Demand Multiplier: <span className="font-bold">{s.demandMultiplier.toFixed(2)}x</span>
+          </p>
+        )}
       </div>
     </div>
   )

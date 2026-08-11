@@ -1280,7 +1280,7 @@
         "station": "Estación",
         "cycleTime": "Tiempo de Ciclo",
         "operators": "Operarios",
-        "failureRate": "Tasa de Fallo"
+        "failureRate": "% Scrap"
       },
       "descriptions": {
         "monobath": "Plantilla insignia basada en la construcción modular industrializada. Presenta alta dependencia manual, cuellos de botella variables y tasas de fallo significativas en la fase de impermeabilización y alicatado, lo que la hace ideal para experimentar con la simulación Monte Carlo.",
@@ -1312,7 +1312,7 @@
         "s2": {
           "title": "Modelado de Estaciones",
           "desc": "Construye tu línea añadiendo cada estación. Introduce el tiempo de ciclo cronometrado, el número de operarios asignados y la tasa de fallo.",
-          "theory": "El 'Tiempo de Ciclo' (CT) es el tiempo real que tarda una estación en completar su tarea. La 'Tasa de Fallo' introduce la probabilidad de reproceso o chatarra (Scrap), vital para modelos estocásticos.",
+          "theory": "El 'Tiempo de Ciclo' (CT) es el tiempo real que tarda una estación en completar su tarea. El '% Scrap' introduce la probabilidad de reproceso o chatarra (Scrap), vital para modelos estocásticos.",
           "tip": "Evita tiempos ideales. Usa cronometraje directo en planta con técnica de rating, y añade un suplemento por fatiga humana (usualmente 10-15%).",
           "action": "En el área central, pulsa 'Añadir Estación'. Usa los sliders para configurar el tiempo y observa cómo la barra de capacidad se llena respecto al Takt Time."
         },
