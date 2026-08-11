@@ -99,7 +99,7 @@ interface TaktChartProps {
   height?: number
 }
 
-export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) {
+export default function TaktChart({ scenarioId, height = 380 }: TaktChartProps) {
   const t = useTranslations("simulator.chart")
   const hydrated = useHydrated()
   const scenario = useTaktStore((state) =>
@@ -142,22 +142,22 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">{t("title")}</CardTitle>
       </CardHeader>
-      <CardContent className="pr-2">
+      <CardContent className="pr-4 pl-1 pb-4">
         <ResponsiveContainer width="100%" height={height}>
           <BarChart
             data={chartData}
-            margin={{ top: 10, right: 70, left: 0, bottom: 65 }}
+            margin={{ top: 15, right: 105, left: 5, bottom: 85 }}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
 
             <XAxis
               dataKey="name"
-              tickFormatter={(v: string) => truncate(v, 22)}
+              tickFormatter={(v: string) => truncate(v, 26)}
               tick={{ fontSize: 11, fill: "#6b7280" }}
               interval={0}
-              angle={-25}
+              angle={-28}
               textAnchor="end"
-              height={65}
+              height={85}
             />
 
             <YAxis
@@ -188,6 +188,7 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
                   position: "right",
                   fill: "#374151",
                   fontSize: 11,
+                  fontWeight: 600,
                 }}
               />
             )}
