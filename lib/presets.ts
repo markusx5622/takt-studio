@@ -54,13 +54,13 @@ export function getPresetNames(locale?: string): PresetNames {
 }
 
 const MONOBATH_STATIONS: Omit<Station, "id" | "name">[] = [
-  { cycleTimeMin: 45, operators: 2, failureRate: 0.02 },
-  { cycleTimeMin: 55, operators: 2, failureRate: 0.05 },
-  { cycleTimeMin: 35, operators: 1, failureRate: 0.03 },
-  { cycleTimeMin: 90, operators: 3, failureRate: 0.04 },
-  { cycleTimeMin: 50, operators: 2, failureRate: 0.03 },
-  { cycleTimeMin: 25, operators: 1, failureRate: 0.01 },
-  { cycleTimeMin: 30, operators: 1, failureRate: 0.02 },
+  { cycleTimeMin: 45, operators: 2, failureRate: 0.02, unitsPerCycle: 1 },
+  { cycleTimeMin: 55, operators: 2, failureRate: 0.05, unitsPerCycle: 1 },
+  { cycleTimeMin: 35, operators: 1, failureRate: 0.03, unitsPerCycle: 1 },
+  { cycleTimeMin: 90, operators: 3, failureRate: 0.04, unitsPerCycle: 1 },
+  { cycleTimeMin: 50, operators: 2, failureRate: 0.03, unitsPerCycle: 1 },
+  { cycleTimeMin: 25, operators: 1, failureRate: 0.01, unitsPerCycle: 1 },
+  { cycleTimeMin: 30, operators: 1, failureRate: 0.02, unitsPerCycle: 1 },
 ]
 
 export type IndustrySectorKey =
@@ -80,7 +80,7 @@ export const INDUSTRY_PRESETS_DATA: Record<
     demandPerDay: number
     shiftHours: number
     shiftsPerDay: number
-    stations: { nameEs: string; nameEn: string; cycleTimeMin: number; operators: number; failureRate: number }[]
+    stations: { nameEs: string; nameEn: string; cycleTimeMin: number; operators: number; failureRate: number; unitsPerCycle?: number }[]
   }
 > = {
   monobath: {
@@ -197,6 +197,7 @@ export function createPresetFromSector(sectorKey: IndustrySectorKey, locale?: st
     cycleTimeMin: st.cycleTimeMin,
     operators: st.operators,
     failureRate: st.failureRate,
+    unitsPerCycle: st.unitsPerCycle ?? 1,
   }))
 }
 
@@ -213,6 +214,7 @@ export function createMonobathPreset(names?: PresetNames): Scenario {
     demandPerDay: 8,
     shiftHours: 8,
     shiftsPerDay: 1,
+    allocationPercent: 100,
     economics: { ...DEFAULT_ECONOMICS },
   }
 }
@@ -225,6 +227,7 @@ export function createEmptyScenario(name: string): Scenario {
     demandPerDay: 8,
     shiftHours: 8,
     shiftsPerDay: 1,
+    allocationPercent: 100,
     economics: { ...DEFAULT_ECONOMICS },
   }
 }

@@ -173,6 +173,11 @@ export default function ScenarioControls() {
     if (!isNaN(n) && n >= 1 && n <= 12) updateScenario(scenario!.id, { shiftHours: n })
   }
 
+  function handleAllocationChange(value: string) {
+    const n = parseInt(value, 10)
+    if (!isNaN(n) && n >= 1 && n <= 100) updateScenario(scenario!.id, { allocationPercent: n })
+  }
+
   function handleDelete() {
     if (confirm(t("deleteConfirm", { name: scenario!.name }))) {
       removeScenario(scenario!.id)
@@ -280,6 +285,22 @@ export default function ScenarioControls() {
                   {n}
                 </Button>
               ))}
+            </div>
+          </div>
+
+          {/* Allocation % (Shared Loading) */}
+          <div className="space-y-1.5">
+            <label htmlFor="sc-allocation" className="text-sm font-medium">Asignación (%)</label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="sc-allocation"
+                type="number"
+                min={1}
+                max={100}
+                step={1}
+                value={scenario.allocationPercent ?? 100}
+                onChange={(e) => handleAllocationChange(e.target.value)}
+              />
             </div>
           </div>
         </div>

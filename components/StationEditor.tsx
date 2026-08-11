@@ -43,6 +43,7 @@ function StationEditorSkeleton() {
 interface RowActions {
   onNameChange: (id: string, value: string) => void
   onCycleChange: (id: string, value: string) => void
+  onUnitsChange: (id: string, value: string) => void
   onOperatorsChange: (id: string, value: string) => void
   onFailureChange: (id: string, value: string) => void
   onMoveUp: () => void
@@ -73,6 +74,7 @@ function StationRow({
   isBottleneck,
   onNameChange,
   onCycleChange,
+  onUnitsChange,
   onOperatorsChange,
   onFailureChange,
   onMoveUp,
@@ -119,6 +121,17 @@ function StationRow({
           value={station.cycleTimeMin}
           aria-label={t("colCycle")}
           onChange={(e) => onCycleChange(station.id, e.target.value)}
+        />
+      </td>
+      <td className="py-1 pl-2">
+        <Input
+          className={cn(cellInputCls, "w-20")}
+          type="number"
+          min={1}
+          step={1}
+          value={station.unitsPerCycle ?? 1}
+          aria-label={t("colUnits")}
+          onChange={(e) => onUnitsChange(station.id, e.target.value)}
         />
       </td>
       <td className="py-1 pl-2">
@@ -192,6 +205,7 @@ function StationCard({
   isBottleneck,
   onNameChange,
   onCycleChange,
+  onUnitsChange,
   onOperatorsChange,
   onFailureChange,
   onMoveUp,
@@ -264,7 +278,7 @@ function StationCard({
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         <div>
           <p className="mb-1 text-xs text-muted-foreground">{t("cycleMin")}</p>
           <Input
@@ -275,6 +289,18 @@ function StationCard({
             value={station.cycleTimeMin}
             aria-label={t("cycleMin")}
             onChange={(e) => onCycleChange(station.id, e.target.value)}
+          />
+        </div>
+        <div>
+          <p className="mb-1 text-xs text-muted-foreground">{t("units")}</p>
+          <Input
+            className="h-8 text-sm"
+            type="number"
+            min={1}
+            step={1}
+            value={station.unitsPerCycle ?? 1}
+            aria-label={t("units")}
+            onChange={(e) => onUnitsChange(station.id, e.target.value)}
           />
         </div>
         <div>
@@ -329,7 +355,7 @@ export default function StationEditor() {
   const stations = scenario?.stations ?? []
 
   function handleAddStation() {
-    addStation({ name: t("newStationName"), cycleTimeMin: 30, operators: 1, failureRate: 0 })
+    addStation({ name: t("newStationName"), cycleTimeMin: 30, operators: 1, failureRate: 0, unitsPerCycle: 1 })
   }
 
   function handleDelete(stationId: string) {
@@ -348,6 +374,12 @@ export default function StationEditor() {
     updateStation(id, { cycleTimeMin: n })
   }
 
+  function handleUnitsChange(id: string, value: string) {
+    const n = parseInt(value, 10)
+    if (isNaN(n) || n < 1) return
+    updateStation(id, { unitsPerCycle: n })
+  }
+
   function handleOperatorsChange(id: string, value: string) {
     const n = parseInt(value, 10)
     if (isNaN(n) || n < 1 || n > 20) return
@@ -363,6 +395,7 @@ export default function StationEditor() {
   const rowActions = (station: Station): RowActions => ({
     onNameChange: handleNameChange,
     onCycleChange: handleCycleChange,
+    onUnitsChange: handleUnitsChange,
     onOperatorsChange: handleOperatorsChange,
     onFailureChange: handleFailureChange,
     onMoveUp: () => moveStation(station.id, "up"),
@@ -376,16 +409,19 @@ export default function StationEditor() {
     const headers = [
       t("colName"),
       t("colCycle"),
+      t("colUnits"),
       t("colOperators"),
       t("colFailure"),
       t("colEffective")
     ]
 
     const rows = stations.map((st) => {
-      const effectiveTime = st.cycleTimeMin / (st.operators * (1 - st.failureRate))
+      const units = st.unitsPerCycle ?? 1
+      const effectiveTime = (st.cycleTimeMin / units) / (st.operators * (1 - st.failureRate))
       return [
         `"${st.name.replace(/"/g, '""')}"`,
         st.cycleTimeMin,
+        units,
         st.operators,
         `${(st.failureRate * 100).toFixed(1)}%`,
         effectiveTime.toFixed(2)
@@ -442,11 +478,13 @@ export default function StationEditor() {
         const newStations: Station[] = []
         for (let i = 1; i < lines.length; i++) {
           const cols = parseCSVLine(lines[i])
-          if (cols.length < 4) continue // basic validation
+          if (cols.length < 5) continue // basic validation
           
           const name = cols[0].replace(/^"|"$/g, '').replace(/""/g, '"').trim()
           const cycleTimeMin = parseFloat(cols[1])
-          const operators = parseInt(cols[2], 10)
+          const unitsPerCycle = parseInt(cols[2], 10)
+          const operators = parseInt(cols[3], 10)
+          const failureStr = cols[4].replace('%', '').trim()
           
           let failureRate = 0
           if (cols[3].includes('%')) {
@@ -576,6 +614,9 @@ export default function StationEditor() {
                     </th>
                     <th scope="col" className="w-32 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
                       {t("colCycle")}
+                    </th>
+                    <th scope="col" className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
+                      {t("colUnits")}
                     </th>
                     <th scope="col" className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
                       {t("colOperators")}

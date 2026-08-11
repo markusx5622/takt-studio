@@ -11,6 +11,8 @@ export type Station = {
   cycleTimeMin: number
   /** Número de operarios asignados a esta estación (mínimo 1) */
   operators: number
+  /** Unidades producidas simultáneamente por ciclo (multi-cavidad/batching). Opcional, default 1 */
+  unitsPerCycle?: number
   /** Tasa de fallo/reproceso como decimal 0-1 (ej: 0.05 = 5%). Opcional, default 0 */
   failureRate: number
 }
@@ -29,6 +31,8 @@ export type Scenario = {
   shiftHours: number
   /** Número de turnos por día (1, 2 o 3) */
   shiftsPerDay: number
+  /** Porcentaje de tiempo de línea asignado a este escenario (0-100). Default 100 */
+  allocationPercent?: number
   /** Supuestos económicos configurables por escenario */
   economics: EconomicInputs
   /** Opciones de la simulación Monte Carlo (variabilidad, semilla) */

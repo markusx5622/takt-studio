@@ -19,7 +19,7 @@ interface TaktStore extends AppState {
   ) => void
   updateScenario: (
     id: string,
-    updates: Partial<Pick<Scenario, "name" | "demandPerDay" | "shiftHours" | "shiftsPerDay" | "economics" | "stations" | "monteCarloOptions">>
+    updates: Partial<Pick<Scenario, "name" | "demandPerDay" | "shiftHours" | "shiftsPerDay" | "allocationPercent" | "economics" | "stations" | "monteCarloOptions">>
   ) => void
   setActiveScenario: (id: string) => void
   setCompareA: (id: string) => void
@@ -354,7 +354,7 @@ export const useTaktStore = create<TaktStore>()(
     }),
     {
       name: "takt-studio-storage",
-      version: 2,
+      version: 3,
       migrate: (persistedState: unknown, version: number) => {
         const state = persistedState as { scenarios?: Scenario[]; snapshots?: unknown[] }
         if (version < 1) {
@@ -370,6 +370,18 @@ export const useTaktStore = create<TaktStore>()(
         }
         if (version < 2) {
           state.snapshots = state.snapshots ?? []
+        }
+        if (version < 3) {
+          if (state.scenarios) {
+            state.scenarios = state.scenarios.map((s) => ({
+              ...s,
+              allocationPercent: s.allocationPercent ?? 100,
+              stations: s.stations?.map(st => ({
+                ...st,
+                unitsPerCycle: st.unitsPerCycle ?? 1
+              })) ?? []
+            }))
+          }
         }
         return persistedState as { scenarios: Scenario[]; activeScenarioId: string; compareScenarioAId: string; compareScenarioBId: string; snapshots: ScenarioSnapshot[] }
       },
