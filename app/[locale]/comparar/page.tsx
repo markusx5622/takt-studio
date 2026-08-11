@@ -472,7 +472,7 @@ export default function CompararPage() {
             </span>
           </div>
           <MiniKpis kpis={kpisA} />
-          <TaktChart scenarioId={scenarioA.id} height={250} />
+          <TaktChart scenarioId={scenarioA.id} height={320} />
         </div>
 
         <div className="space-y-4">
@@ -485,7 +485,7 @@ export default function CompararPage() {
             </span>
           </div>
           <MiniKpis kpis={kpisB} />
-          <TaktChart scenarioId={scenarioB.id} height={250} />
+          <TaktChart scenarioId={scenarioB.id} height={320} />
         </div>
       </div>
 

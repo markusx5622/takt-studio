@@ -29,9 +29,6 @@ function getBarColor(station: StationWithEffective): string {
   return COLOR_NORMAL
 }
 
-function truncate(str: string, max = 22): string {
-  return str.length > max ? `${str.substring(0, max)}…` : str
-}
 
 // ─── Custom tooltip ────────────────────────────────────────────────────────────
 
@@ -99,6 +96,50 @@ interface TaktChartProps {
   height?: number
 }
 
+// ─── Custom XAxis tick with multiline word-wrap ──────────────────────────────
+
+interface CustomTickProps {
+  x?: number
+  y?: number
+  payload?: { value: string }
+}
+
+function CustomXAxisTick({ x = 0, y = 0, payload }: CustomTickProps) {
+  if (!payload?.value) return null
+  const text = payload.value
+
+  const words = text.split(" ")
+  let line1 = text
+  let line2 = ""
+
+  if (text.length > 13 && words.length > 1) {
+    const mid = Math.ceil(words.length / 2)
+    line1 = words.slice(0, mid).join(" ")
+    line2 = words.slice(mid).join(" ")
+    if (line1.length > 15) line1 = `${line1.substring(0, 14)}…`
+    if (line2.length > 15) line2 = `${line2.substring(0, 14)}…`
+  } else if (text.length > 16) {
+    line1 = `${text.substring(0, 15)}…`
+  }
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={0}
+        textAnchor="end"
+        fill="#6b7280"
+        fontSize={10}
+        fontWeight={500}
+        transform="rotate(-25)"
+      >
+        <tspan x={0} dy="8">{line1}</tspan>
+        {line2 && <tspan x={0} dy="11">{line2}</tspan>}
+      </text>
+    </g>
+  )
+}
+
 export default function TaktChart({ scenarioId, height = 380 }: TaktChartProps) {
   const t = useTranslations("simulator.chart")
   const hydrated = useHydrated()
@@ -146,18 +187,15 @@ export default function TaktChart({ scenarioId, height = 380 }: TaktChartProps) 
         <ResponsiveContainer width="100%" height={height}>
           <BarChart
             data={chartData}
-            margin={{ top: 15, right: 105, left: 5, bottom: 85 }}
+            margin={{ top: 15, right: 95, left: 5, bottom: 75 }}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
 
             <XAxis
               dataKey="name"
-              tickFormatter={(v: string) => truncate(v, 26)}
-              tick={{ fontSize: 11, fill: "#6b7280" }}
+              tick={<CustomXAxisTick />}
               interval={0}
-              angle={-28}
-              textAnchor="end"
-              height={85}
+              height={75}
             />
 
             <YAxis
