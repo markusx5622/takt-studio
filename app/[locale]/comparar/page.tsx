@@ -20,7 +20,9 @@ import {
   Minus,
   DollarSign,
   ArrowLeftRight,
-  Gauge,
+  CheckCircle2,
+  Info,
+  Activity,
 } from "lucide-react"
 import { runMonteCarlo } from "@/lib/monte-carlo"
 import { cn } from "@/lib/utils"
@@ -74,6 +76,75 @@ function ScenarioSelect({
   )
 }
 
+// ─── Executive Verdict Banner ───────────────────────────────────────────────
+
+function ExecutiveVerdictBanner({
+  scenarioA,
+  scenarioB,
+  kpisA,
+  kpisB,
+}: {
+  scenarioA: Scenario
+  scenarioB: Scenario
+  kpisA: KPIs
+  kpisB: KPIs
+}) {
+  const t = useTranslations("compare")
+  const deltaTP = kpisB.throughputPerDay - kpisA.throughputPerDay
+  const deltaLT = Math.abs(kpisB.leadTimeMin - kpisA.leadTimeMin).toFixed(1)
+  const pct = kpisA.throughputPerDay > 0 ? Math.round((deltaTP / kpisA.throughputPerDay) * 100) : 0
+
+  if (Math.abs(deltaTP) < 1 && Math.abs(kpisB.leadTimeMin - kpisA.leadTimeMin) < 0.1) {
+    return (
+      <div className="flex items-start gap-3 rounded-xl border border-slate-200/90 bg-slate-50/80 p-4 shadow-2xs">
+        <div className="rounded-lg border border-slate-200 bg-slate-100 p-2 text-slate-600 shrink-0">
+          <Info className="h-5 w-5" />
+        </div>
+        <div>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">{t("verdictTitle")}</h4>
+          <p className="mt-0.5 text-xs text-slate-600 leading-relaxed font-medium">
+            {t("verdictEqual")}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const isBetter = deltaTP > 0 || (deltaTP === 0 && kpisB.leadTimeMin < kpisA.leadTimeMin)
+
+  return (
+    <div
+      className={cn(
+        "flex items-start gap-3 rounded-xl border p-4 shadow-2xs transition-all",
+        isBetter
+          ? "border-emerald-200/90 bg-emerald-50/70 text-emerald-950"
+          : "border-amber-200/90 bg-amber-50/70 text-amber-950"
+      )}
+    >
+      <div
+        className={cn(
+          "rounded-lg border p-2 shrink-0 shadow-2xs",
+          isBetter
+            ? "border-emerald-300 bg-emerald-100/90 text-emerald-700"
+            : "border-amber-300 bg-amber-100/90 text-amber-700"
+        )}
+      >
+        {isBetter ? <CheckCircle2 className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
+      </div>
+      <div className="space-y-0.5">
+        <span className="text-xs font-extrabold uppercase tracking-wider opacity-80">
+          {t("verdictTitle")}
+        </span>
+        <p className="text-xs font-medium leading-relaxed">
+          {isBetter
+            ? t("verdictBetter", { nameA: scenarioA.name, nameB: scenarioB.name, deltaTP, pct: pct > 0 ? `${pct}` : "0", deltaLT })
+            : t("verdictWorse", { nameA: scenarioA.name, nameB: scenarioB.name, deltaTP: Math.abs(deltaTP), deltaLT })}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // ─── Delta badge ───────────────────────────────────────────────────────────────
 
 function DeltaBadge({
@@ -88,7 +159,7 @@ function DeltaBadge({
   const t = useTranslations("compare")
   if (Math.abs(delta) < 0.01) {
     return (
-      <span className="inline-flex items-center gap-0.5 text-xs text-muted-foreground">
+      <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 shadow-2xs">
         <Minus className="h-3 w-3" />
         {t("noChange")}
       </span>
@@ -99,14 +170,16 @@ function DeltaBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-0.5 text-xs font-medium",
-        isImprovement ? "text-green-600" : "text-red-600"
+        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold shadow-2xs",
+        isImprovement
+          ? "border-emerald-200/90 bg-emerald-50 text-emerald-700"
+          : "border-rose-200/90 bg-rose-50 text-rose-700"
       )}
     >
       {isImprovement ? (
-        <ArrowUpRight className="h-3 w-3" />
+        <ArrowUpRight className="h-3 w-3 shrink-0" />
       ) : (
-        <ArrowDownRight className="h-3 w-3" />
+        <ArrowDownRight className="h-3 w-3 shrink-0" />
       )}
       {delta > 0 ? "+" : ""}
       {fmt(delta)}
@@ -254,9 +327,13 @@ function buildRows(kpisA: KPIs, kpisB: KPIs, t: (key: string) => string): TableR
 }
 
 function ComparisonTable({
+  scenarioA,
+  scenarioB,
   kpisA,
   kpisB,
 }: {
+  scenarioA: Scenario
+  scenarioB: Scenario
   kpisA: KPIs
   kpisB: KPIs
 }) {
@@ -266,7 +343,15 @@ function ComparisonTable({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">{t("tableTitle")}</CardTitle>
+        <div className="flex items-center gap-2">
+          <div className="rounded-lg bg-blue-100/80 p-2 text-blue-700">
+            <BarChart3 className="h-5 w-5" />
+          </div>
+          <div>
+            <CardTitle className="text-lg">{t("secKpiTitle")}</CardTitle>
+            <CardDescription className="text-xs">{t("tableTitleOperational")}</CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -277,10 +362,14 @@ function ComparisonTable({
                   {t("colMetric")}
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  {t("colA")}
+                  <span className="inline-flex items-center gap-1.5 rounded border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 font-bold text-blue-700 shadow-2xs">
+                    A · {scenarioA.name}
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  {t("colB")}
+                  <span className="inline-flex items-center gap-1.5 rounded border border-indigo-200/80 bg-indigo-50/80 px-2 py-0.5 font-bold text-indigo-700 shadow-2xs">
+                    B · {scenarioB.name}
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
                   {t("colDelta")}
@@ -460,14 +549,22 @@ export default function CompararPage() {
         </CardContent>
       </Card>
 
+      {/* Banner de Veredicto Ejecutivo */}
+      <ExecutiveVerdictBanner
+        scenarioA={scenarioA}
+        scenarioB={scenarioB}
+        kpisA={kpisA}
+        kpisB={kpisB}
+      />
+
       {/* Mini KPIs + charts side by side */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className="rounded bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
+            <span className="rounded-md bg-blue-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-2xs">
               A
             </span>
-            <span className="truncate text-sm font-semibold" title={scenarioA.name}>
+            <span className="truncate text-sm font-bold text-blue-950" title={scenarioA.name}>
               {scenarioA.name}
             </span>
           </div>
@@ -477,10 +574,10 @@ export default function CompararPage() {
 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className="rounded bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground">
+            <span className="rounded-md bg-indigo-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-2xs">
               B
             </span>
-            <span className="truncate text-sm font-semibold" title={scenarioB.name}>
+            <span className="truncate text-sm font-bold text-indigo-950" title={scenarioB.name}>
               {scenarioB.name}
             </span>
           </div>
@@ -497,6 +594,8 @@ export default function CompararPage() {
 
       {/* Comparison table */}
       <ComparisonTable
+        scenarioA={scenarioA}
+        scenarioB={scenarioB}
         kpisA={kpisA}
         kpisB={kpisB}
       />
@@ -632,9 +731,11 @@ function EconComparisonTable({
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-primary" />
+          <div className="rounded-lg bg-emerald-100/80 p-2 text-emerald-700">
+            <DollarSign className="h-5 w-5" />
+          </div>
           <div>
-            <CardTitle className="text-lg">{t("econTableTitle")}</CardTitle>
+            <CardTitle className="text-lg">{t("secEconTitle")}</CardTitle>
             <CardDescription className="text-xs">
               {t("econDisclaimer")}
             </CardDescription>
@@ -650,10 +751,14 @@ function EconComparisonTable({
                   {t("colMetric")}
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  {t("colA")}
+                  <span className="inline-flex items-center gap-1.5 rounded border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 font-bold text-blue-700 shadow-2xs">
+                    A · {scenarioA.name}
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  {t("colB")}
+                  <span className="inline-flex items-center gap-1.5 rounded border border-indigo-200/80 bg-indigo-50/80 px-2 py-0.5 font-bold text-indigo-700 shadow-2xs">
+                    B · {scenarioB.name}
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
                   {t("colDelta")}
@@ -760,9 +865,11 @@ function MonteCarloComparisonTable({
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <Gauge className="h-5 w-5 text-primary" />
+          <div className="rounded-lg bg-purple-100/80 p-2 text-purple-700">
+            <Activity className="h-5 w-5" />
+          </div>
           <div>
-            <CardTitle className="text-lg">{t("mcTableTitle")}</CardTitle>
+            <CardTitle className="text-lg">{t("secMcTitle")}</CardTitle>
             <CardDescription className="text-xs">
               {t("mcDisclaimer")}
             </CardDescription>
@@ -778,10 +885,14 @@ function MonteCarloComparisonTable({
                   {t("colMetric")}
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  {t("colA")}
+                  <span className="inline-flex items-center gap-1.5 rounded border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 font-bold text-blue-700 shadow-2xs">
+                    A · {scenarioA.name}
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
-                  {t("colB")}
+                  <span className="inline-flex items-center gap-1.5 rounded border border-indigo-200/80 bg-indigo-50/80 px-2 py-0.5 font-bold text-indigo-700 shadow-2xs">
+                    B · {scenarioB.name}
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
                   {t("colDelta")}
