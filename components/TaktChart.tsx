@@ -29,7 +29,7 @@ function getBarColor(station: StationWithEffective): string {
   return COLOR_NORMAL
 }
 
-function truncate(str: string, max = 15): string {
+function truncate(str: string, max = 22): string {
   return str.length > max ? `${str.substring(0, max)}…` : str
 }
 
@@ -152,12 +152,12 @@ export default function TaktChart({ scenarioId, height = 350 }: TaktChartProps) 
 
             <XAxis
               dataKey="name"
-              tickFormatter={(v: string) => truncate(v)}
-              tick={{ fontSize: 10, fill: "#6b7280" }}
+              tickFormatter={(v: string) => truncate(v, 22)}
+              tick={{ fontSize: 11, fill: "#6b7280" }}
               interval={0}
-              angle={-35}
+              angle={-25}
               textAnchor="end"
-              height={70}
+              height={65}
             />
 
             <YAxis

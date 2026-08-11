@@ -42,11 +42,9 @@ export default async function SimuladorPage({
       {/* ── 2. Definición de estaciones ─────────────────────────────────────── */}
       <StationEditor />
 
-      {/* ── 3. Visión cuantitativa: gráfico + KPIs ──────────────────────────── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <TaktChart />
-        <KpiPanel />
-      </div>
+      {/* ── 3. Visión cuantitativa: KPIs + gráfico ──────────────────────────── */}
+      <KpiPanel />
+      <TaktChart />
 
       {/* ── 4. Propuestas de mejora ─────────────────────────────────────────── */}
       <ImprovementPlan />
