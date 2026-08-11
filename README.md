@@ -54,7 +54,10 @@ Su objetivo fundamental es democratizar el análisis de balanceo de líneas en p
 ### ⚡ Simulador de Líneas en Tiempo Real
 - **Modelado Flexible de Estaciones**: Define estaciones con tiempo de ciclo base (minutos), operarios asignados y tasa de fallo o reproceso (0-100%).
 - **Cálculo Reactivo de Tiempos Efectivos**: Ajuste automático del tiempo de ciclo en función del número de operarios ($T_{base} / \text{ops}$) y penalización por scrap/reproceso ($1 / (1 - p)$).
-- **Preset Industrial Precargado ("Monobath")**: Plantilla real preconfigurada de una línea de fabricación de módulos de baño industrializados (7 estaciones: desde estructura base hasta limpieza final).
+- **Modal de Onboarding Asistido**: Flujo de bienvenida guiado mediante `React.createPortal` directo en `document.body` con desenfoque de pantalla completa al crear un nuevo escenario.
+- **7 Plantillas Industriales Predefinidas (Presets)**: Colección de escenarios reales de manufactura e industria modular: *Monobath (Módulos de baño)*, *Ensamblaje Automotriz (Chasis y Motor)*, *Montaje Electrónico (Línea SMT)*, *Logística y Embalaje*, *Producción Cerámica*, *Procesado Agroalimentario/Farma* y *Fabricación de Maquinaria*.
+- **Asistente de Auto-Balanceo (1-Click Wand2)**: Rebalanceo automático de plantilla aplicando la heurística $N_{\text{op}} = \max\left(1, \left\lceil \frac{T_{\text{ciclo}} \times (1 + \%_{\text{fallo}})}{T_{takt}} \right\rceil\right)$.
+- **Importación Masiva desde CSV**: Carga rápida de estaciones desde hojas de datos mediante parseador seguro de comillas y delimitadores.
 
 ### 📊 Panel de KPIs Industriales y Balanceo
 - **Takt Time ($T_t$)**: Ritmo objetivo de producción calculado a partir del tiempo disponible y la demanda requerida.
@@ -69,7 +72,8 @@ Su objetivo fundamental es democratizar el análisis de balanceo de líneas en p
 - **Margen de Contribución & Opportunity Gap**: Valoración de ingresos diarios por unidades entregadas y cuantificación del margen perdido debido a déficit de capacidad frente a la demanda.
 - **Beneficio Operativo Estimado (Profit Proxy)**: Cálculo de margen neto diario/mensual deduciendo costes de personal, costes fijos por turno y reproceso.
 
-### 🔬 Laboratorio de Sensibilidad (Sensitivity Lab)
+### 🔬 Laboratorio de Sensibilidad & Mini-Lab KaTeX (`TaktPlayground`)
+- **Mini-Lab Interactivo de Takt Time**: Sliders en vivo (Horas por turno, Turnos por día, Demanda diaria) con recálculo dinámico de ecuaciones LaTeX y badges de nivel de cadencia (Exigente, Estándar, Moderada).
 - **Análisis Paramétrico Multidimensional**: Simulación en vivo para evaluar cómo varía la capacidad y la eficiencia al modificar operarios, turnos por día, horas efectivas o tasas de defecto.
 - **Elasticidad de Línea**: Gráficos dinámicos e indicadores de sensibilidad para identificar palancas de mejora de alto impacto con mínima inversión.
 
@@ -142,7 +146,7 @@ $$E_b = \frac{\sum_{i=1}^{N} T_{ef, i}}{N \times T_{bottleneck}}$$
 | **Internacionalización** | [next-intl v4](https://next-intl.dev/) | ES/EN completos (560 claves por idioma), rutas localizadas y middleware de detección. |
 | **Visualización de Datos** | [Recharts v3](https://recharts.org/) | Gráficos interactivos de barras de ciclo vs Takt Time. |
 | **Generación de Documentos** | [jsPDF v4](https://github.com/parallax/jsPDF) | Generación vectorial de informes ejecutivos en PDF con paginación automática, cabeceras de continuación y metadatos. |
-| **Testing Unitario** | [Vitest v4](https://vitest.dev/) + coverage v8 | 106 pruebas unitarias con umbrales de cobertura obligatorios. |
+| **Testing Unitario** | [Vitest v4](https://vitest.dev/) + coverage v8 | 123 pruebas unitarias en 11 archivos con umbrales de cobertura obligatorios. |
 | **Testing E2E** | [Playwright](https://playwright.dev/) | 12 smoke tests bilingües ejecutados en CI sobre build de producción. |
 | **Analítica** | [Vercel Analytics](https://vercel.com/analytics) | Métricas de uso y Web Vitals sin cookies ni datos personales. |
 | **Tipado** | TypeScript Estricto | Tipado completo sin uso de `any`. |
@@ -271,6 +275,8 @@ takt-studio/
 │   ├── MonteCarloPanel.tsx     # Panel de simulación estocástica
 │   ├── CostImpactPanel.tsx     # Análisis económico y costes de no-calidad
 │   ├── ImprovementPlan.tsx     # Plan de recomendación de mejoras y ROI
+│   ├── NewScenarioModal.tsx    # Modal de onboarding asistido con React.createPortal
+│   ├── TaktPlayground.tsx      # Mini-Lab interactivo de Takt Time con KaTeX en vivo
 │   ├── SharedScenarioLoader.tsx# Carga de escenarios compartidos por URL
 │   └── …                       # LineDiagram, TaktChart, InsightsPanel, ExportPdfButton…
 ├── e2e/
@@ -287,8 +293,8 @@ takt-studio/
 │   ├── insights.ts             # Algoritmos de generación de diagnósticos
 │   ├── import-export.ts        # Validadores e importadores/exportadores JSON
 │   ├── share.ts                # Serialización de escenarios en hash de URL
-│   ├── presets.ts              # Plantilla precargada de línea Monobath (7 estaciones)
-│   └── *.test.ts               # 10 archivos de pruebas unitarias (106 tests, paridad i18n y PDF)
+│   ├── presets.ts              # 7 Plantillas industriales de sector (Monobath, Automoción, Electrónica, etc.)
+│   └── *.test.ts               # 11 archivos de pruebas unitarias (123 tests, paridad i18n y PDF)
 ├── messages/
 │   ├── es.json                 # Diccionario español (560 claves)
 │   └── en.json                 # Diccionario inglés (560 claves)
@@ -356,7 +362,7 @@ takt-studio/
 
 ## 🔬 Testing y Calidad
 
-### Pruebas Unitarias (106 tests, 10 archivos en `lib/`)
+### Pruebas Unitarias (123 tests, 11 archivos en `lib/`)
 - Cálculo exacto de **Takt Time** ante diferentes escenarios de demanda y jornada.
 - Identificación precisa del **Cuello de Botella** y tiempos efectivos con operarios y scrap.
 - Comprobación de límites en la **Eficiencia de Balanceo** ($0 \le E_b \le 1$).
