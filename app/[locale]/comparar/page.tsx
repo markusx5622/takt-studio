@@ -49,24 +49,33 @@ function ScenarioSelect({
   value,
   onChange,
   scenarios,
+  colorScheme = "blue",
 }: {
   label: string
   value: string
   onChange: (id: string) => void
   scenarios: Scenario[]
+  colorScheme?: "blue" | "indigo" | "emerald" | "amber"
 }) {
+  const colorMap = {
+    blue: "text-blue-700 bg-blue-50 border-blue-200 focus:ring-blue-500",
+    indigo: "text-indigo-700 bg-indigo-50 border-indigo-200 focus:ring-indigo-500",
+    emerald: "text-emerald-700 bg-emerald-50 border-emerald-200 focus:ring-emerald-500",
+    amber: "text-amber-700 bg-amber-50 border-amber-200 focus:ring-amber-500",
+  }
+
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <span className={cn("text-[11px] font-bold uppercase tracking-wider", colorMap[colorScheme].split(" ")[0])}>
         {label}
       </span>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full font-medium">
+        <SelectTrigger className={cn("w-full font-semibold transition-all hover:brightness-95", colorMap[colorScheme])}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {scenarios.map((sc) => (
-            <SelectItem key={sc.id} value={sc.id}>
+            <SelectItem key={sc.id} value={sc.id} className="font-medium">
               {sc.name}
             </SelectItem>
           ))}
@@ -96,13 +105,13 @@ function ExecutiveVerdictBanner({
 
   if (Math.abs(deltaTP) < 1 && Math.abs(kpisB.leadTimeMin - kpisA.leadTimeMin) < 0.1) {
     return (
-      <div className="flex items-start gap-3 rounded-xl border border-slate-200/90 bg-slate-50/80 p-4 shadow-2xs">
-        <div className="rounded-lg border border-slate-200 bg-slate-100 p-2 text-slate-600 shrink-0">
-          <Info className="h-5 w-5" />
+      <div className="flex items-start gap-4 rounded-2xl border border-slate-200/60 bg-gradient-to-r from-slate-50 to-white p-5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] backdrop-blur-md transition-all hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)]">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white p-2 text-slate-500 shadow-sm transition-transform hover:scale-105">
+          <Info className="h-6 w-6" />
         </div>
-        <div>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">{t("verdictTitle")}</h4>
-          <p className="mt-0.5 text-xs text-slate-600 leading-relaxed font-medium">
+        <div className="flex flex-col justify-center pt-0.5">
+          <h4 className="text-xs font-bold uppercase tracking-widest text-slate-700/80">{t("verdictTitle")}</h4>
+          <p className="mt-1 text-sm font-medium leading-relaxed text-slate-700">
             {t("verdictEqual")}
           </p>
         </div>
@@ -115,27 +124,27 @@ function ExecutiveVerdictBanner({
   return (
     <div
       className={cn(
-        "flex items-start gap-3 rounded-xl border p-4 shadow-2xs transition-all",
+        "group flex items-start gap-4 rounded-2xl border p-5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] backdrop-blur-md transition-all duration-300 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)]",
         isBetter
-          ? "border-emerald-200/90 bg-emerald-50/70 text-emerald-950"
-          : "border-amber-200/90 bg-amber-50/70 text-amber-950"
+          ? "border-emerald-200/50 bg-gradient-to-br from-emerald-50/80 to-teal-50/30 text-emerald-950"
+          : "border-rose-200/50 bg-gradient-to-br from-rose-50/80 to-red-50/30 text-rose-950"
       )}
     >
       <div
         className={cn(
-          "rounded-lg border p-2 shrink-0 shadow-2xs",
+          "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3",
           isBetter
-            ? "border-emerald-300 bg-emerald-100/90 text-emerald-700"
-            : "border-amber-300 bg-amber-100/90 text-amber-700"
+            ? "border-emerald-200 bg-white text-emerald-600"
+            : "border-rose-200 bg-white text-rose-600"
         )}
       >
-        {isBetter ? <CheckCircle2 className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
+        {isBetter ? <CheckCircle2 className="h-6 w-6" /> : <AlertTriangle className="h-6 w-6" />}
       </div>
-      <div className="space-y-0.5">
-        <span className="text-xs font-extrabold uppercase tracking-wider opacity-80">
+      <div className="flex flex-col justify-center pt-0.5">
+        <span className="text-xs font-bold uppercase tracking-widest opacity-70">
           {t("verdictTitle")}
         </span>
-        <p className="text-xs font-medium leading-relaxed">
+        <p className="mt-1 text-sm font-medium leading-relaxed">
           {isBetter
             ? t("verdictBetter", { nameA: scenarioA.name, nameB: scenarioB.name, deltaTP, pct: pct > 0 ? `${pct}` : "0", deltaLT })
             : t("verdictWorse", { nameA: scenarioA.name, nameB: scenarioB.name, deltaTP: Math.abs(deltaTP), deltaLT })}
@@ -159,7 +168,7 @@ function DeltaBadge({
   const t = useTranslations("compare")
   if (Math.abs(delta) < 0.01) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 shadow-2xs">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-100/50 px-2.5 py-1 text-[11px] font-bold text-slate-600 shadow-sm transition-all hover:bg-slate-100">
         <Minus className="h-3 w-3" />
         {t("noChange")}
       </span>
@@ -170,16 +179,16 @@ function DeltaBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold shadow-2xs",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold shadow-sm transition-all hover:brightness-95",
         isImprovement
-          ? "border-emerald-200/90 bg-emerald-50 text-emerald-700"
-          : "border-rose-200/90 bg-rose-50 text-rose-700"
+          ? "border-emerald-200 bg-emerald-100/60 text-emerald-800"
+          : "border-rose-200 bg-rose-100/60 text-rose-800"
       )}
     >
       {isImprovement ? (
-        <ArrowUpRight className="h-3 w-3 shrink-0" />
+        <ArrowUpRight className="h-3.5 w-3.5 shrink-0 stroke-[2.5]" />
       ) : (
-        <ArrowDownRight className="h-3 w-3 shrink-0" />
+        <ArrowDownRight className="h-3.5 w-3.5 shrink-0 stroke-[2.5]" />
       )}
       {delta > 0 ? "+" : ""}
       {fmt(delta)}
@@ -195,52 +204,54 @@ function MiniKpis({ kpis }: { kpis: KPIs }) {
   const bottleneckExceedsTakt = kpis.bottleneckCycleMin > kpis.taktTimeMin
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <Card>
-        <CardContent className="pt-4 pb-3">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
+    <div className="grid grid-cols-2 gap-4">
+      <Card className="group overflow-hidden border-blue-100/50 bg-gradient-to-br from-white to-blue-50/30 transition-all hover:shadow-md hover:border-blue-200">
+        <CardContent className="pt-5 pb-4">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-600/80">
+            <Clock className="h-4 w-4 transition-transform group-hover:scale-110 group-hover:text-blue-600" />
             Takt Time
           </div>
-          <p className="mt-1 text-xl font-bold">{kpis.taktTimeMin.toFixed(1)}</p>
-          <p className="text-xs text-muted-foreground">{t("minPerUnit")}</p>
+          <p className="mt-2 text-2xl font-black text-slate-800 tracking-tight">{kpis.taktTimeMin.toFixed(1)}</p>
+          <p className="mt-0.5 text-xs font-medium text-slate-500">{t("minPerUnit")}</p>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="pt-4 pb-3">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <TrendingUp className="h-3 w-3" />
+      <Card className="group overflow-hidden border-indigo-100/50 bg-gradient-to-br from-white to-indigo-50/30 transition-all hover:shadow-md hover:border-indigo-200">
+        <CardContent className="pt-5 pb-4">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600/80">
+            <TrendingUp className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:text-indigo-600" />
             Throughput
           </div>
           <p
             className={cn(
-              "mt-1 text-xl font-bold",
-              kpis.meetsDemand ? "text-green-600" : "text-red-600"
+              "mt-2 text-2xl font-black tracking-tight",
+              kpis.meetsDemand ? "text-emerald-600" : "text-rose-600"
             )}
           >
             {kpis.throughputPerDay}
           </p>
-          <p className="text-xs text-muted-foreground">{t("unitsPerDay")}</p>
+          <p className="mt-0.5 text-xs font-medium text-slate-500">{t("unitsPerDay")}</p>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="pt-4 pb-3">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <AlertTriangle className="h-3 w-3" />
-            {t("bottleneck")}
+      <Card className="col-span-2 group overflow-hidden border-amber-100/50 bg-gradient-to-br from-white to-amber-50/30 transition-all hover:shadow-md hover:border-amber-200">
+        <CardContent className="flex flex-col sm:flex-row sm:items-center justify-between pt-5 pb-4 gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-600/80">
+              <AlertTriangle className="h-4 w-4 transition-transform group-hover:scale-110 group-hover:text-amber-600" />
+              {t("bottleneck")}
+            </div>
+            <p className="mt-2 text-lg font-bold text-slate-800 line-clamp-1" title={kpis.bottleneckStationName}>
+              {kpis.bottleneckStationName || "—"}
+            </p>
           </div>
-          <p className="mt-1 truncate text-sm font-bold" title={kpis.bottleneckStationName}>
-            {kpis.bottleneckStationName || "—"}
-          </p>
-          <div className="mt-1">
+          <div className="flex shrink-0">
             {bottleneckExceedsTakt ? (
-              <Badge variant="destructive" className="text-[10px]">
+              <Badge variant="destructive" className="px-3 py-1 text-xs shadow-sm font-bold uppercase tracking-wider">
                 {t("exceedsTakt")}
               </Badge>
             ) : (
-              <Badge variant="success" className="text-[10px]">
+              <Badge variant="success" className="px-3 py-1 text-xs shadow-sm font-bold uppercase tracking-wider">
                 {t("withinTaktOk")}
               </Badge>
             )}
@@ -495,47 +506,47 @@ export default function CompararPage() {
         </div>
 
         {/* Selectors */}
-        <Card>
-        <CardContent className="pt-5 pb-4">
+        <Card className="overflow-hidden border-slate-200 shadow-sm">
+        <CardContent className="pt-6 pb-6 bg-gradient-to-r from-slate-50/50 via-white to-slate-50/50">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
-            <div className="flex-1">
+            <div className="flex-1 rounded-xl border border-blue-100/50 bg-blue-50/20 p-3 shadow-inner">
               <ScenarioSelect
                 label={t("scenarioA")}
                 value={scenarioA.id}
                 onChange={setCompareA}
                 scenarios={scenarios}
+                colorScheme="blue"
               />
             </div>
 
-            <div className="flex shrink-0 flex-wrap items-end gap-2">
+            <div className="flex shrink-0 flex-wrap items-center justify-center gap-2 sm:pb-3">
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
                 onClick={handleSwapAB}
-                className="gap-2"
+                className="h-10 w-10 rounded-full border-slate-200 bg-white text-slate-500 shadow-sm transition-all hover:border-slate-300 hover:text-slate-700 hover:shadow-md"
                 title={t("swapScenarios")}
               >
-                <ArrowLeftRight className="h-3.5 w-3.5" />
-                {t("swapScenarios")}
+                <ArrowLeftRight className="h-4 w-4" />
               </Button>
-
               <Button
                 variant="outline"
-                size="sm"
                 onClick={handleDuplicateAtoB}
-                className="gap-2"
+                className="h-10 rounded-full border-slate-200 bg-white px-4 text-sm font-medium text-slate-500 shadow-sm transition-all hover:border-slate-300 hover:text-slate-700 hover:shadow-md"
+                title={t("copyAtoB")}
               >
-                <Copy className="h-3.5 w-3.5" />
-                {t("duplicateAtoB")}
+                <Copy className="mr-2 h-4 w-4" />
+                A → B
               </Button>
             </div>
 
-            <div className="flex-1">
+            <div className="flex-1 rounded-xl border border-indigo-100/50 bg-indigo-50/20 p-3 shadow-inner">
               <ScenarioSelect
                 label={t("scenarioB")}
                 value={scenarioB.id}
                 onChange={setCompareB}
                 scenarios={scenarios}
+                colorScheme="indigo"
               />
             </div>
           </div>

@@ -96,49 +96,7 @@ interface TaktChartProps {
   height?: number
 }
 
-// ─── Custom XAxis tick with multiline word-wrap ──────────────────────────────
-
-interface CustomTickProps {
-  x?: number
-  y?: number
-  payload?: { value: string }
-}
-
-function CustomXAxisTick({ x = 0, y = 0, payload }: CustomTickProps) {
-  if (!payload?.value) return null
-  const text = payload.value
-
-  const words = text.split(" ")
-  let line1 = text
-  let line2 = ""
-
-  if (text.length > 13 && words.length > 1) {
-    const mid = Math.ceil(words.length / 2)
-    line1 = words.slice(0, mid).join(" ")
-    line2 = words.slice(mid).join(" ")
-    if (line1.length > 15) line1 = `${line1.substring(0, 14)}…`
-    if (line2.length > 15) line2 = `${line2.substring(0, 14)}…`
-  } else if (text.length > 16) {
-    line1 = `${text.substring(0, 15)}…`
-  }
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text
-        x={0}
-        y={0}
-        textAnchor="end"
-        fill="#6b7280"
-        fontSize={10}
-        fontWeight={500}
-        transform="rotate(-25)"
-      >
-        <tspan x={0} dy="8">{line1}</tspan>
-        {line2 && <tspan x={0} dy="11">{line2}</tspan>}
-      </text>
-    </g>
-  )
-}
+// No custom tick needed for horizontal layout
 
 export default function TaktChart({ scenarioId, height = 380 }: TaktChartProps) {
   const t = useTranslations("simulator.chart")
@@ -187,27 +145,29 @@ export default function TaktChart({ scenarioId, height = 380 }: TaktChartProps) 
         <ResponsiveContainer width="100%" height={height}>
           <BarChart
             data={chartData}
-            margin={{ top: 15, right: 95, left: 5, bottom: 75 }}
+            layout="vertical"
+            margin={{ top: 15, right: 35, left: 20, bottom: 25 }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e5e7eb" />
 
             <XAxis
-              dataKey="name"
-              tick={<CustomXAxisTick />}
-              interval={0}
-              height={75}
-            />
-
-            <YAxis
+              type="number"
               tick={{ fontSize: 11, fill: "#6b7280" }}
               label={{
                 value: t("axisMinPerUnit"),
-                angle: -90,
-                position: "insideLeft",
-                offset: 15,
+                position: "insideBottom",
+                offset: -15,
                 style: { fontSize: 11, fill: "#6b7280" },
               }}
-              width={60}
+              height={40}
+            />
+
+            <YAxis
+              type="category"
+              dataKey="name"
+              tick={{ fontSize: 11, fill: "#6b7280" }}
+              width={160}
+              interval={0}
             />
 
             <Tooltip
@@ -217,13 +177,13 @@ export default function TaktChart({ scenarioId, height = 380 }: TaktChartProps) 
 
             {taktTimeMin > 0 && (
               <ReferenceLine
-                y={taktTimeMin}
+                x={taktTimeMin}
                 stroke="#374151"
                 strokeDasharray="8 4"
                 strokeWidth={2}
                 label={{
                   value: t("taktLine", { value: taktTimeMin.toFixed(1) }),
-                  position: "right",
+                  position: "top",
                   fill: "#374151",
                   fontSize: 11,
                   fontWeight: 600,
@@ -231,7 +191,7 @@ export default function TaktChart({ scenarioId, height = 380 }: TaktChartProps) 
               />
             )}
 
-            <Bar dataKey="effectiveCycleMin" radius={[4, 4, 0, 0]} maxBarSize={56}>
+            <Bar dataKey="effectiveCycleMin" radius={[0, 4, 4, 0]} maxBarSize={32}>
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={getBarColor(entry)} />
               ))}
