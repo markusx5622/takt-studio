@@ -487,18 +487,19 @@ export default function StationEditor() {
           const failureStr = cols[4].replace('%', '').trim()
           
           let failureRate = 0
-          if (cols[3].includes('%')) {
-            failureRate = parseFloat(cols[3].replace('%', '')) / 100
+          if (cols[4].includes('%')) {
+            failureRate = parseFloat(failureStr) / 100
           } else {
-            failureRate = parseFloat(cols[3])
+            failureRate = parseFloat(cols[4])
           }
 
-          if (!name || isNaN(cycleTimeMin) || isNaN(operators) || isNaN(failureRate)) continue
+          if (!name || isNaN(cycleTimeMin) || isNaN(unitsPerCycle) || isNaN(operators) || isNaN(failureRate)) continue
 
           newStations.push({
             id: crypto.randomUUID(),
             name,
             cycleTimeMin,
+            unitsPerCycle,
             operators,
             failureRate,
           })
