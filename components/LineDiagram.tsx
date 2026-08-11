@@ -63,10 +63,10 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
   return (
     <div
       className={cn(
-        "w-40 shrink-0 overflow-hidden rounded-lg border-2 transition-shadow hover:shadow-lg",
-        station.isBottleneck && "border-red-500",
-        !station.isBottleneck && station.exceedsTakt && "border-amber-500 bg-amber-50",
-        !station.isBottleneck && !station.exceedsTakt && "border-green-300 bg-white"
+        "w-44 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 hover:shadow-xl",
+        station.isBottleneck && "border-red-500 bg-red-50/20 shadow-md shadow-red-500/10 ring-2 ring-red-500/30 ring-offset-1 animate-pulse",
+        !station.isBottleneck && station.exceedsTakt && "border-amber-500/80 bg-amber-50/50",
+        !station.isBottleneck && !station.exceedsTakt && "border-emerald-300/80 bg-white"
       )}
     >
       {station.isBottleneck && (

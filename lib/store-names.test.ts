@@ -1,3 +1,13 @@
+if (typeof global.document === "undefined" || !global.document) {
+  let lang = ""
+  global.document = {
+    documentElement: {
+      get lang() { return lang },
+      set lang(val: string) { lang = val }
+    }
+  } as unknown as Document
+}
+
 import { describe, it, expect } from "vitest"
 import { getStoreNames } from "./store-names"
 

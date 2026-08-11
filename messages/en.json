@@ -654,7 +654,8 @@
       "copied": "Link Copied!",
       "emptyStateTitle": "No Active Scenarios",
       "emptyStateSubtitle": "To start simulating and optimizing your production line, create your first scenario or load a predefined industry template.",
-      "createFirstScenario": "Create My First Scenario"
+      "createFirstScenario": "Create My First Scenario",
+      "availableTimeBadge": "{hours}h avail. ({minutes} min/day)"
     },
     "onboarding": {
       "title": "New Scenario Created!",
@@ -684,6 +685,7 @@
       "colFailure": "Failure (%)",
       "colEffective": "Effective time (min)",
       "colActions": "Actions",
+      "bottleneckTag": "Bottleneck",
       "cycleMin": "Cycle (min)",
       "operators": "Operators",
       "failurePct": "Failure (%)",

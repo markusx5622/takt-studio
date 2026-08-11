@@ -6,9 +6,10 @@ import { encodeScenarioToHash } from "@/lib/share"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { createPresetFromSector, INDUSTRY_PRESETS_DATA, type IndustrySectorKey } from "@/lib/presets"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Copy, Plus, Trash2, Share2, Check, Sparkles } from "lucide-react"
+import { Copy, Plus, Trash2, Share2, Check, Sparkles, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ExportPdfButton from "@/components/ExportPdfButton"
 import NewScenarioModal from "@/components/NewScenarioModal"
@@ -181,7 +182,16 @@ export default function ScenarioControls() {
   return (
     <Card>
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between space-y-0 pb-4">
-        <CardTitle className="text-lg">{t("title")}</CardTitle>
+        <div className="flex flex-wrap items-center gap-2">
+          <CardTitle className="text-lg">{t("title")}</CardTitle>
+          <Badge variant="outline" className="bg-blue-50/60 border-blue-200/80 text-blue-700 text-xs font-semibold px-2.5 py-0.5 shadow-2xs">
+            <Clock className="mr-1 h-3 w-3 inline text-blue-600 shrink-0" />
+            {t("availableTimeBadge", {
+              hours: (scenario.shiftHours * scenario.shiftsPerDay).toFixed(0),
+              minutes: (scenario.shiftHours * 60 * scenario.shiftsPerDay).toFixed(0),
+            })}
+          </Badge>
+        </div>
 
         {/* Preset Selector */}
         <div className="flex items-center gap-2">

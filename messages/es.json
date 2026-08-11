@@ -654,7 +654,8 @@
       "copied": "¡Enlace copiado!",
       "emptyStateTitle": "Sin escenarios activos",
       "emptyStateSubtitle": "Para comenzar a simular y optimizar tu línea de producción, crea tu primer escenario o carga una plantilla industrial predefinida.",
-      "createFirstScenario": "Crear mi primer escenario"
+      "createFirstScenario": "Crear mi primer escenario",
+      "availableTimeBadge": "{hours}h dispon. ({minutes} min/día)"
     },
     "onboarding": {
       "title": "¡Nuevo Escenario Creado!",
@@ -684,6 +685,7 @@
       "colFailure": "Fallo (%)",
       "colEffective": "Tiempo efectivo (min)",
       "colActions": "Acciones",
+      "bottleneckTag": "Cuello de botella",
       "cycleMin": "Ciclo (min)",
       "operators": "Operarios",
       "failurePct": "Fallo (%)",

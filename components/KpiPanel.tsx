@@ -150,7 +150,7 @@ export default function KpiPanel() {
         </Card>
 
         {/* CARD 2 — Cuello de botella */}
-        <Card>
+        <Card className={cn("transition-all hover:shadow-md", bottleneckExceedsTakt ? "border-red-300/80 bg-red-50/20 shadow-2xs ring-1 ring-red-500/20" : "border-emerald-200/80 bg-emerald-50/10")}>
           <CardContent className="pt-5">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
@@ -203,7 +203,7 @@ export default function KpiPanel() {
         </Card>
 
         {/* CARD 3 — Capacidad de Producción y Saturación */}
-        <Card className="transition-all hover:shadow-md">
+        <Card className={cn("transition-all hover:shadow-md", kpis.meetsDemand ? "border-emerald-200/80 bg-emerald-50/20 shadow-2xs" : "border-red-300/80 bg-red-50/20 shadow-2xs ring-1 ring-red-500/20")}>
           <CardContent className="pt-5">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">

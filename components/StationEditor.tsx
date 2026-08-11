@@ -85,7 +85,7 @@ function StationRow({
       className={cn(
         "border-b transition-colors",
         isBottleneck
-          ? "bg-amber-500/10 hover:bg-amber-500/15 dark:bg-amber-950/30 border-l-4 border-l-amber-500"
+          ? "bg-red-50/70 hover:bg-red-50/90 dark:bg-red-950/30 border-l-4 border-l-red-500 shadow-2xs"
           : "hover:bg-blue-50/60"
       )}
     >
@@ -101,10 +101,10 @@ function StationRow({
           />
           {isBottleneck && (
             <span
-              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-300 bg-amber-100/90 px-2 py-0.5 text-[10px] font-bold text-amber-800 shadow-2xs dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300"
+              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-red-300 bg-red-100/90 px-2.5 py-0.5 text-[10px] font-bold text-red-800 shadow-2xs animate-pulse"
               title={t("bottleneckTooltip")}
             >
-              <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400 shrink-0" />
+              <AlertTriangle className="h-3 w-3 text-red-600 shrink-0" />
               <span>{t("bottleneckBadge")}</span>
             </span>
           )}
@@ -204,7 +204,7 @@ function StationCard({
       className={cn(
         "rounded-lg border p-3 transition-all",
         isBottleneck
-          ? "border-amber-400/80 bg-amber-50/40 border-l-4 border-l-amber-500 shadow-2xs dark:bg-amber-950/20"
+          ? "border-red-400/80 bg-red-50/40 border-l-4 border-l-red-500 shadow-2xs dark:bg-red-950/20"
           : "hover:border-blue-300/60"
       )}
     >
@@ -213,10 +213,10 @@ function StationCard({
           <span className="text-xs font-medium text-muted-foreground">#{index + 1}</span>
           {isBottleneck && (
             <span
-              className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-100/90 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:border-amber-700/60 dark:bg-amber-950/80 dark:text-amber-300"
+              className="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-100/90 px-2 py-0.5 text-[10px] font-bold text-red-800 shadow-2xs animate-pulse"
               title={t("bottleneckTooltip")}
             >
-              <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400 shrink-0" />
+              <AlertTriangle className="h-3 w-3 text-red-600 shrink-0" />
               <span>{t("bottleneckBadge")}</span>
             </span>
           )}
