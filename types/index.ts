@@ -33,6 +33,10 @@ export type Scenario = {
   shiftsPerDay: number
   /** Porcentaje de tiempo de línea asignado a este escenario (0-100). Default 100 */
   allocationPercent?: number
+  /** Número de cambios de serie/formato al día. Default 0 */
+  changeoversPerDay?: number
+  /** Tiempo por cambio de serie (minutos). Default 0 */
+  changeoverTimeMin?: number
   /** Supuestos económicos configurables por escenario */
   economics: EconomicInputs
   /** Opciones de la simulación Monte Carlo (variabilidad, semilla) */

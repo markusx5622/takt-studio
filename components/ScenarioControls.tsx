@@ -178,6 +178,16 @@ export default function ScenarioControls() {
     if (!isNaN(n) && n >= 1 && n <= 100) updateScenario(scenario!.id, { allocationPercent: n })
   }
 
+  function handleChangeoversPerDayChange(value: string) {
+    const n = parseInt(value, 10)
+    if (!isNaN(n) && n >= 0) updateScenario(scenario!.id, { changeoversPerDay: n })
+  }
+
+  function handleChangeoverTimeMinChange(value: string) {
+    const n = parseFloat(value)
+    if (!isNaN(n) && n >= 0) updateScenario(scenario!.id, { changeoverTimeMin: n })
+  }
+
   function handleDelete() {
     if (confirm(t("deleteConfirm", { name: scenario!.name }))) {
       removeScenario(scenario!.id)
@@ -290,7 +300,7 @@ export default function ScenarioControls() {
 
           {/* Allocation % (Shared Loading) */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-allocation" className="text-sm font-medium">Asignación (%)</label>
+            <label htmlFor="sc-allocation" className="text-sm font-medium">{t("allocationLabel") ?? "Asignación (%)"}</label>
             <div className="flex items-center gap-2">
               <Input
                 id="sc-allocation"
@@ -302,6 +312,32 @@ export default function ScenarioControls() {
                 onChange={(e) => handleAllocationChange(e.target.value)}
               />
             </div>
+          </div>
+
+          {/* Changeovers per Day */}
+          <div className="space-y-1.5">
+            <label htmlFor="sc-changeovers" className="text-sm font-medium">{t("changeoversPerDayLabel") ?? "Cambios/Día (SMED)"}</label>
+            <Input
+              id="sc-changeovers"
+              type="number"
+              min={0}
+              step={1}
+              value={scenario.changeoversPerDay ?? 0}
+              onChange={(e) => handleChangeoversPerDayChange(e.target.value)}
+            />
+          </div>
+
+          {/* Changeover Time */}
+          <div className="space-y-1.5">
+            <label htmlFor="sc-changeover-time" className="text-sm font-medium">{t("changeoverTimeMinLabel") ?? "Min/Cambio (SMED)"}</label>
+            <Input
+              id="sc-changeover-time"
+              type="number"
+              min={0}
+              step={5}
+              value={scenario.changeoverTimeMin ?? 0}
+              onChange={(e) => handleChangeoverTimeMinChange(e.target.value)}
+            />
           </div>
         </div>
 

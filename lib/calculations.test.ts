@@ -61,6 +61,15 @@ describe("calculateTaktTime", () => {
     const scenario = makeScenario([], 0, 8, 1)
     expect(calculateTaktTime(scenario)).toBe(0)
   })
+
+  it("takt time deducts changeover time from available time", () => {
+    const scenario = makeScenario([], 8, 8, 1)
+    scenario.changeoversPerDay = 2
+    scenario.changeoverTimeMin = 30
+    // Total time = 480 min. Loss = 2 * 30 = 60 min. Net = 420 min.
+    // Takt = 420 / 8 = 52.5
+    expect(calculateTaktTime(scenario)).toBe(52.5)
+  })
 })
 
 describe("findBottleneck", () => {
@@ -121,6 +130,16 @@ describe("calculateThroughput", () => {
     expect(throughput).toBeGreaterThan(0)
     expect(Number.isFinite(throughput)).toBe(true)
     expect(Number.isInteger(throughput)).toBe(true)
+  })
+
+  it("throughput is reduced by changeovers", () => {
+    const stations = [makeStation(30, 1)]
+    const scenario = makeScenario(stations, 10, 8, 1)
+    scenario.changeoversPerDay = 3
+    scenario.changeoverTimeMin = 60
+    // Total time = 480 min. Loss = 180 min. Net = 300 min.
+    // Throughput = floor(300 / 30) = 10
+    expect(calculateThroughput(scenario)).toBe(10)
   })
 })
 

@@ -30,11 +30,22 @@ export function getStationsWithEffective(
   }))
 }
 
+/** Calcula el tiempo disponible neto tras restar el % de asignación y los tiempos de cambio de serie */
+export function getNetAvailableTimeMin(scenario: Scenario): number {
+  const allocation = scenario.allocationPercent ?? 100
+  const availableTimeFull = scenario.shiftHours * 60 * scenario.shiftsPerDay * (allocation / 100)
+  
+  const changeoversPerDay = scenario.changeoversPerDay ?? 0
+  const changeoverTimeMin = scenario.changeoverTimeMin ?? 0
+  const changeoverLoss = changeoversPerDay * changeoverTimeMin
+
+  return Math.max(0, availableTimeFull - changeoverLoss)
+}
+
 /** Takt Time = Tiempo disponible / Demanda. Ritmo necesario de producción. */
 export function calculateTaktTime(scenario: Scenario): number {
   if (scenario.demandPerDay <= 0) return 0
-  const allocation = scenario.allocationPercent ?? 100
-  const availableTimeMin = (scenario.shiftHours * 60 * scenario.shiftsPerDay) * (allocation / 100)
+  const availableTimeMin = getNetAvailableTimeMin(scenario)
   return availableTimeMin / scenario.demandPerDay
 }
 
@@ -66,8 +77,7 @@ export function findBottleneck(
 export function calculateThroughput(scenario: Scenario): number {
   if (scenario.stations.length === 0) return 0
 
-  const allocation = scenario.allocationPercent ?? 100
-  const availableTimeMin = scenario.shiftHours * 60 * scenario.shiftsPerDay * (allocation / 100)
+  const availableTimeMin = getNetAvailableTimeMin(scenario)
   const { effectiveCycleMin } = findBottleneck(scenario.stations)
 
   if (effectiveCycleMin <= 0 || !isFinite(effectiveCycleMin)) return 0
@@ -99,8 +109,7 @@ export function calculateAllKPIs(scenario: Scenario): KPIs {
   const leadTimeMin = calculateLeadTime(scenario.stations)
   const balancingEfficiency = calculateBalancingEfficiency(scenario.stations)
   const totalCycleMin = scenario.stations.reduce((sum, s) => sum + s.cycleTimeMin, 0)
-  const allocation = scenario.allocationPercent ?? 100
-  const availableTimeMin = scenario.shiftHours * 60 * scenario.shiftsPerDay * (allocation / 100)
+  const availableTimeMin = getNetAvailableTimeMin(scenario)
   const meetsDemand = throughputPerDay >= scenario.demandPerDay
   const demandDelta = throughputPerDay - scenario.demandPerDay
 
