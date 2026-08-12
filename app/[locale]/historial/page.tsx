@@ -6,7 +6,7 @@ import { Link, useRouter } from "@/i18n/navigation"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { calculateAllKPIs } from "@/lib/calculations"
 import { buildSnapshotExportPayload } from "@/lib/import-export"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -31,13 +31,9 @@ import {
   Search,
   Download,
   StickyNote,
-  Activity,
   ShieldAlert,
-  Sparkles,
-  Layers,
   Clock,
   Zap,
-  Percent,
 } from "lucide-react"
 import type { ScenarioSnapshot } from "@/types"
 import ConsultingBackground from "@/components/ConsultingBackground"
@@ -563,7 +559,7 @@ export default function HistorialPage() {
                   <p className="text-xs text-slate-500">{fmtDate(baselineSnapshot.createdAt, locale)}</p>
                   {baselineSnapshot.note && (
                     <p className="mt-1 text-xs italic text-slate-600 bg-amber-100/50 px-2.5 py-1 rounded-md inline-block">
-                      "{baselineSnapshot.note}"
+                      &quot;{baselineSnapshot.note}&quot;
                     </p>
                   )}
                 </div>

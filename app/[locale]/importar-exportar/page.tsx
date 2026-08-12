@@ -36,7 +36,6 @@ import {
   Layers,
   History,
   ShieldCheck,
-  Zap,
 } from "lucide-react"
 import ConsultingBackground from "@/components/ConsultingBackground"
 
@@ -148,7 +147,7 @@ function ImportPreview({ payload }: { payload: ExportPayload }) {
 
       {!isScenario && payload.snapshot.note && (
         <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50/60 p-2.5 text-xs text-amber-900 italic">
-          "{payload.snapshot.note}"
+          &quot;{payload.snapshot.note}&quot;
         </div>
       )}
     </div>
