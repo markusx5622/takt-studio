@@ -212,7 +212,7 @@
       "sub": "Todo lo que incluye Takt Studio desde el primer acceso",
       "items": [
         {
-          "title": "Auditoría de Estrés Automotriz (Ford CAR)",
+          "title": "Auditoría de Estrés Automotriz (Estándar CAR)",
           "description": "Evaluación OEE Requerido vs Demostrado, propagación de mermas (% Scrap) y Test de Estrés MPW (+20% demanda)."
         },
         {
@@ -296,7 +296,7 @@
           "a": "No es obligatorio, pero ayuda. La herramienta está diseñada para ser intuitiva, pero conceptos como 'Cuello de Botella' o 'Balanceo de Línea' son fundamentales para interpretar correctamente los resultados y tomar decisiones de mejora."
         },
         {
-          "q": "¿Qué aporta el Estándar Automotriz Ford CAR a las simulaciones?",
+          "q": "¿Qué aporta el Estándar Automotriz CAR a las simulaciones?",
           "a": "El estándar de la industria automotriz audita la capacidad bajo estrés real: evalúa la asignación de línea (% Shared Loading), calcula la merma acumulada hacia atrás (% Scrap), exige un ratio de OEE mínimo para cumplir demanda y permite realizar pruebas de estrés de volumen pico (MPW)."
         }
       ]
@@ -320,7 +320,7 @@
         {
           "phase": "Fase 3",
           "status": "Completado",
-          "title": "Grado Automotriz (Ford CAR)",
+          "title": "Grado Automotriz (Estándar CAR)",
           "desc": "Auditoría de estrés OEE, propagación de mermas (% scrap), asignación y test MPW (+20% demanda)."
         },
         {
@@ -543,7 +543,7 @@
         "note": "Un valor de 1.0 indica una línea perfectamente balanceada. Valores por debajo de 0.7 sugieren oportunidad de redistribución de cargas."
       }
     ],
-    "autoTitle": "Auditoría Grado Automotriz (Estándar Ford CAR)",
+    "autoTitle": "Auditoría Grado Automotriz (Estándar CAR)",
     "autoIntro": "Takt Studio incorpora de forma transversal las mecánicas y estándares de automoción para escenarios de alta exigencia, permitiendo evaluar el estrés operativo de la línea en base a parámetros estandarizados de validación industrial.",
     "autoCards": [
       {
@@ -1091,7 +1091,7 @@
       "paybackImmediate": "Inmediato",
       "paybackOver10Years": "> 10 años",
       "noImprovements": "No se detectan cuellos de botella ni acciones de mejora prioritarias requeridas para este escenario.",
-      "secAutomotive": "AUDITORÍA GRADO AUTOMOTRIZ (ESTÁNDAR FORD CAR)",
+      "secAutomotive": "AUDITORÍA GRADO AUTOMOTRIZ (ESTÁNDAR CAR)",
       "autoAllocation": "Asignación Línea (Shared Loading)",
       "autoScrap": "Merma Acumulada (% Scrap Línea)",
       "autoOeeReq": "OEE Requerido",

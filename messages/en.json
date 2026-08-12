@@ -212,7 +212,7 @@
       "sub": "Everything included in Takt Studio from the first visit",
       "items": [
         {
-          "title": "Automotive Stress Audit (Ford CAR)",
+          "title": "Automotive Stress Audit (CAR Standard)",
           "description": "Required vs Demonstrated OEE evaluation, scrap rate propagation (% Scrap) and MPW Stress Test (+20% demand)."
         },
         {
@@ -296,7 +296,7 @@
           "a": "Not required, but it helps. The tool is designed to be intuitive, but concepts like 'Bottleneck' or 'Line Balancing' are fundamental to correctly interpret results and make improvement decisions."
         },
         {
-          "q": "What value does the Automotive Ford CAR Standard bring to simulations?",
+          "q": "What value does the Automotive CAR Standard bring to simulations?",
           "a": "The automotive industry standard audits line capacity under real-world stress: evaluates shared line allocation (% Shared Loading), propagates cumulative scrap rate backward (% Scrap), requires a minimum OEE ratio to meet demand, and enables peak volume stress testing (MPW)."
         }
       ]
@@ -320,7 +320,7 @@
         {
           "phase": "Phase 3",
           "status": "Completed",
-          "title": "Automotive Grade (Ford CAR)",
+          "title": "Automotive Grade (CAR Standard)",
           "desc": "Required OEE stress audit, scrap propagation (% scrap), line allocation and MPW test (+20% demand)."
         },
         {
@@ -543,7 +543,7 @@
         "note": "A value of 1.0 indicates a perfectly balanced line. Values below 0.7 suggest an opportunity to redistribute workloads."
       }
     ],
-    "autoTitle": "Automotive Grade Audit (Ford CAR Standard)",
+    "autoTitle": "Automotive Grade Audit (CAR Standard)",
     "autoIntro": "Takt Studio transversally incorporates automotive mechanics and standards for high-demand scenarios, allowing for the evaluation of operational line stress based on standardized industrial validation parameters.",
     "autoCards": [
       {
@@ -1092,7 +1092,7 @@
       "paybackImmediate": "Immediate",
       "paybackOver10Years": "> 10 years",
       "noImprovements": "No critical bottlenecks or priority improvement actions were detected for this scenario.",
-      "secAutomotive": "AUTOMOTIVE GRADE AUDIT (FORD CAR STANDARD)",
+      "secAutomotive": "AUTOMOTIVE GRADE AUDIT (CAR STANDARD)",
       "autoAllocation": "Line Allocation (Shared Loading)",
       "autoScrap": "Accumulated Scrap (% Total)",
       "autoOeeReq": "OEE Required",

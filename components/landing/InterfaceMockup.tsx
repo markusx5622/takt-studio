@@ -45,7 +45,7 @@ export default function InterfaceMockup() {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-1 rounded-md border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 text-[9px] font-bold text-blue-700 shadow-2xs">
             <ShieldCheck className="h-3 w-3 text-blue-600" />
-            <span>FORD CAR STANDARD</span>
+            <span>CAR STANDARD (AUTOMOTIVE)</span>
           </div>
           <div className="h-6 w-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
             <Settings2 className="h-3 w-3 text-primary" />
