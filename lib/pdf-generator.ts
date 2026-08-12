@@ -474,6 +474,56 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
   })
   y += pBoxH + 2
 
+  // ── 3.5. AUDITORÍA GRADO AUTOMOTRIZ (ESTÁNDAR FORD CAR) ─────────────────────
+
+  sectionTitle(t("secAutomotive"))
+
+  const getAccumulatedScrap = (scenarioStations: Station[]) => {
+    if (scenarioStations.length === 0) return 0
+    let yieldVal = 1
+    for (const st of scenarioStations) yieldVal *= (1 - Math.min(st.failureRate, 0.99))
+    return (1 - yieldVal) * 100
+  }
+  const accumulatedScrap = getAccumulatedScrap(scenario.stations)
+
+  const automotiveCols = [
+    { label: t("autoAllocation"), value: `${scenario.allocationPercent ?? 100}%` },
+    { label: t("autoOeeReq"), value: `${(kpis.requiredOEE * 100).toFixed(1)}%` },
+    { label: t("autoOeeDem"), value: `${(kpis.balancingEfficiency * 100).toFixed(1)}%` },
+    { label: t("autoScrap"), value: `${accumulatedScrap.toFixed(1)}%` },
+  ]
+
+  const aColW = CW / 4
+  const aBoxH = 12
+
+  // Auto Param Header
+  doc.setFillColor(248, 250, 252)
+  doc.rect(LM, y, CW, 5, "F")
+  doc.setDrawColor(203, 213, 225)
+  doc.setLineWidth(0.2)
+  doc.rect(LM, y, CW, 5, "S")
+
+  setGray()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(7)
+  automotiveCols.forEach((col, i) => {
+    const cleanLabel = fitText(doc, col.label, aColW - 2)
+    doc.text(cleanLabel, LM + i * aColW + aColW / 2, y + 3.5, { align: "center" })
+  })
+  y += 5
+
+  // Auto Param Values
+  doc.setFillColor(255, 255, 255)
+  doc.rect(LM, y, CW, aBoxH - 5, "FD")
+  setDark()
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(8.5)
+  automotiveCols.forEach((col, i) => {
+    const cleanVal = fitText(doc, col.value, aColW - 2)
+    doc.text(cleanVal, LM + i * aColW + aColW / 2, y + 4.8, { align: "center" })
+  })
+  y += aBoxH + 4
+
   // ── 4. KPIS OPERATIVOS DE LÍNEA ──────────────────────────────────────────────
 
   sectionTitle(t("secKpis"))
@@ -976,10 +1026,11 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
 
   const tCols = [
     { x: LM,       w: 8,  label: t("colIndex"),    align: "center" as const },
-    { x: LM + 8,   w: 60, label: t("colName"),     align: "left" as const   },
-    { x: LM + 68,  w: 20, label: t("colCycle"),    align: "right" as const  },
-    { x: LM + 88,  w: 16, label: t("colOperators"),align: "center" as const },
-    { x: LM + 104, w: 20, label: t("colFailure"),  align: "center" as const },
+    { x: LM + 8,   w: 52, label: t("colName"),     align: "left" as const   },
+    { x: LM + 60,  w: 16, label: t("colCycle"),    align: "right" as const  },
+    { x: LM + 76,  w: 18, label: t("colUnits"),    align: "center" as const },
+    { x: LM + 94,  w: 12, label: t("colOperators"),align: "center" as const },
+    { x: LM + 106, w: 18, label: t("colFailure"),  align: "center" as const },
     { x: LM + 124, w: 23, label: t("colEffective"),align: "right" as const  },
     { x: LM + 147, w: 33, label: t("colExceeds"),  align: "center" as const },
   ]
@@ -1035,14 +1086,15 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     doc.text(String(i + 1), tCols[0].x + tCols[0].w / 2, textY, { align: "center" })
     doc.text(nameLines, tCols[1].x + 1.5, textY)
     doc.text(`${st.cycleTimeMin} ${t("minUnit")}`, tCols[2].x + tCols[2].w - 1, textY, { align: "right" })
-    doc.text(String(st.operators), tCols[3].x + tCols[3].w / 2, textY, { align: "center" })
-    doc.text(`${(st.failureRate * 100).toFixed(0)}%`, tCols[4].x + tCols[4].w / 2, textY, { align: "center" })
-    doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, tCols[5].x + tCols[5].w - 1, textY, { align: "right" })
+    doc.text(String(st.unitsPerCycle ?? 1), tCols[3].x + tCols[3].w / 2, textY, { align: "center" })
+    doc.text(String(st.operators), tCols[4].x + tCols[4].w / 2, textY, { align: "center" })
+    doc.text(`${(st.failureRate * 100).toFixed(0)}%`, tCols[5].x + tCols[5].w / 2, textY, { align: "center" })
+    doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, tCols[6].x + tCols[6].w - 1, textY, { align: "right" })
 
     if (exceedsTakt) setRed()
     else setGreen()
     doc.setFont("helvetica", "bold")
-    doc.text(exceedsTakt ? t("exceedsYes") : t("exceedsNo"), tCols[6].x + tCols[6].w / 2, textY, { align: "center" })
+    doc.text(exceedsTakt ? t("exceedsYes") : t("exceedsNo"), tCols[7].x + tCols[7].w / 2, textY, { align: "center" })
 
     y += rowH
   }

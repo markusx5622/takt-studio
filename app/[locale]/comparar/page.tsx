@@ -285,7 +285,7 @@ interface TableRow {
   fmtDelta: (v: number) => string
 }
 
-function buildRows(kpisA: KPIs, kpisB: KPIs, t: (key: string) => string): TableRow[] {
+function buildRows(scenarioA: Scenario, scenarioB: Scenario, kpisA: KPIs, kpisB: KPIs, t: (key: string) => string): TableRow[] {
   return [
     {
       label: t("rowTakt"),
@@ -328,6 +328,22 @@ function buildRows(kpisA: KPIs, kpisB: KPIs, t: (key: string) => string): TableR
       fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("ppUnit")}`,
     },
     {
+      label: "OEE Requerido",
+      a: `${(kpisA.requiredOEE * 100).toFixed(1)}%`,
+      b: `${(kpisB.requiredOEE * 100).toFixed(1)}%`,
+      delta: (kpisB.requiredOEE - kpisA.requiredOEE) * 100,
+      higherIsBetter: true,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("ppUnit")}`,
+    },
+    {
+      label: "Asignación de Línea",
+      a: `${(scenarioA.allocationPercent ?? 100).toFixed(1)}%`,
+      b: `${(scenarioB.allocationPercent ?? 100).toFixed(1)}%`,
+      delta: (scenarioB.allocationPercent ?? 100) - (scenarioA.allocationPercent ?? 100),
+      higherIsBetter: true,
+      fmtDelta: (v) => `${Math.abs(v).toFixed(1)} ${t("ppUnit")}`,
+    },
+    {
       label: t("rowTotalCycle"),
       a: kpisA.totalCycleMin.toFixed(1),
       b: kpisB.totalCycleMin.toFixed(1),
@@ -350,7 +366,7 @@ function ComparisonTable({
   kpisB: KPIs
 }) {
   const t = useTranslations("compare")
-  const rows = buildRows(kpisA, kpisB, t)
+  const rows = buildRows(scenarioA, scenarioB, kpisA, kpisB, t)
 
   return (
     <Card>

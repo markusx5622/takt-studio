@@ -4,6 +4,7 @@ import type {
   MonteCarloResult,
   HistogramBin,
 } from "@/types"
+import { getNetAvailableTimeMin, getYieldMultipliers } from "@/lib/calculations"
 
 const DEFAULT_RUNS = 2000
 const DEFAULT_CV = 0.1
@@ -44,17 +45,22 @@ export function sampleLognormal(rng: () => number, median: number, cv: number): 
 
 /**
  * Simula un día de producción: muestrea el tiempo efectivo de cada estación
- * (lognormal + reproceso Bernoulli que duplica el tiempo) y calcula el throughput
+ * (lognormal + multiplicadores de merma) y calcula el throughput
  * como floor(tiempo disponible / cuello de botella muestreado).
  */
-function simulateRun(scenario: Scenario, rng: () => number, cv: number): number {
-  const availableTimeMin = scenario.shiftHours * 60 * scenario.shiftsPerDay
+function simulateRun(scenario: Scenario, rng: () => number, cv: number, multipliers: number[], availableTimeMin: number): number {
   let bottleneckMin = 0
-  for (const station of scenario.stations) {
+  for (let i = 0; i < scenario.stations.length; i++) {
+    const station = scenario.stations[i]
     if (station.operators <= 0) return 0
-    const baseSample = sampleLognormal(rng, station.cycleTimeMin, cv)
-    const rework = rng() < station.failureRate ? 1 : 0
-    const effectiveMin = (baseSample / station.operators) * (1 + rework)
+    
+    // Muestreo lognormal sobre el tiempo de ciclo nominal (ya dividido por unidades por ciclo)
+    const units = station.unitsPerCycle ?? 1
+    const nominalMin = station.cycleTimeMin / units
+    const baseSample = sampleLognormal(rng, nominalMin, cv)
+    
+    // El tiempo efectivo incorpora el multiplicador de demanda de esta estación por la propagación de mermas
+    const effectiveMin = (baseSample / station.operators) * multipliers[i]
     if (effectiveMin > bottleneckMin) bottleneckMin = effectiveMin
   }
   if (bottleneckMin <= 0 || !isFinite(bottleneckMin)) return 0
@@ -108,7 +114,9 @@ export function runMonteCarlo(
   const samples: number[] = []
   if (scenario.stations.length > 0 && runs > 0) {
     const rng = mulberry32(seed)
-    for (let i = 0; i < runs; i++) samples.push(simulateRun(scenario, rng, cv))
+    const multipliers = getYieldMultipliers(scenario.stations)
+    const availableTimeMin = getNetAvailableTimeMin(scenario)
+    for (let i = 0; i < runs; i++) samples.push(simulateRun(scenario, rng, cv, multipliers, availableTimeMin))
   }
 
   const sorted = [...samples].sort((a, b) => a - b)

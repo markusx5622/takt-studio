@@ -692,6 +692,22 @@ export async function generateComparativePdf(scenarioAId: string, scenarioBId: s
       higherIsBetter: true
     },
     {
+      label: tCompare("autoOeeReq") || "OEE Requerido",
+      a: `${formatNumber(kpisA.requiredOEE * 100, locale, 1)}%`,
+      b: `${formatNumber(kpisB.requiredOEE * 100, locale, 1)}%`,
+      deltaNum: (kpisB.requiredOEE - kpisA.requiredOEE) * 100,
+      deltaStr: `${formatNumber((kpisB.requiredOEE - kpisA.requiredOEE) * 100, locale, 1)} pp`,
+      higherIsBetter: true
+    },
+    {
+      label: tCompare("autoAllocation") || "Asignación de Línea",
+      a: `${formatNumber(scenarioA.allocationPercent ?? 100, locale, 1)}%`,
+      b: `${formatNumber(scenarioB.allocationPercent ?? 100, locale, 1)}%`,
+      deltaNum: (scenarioB.allocationPercent ?? 100) - (scenarioA.allocationPercent ?? 100),
+      deltaStr: `${formatNumber((scenarioB.allocationPercent ?? 100) - (scenarioA.allocationPercent ?? 100), locale, 1)} pp`,
+      higherIsBetter: true
+    },
+    {
       label: tCompare("rowTotalCycle"),
       a: `${formatNumber(kpisA.totalCycleMin, locale, 1)} ${tCompare("minUnit")}`,
       b: `${formatNumber(kpisB.totalCycleMin, locale, 1)} ${tCompare("minUnit")}`,
