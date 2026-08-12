@@ -59,6 +59,13 @@ Su objetivo fundamental es democratizar el análisis de balanceo de líneas en p
 - **Asistente de Auto-Balanceo (1-Click Wand2)**: Rebalanceo automático de plantilla aplicando la heurística $N_{\text{op}} = \max\left(1, \left\lceil \frac{T_{\text{ciclo}} \times (1 + \%_{\text{fallo}})}{T_{takt}} \right\rceil\right)$.
 - **Importación Masiva desde CSV**: Carga rápida de estaciones desde hojas de datos mediante parseador seguro de comillas y delimitadores.
 
+### 🛡️ Auditoría Grado Automotriz (Estándar CAR)
+- **Estrés OEE (Requerido vs Demostrado)**: Evaluación continua de la Eficiencia General de Equipos requerida frente al histórico demostrable de la planta.
+- **Asignación de Línea (Shared Loading)**: Ajuste proporcional del tiempo disponible para plantas multiproducto donde las líneas no están dedicadas al 100%.
+- **Propagación de Mermas (% Scrap)**: Modelo acumulativo aguas abajo ($Yield_{acum}$) que obliga a las primeras estaciones a compensar defectos posteriores.
+- **Test de Estrés MPW (+20%)**: Prueba de capacidad máxima (*Maximum Parts per Week*) para auditar la resistencia de la línea ante picos de demanda.
+- **Lotes por Ciclo (Uds/Ciclo)**: Ajuste del tiempo efectivo para estaciones con procesado simultáneo de múltiples unidades.
+
 ### 📊 Panel de KPIs Industriales y Balanceo
 - **Takt Time ($T_t$)**: Ritmo objetivo de producción calculado a partir del tiempo disponible y la demanda requerida.
 - **Identificación del Cuello de Botella**: Detección automática y resaltado de la estación limitante que condiciona el ritmo de la línea.
@@ -118,20 +125,26 @@ $$T_{disp} = \text{horasTurno} \times 60 \times \text{turnosDía}$$
 $$T_t = \frac{T_{disp}}{\text{demandaDía}}$$
 
 ### 3. Tiempo de Ciclo Efectivo ($T_{ef, i}$)
-Para cada estación $i$, ajustado por operarios asignados ($O_i$) y tasa de fallo ($p_i$):
-$$T_{ef, i} = \left( \frac{T_{base, i}}{O_i} \right) \times \left( 1 + p_i \right)$$
+Para cada estación $i$, ajustado por operarios ($O_i$), unidades por ciclo ($Uds_{ciclo, i}$) y yield acumulado de mermas ($Yield_{acum, i}$):
+$$T_{ef, i} = \frac{T_{base, i}}{O_i \times Uds_{ciclo, i} \times Yield_{acum, i}}$$
 
 ### 4. Tiempo del Cuello de Botella ($T_{bottleneck}$)
 $$T_{bottleneck} = \max_{i} \left( T_{ef, i} \right)$$
 
 ### 5. Throughput Real Diario ($TP$)
-$$TP = \left\lfloor \frac{T_{disp}}{T_{bottleneck}} \right\rfloor$$
+Ajustado por porcentaje de asignación de línea ($\%Asignacion$) y OEE demostrado:
+$$TP = \left\lfloor \frac{T_{disp} \times \%Asignacion \times OEE}{T_{bottleneck}} \right\rfloor$$
 
 ### 6. Lead Time Total ($LT$)
 $$LT = \sum_{i=1}^{N} T_{ef, i}$$
 
 ### 7. Eficiencia de Balanceo de Línea ($E_b$)
 $$E_b = \frac{\sum_{i=1}^{N} T_{ef, i}}{N \times T_{bottleneck}}$$
+
+### 8. Métricas de Grado Automotriz (Estándar CAR)
+- **Yield Acumulado ($Yield_{acum, i}$)**: $Yield_{acum, i} = \prod_{k=i}^{N} (1 - p_k)$
+- **OEE Requerido ($OEE_{req}$)**: $OEE_{req} = \frac{\text{demandaDía}}{TP_{\text{teórico}}}$
+- **Test de Estrés MPW (+20%)**: $\text{Demanda}_{MPW} = \text{demandaDía} \times 1.20$
 
 ---
 
@@ -146,7 +159,7 @@ $$E_b = \frac{\sum_{i=1}^{N} T_{ef, i}}{N \times T_{bottleneck}}$$
 | **Internacionalización** | [next-intl v4](https://next-intl.dev/) | ES/EN completos (560 claves por idioma), rutas localizadas y middleware de detección. |
 | **Visualización de Datos** | [Recharts v3](https://recharts.org/) | Gráficos interactivos de barras de ciclo vs Takt Time. |
 | **Generación de Documentos** | [jsPDF v4](https://github.com/parallax/jsPDF) | Generación vectorial de informes ejecutivos en PDF con paginación automática, cabeceras de continuación y metadatos. |
-| **Testing Unitario** | [Vitest v4](https://vitest.dev/) + coverage v8 | 123 pruebas unitarias en 11 archivos con umbrales de cobertura obligatorios. |
+| **Testing Unitario** | [Vitest v4](https://vitest.dev/) + coverage v8 | 125 pruebas unitarias en 11 archivos con umbrales de cobertura obligatorios. |
 | **Testing E2E** | [Playwright](https://playwright.dev/) | 12 smoke tests bilingües ejecutados en CI sobre build de producción. |
 | **Analítica** | [Vercel Analytics](https://vercel.com/analytics) | Métricas de uso y Web Vitals sin cookies ni datos personales. |
 | **Tipado** | TypeScript Estricto | Tipado completo sin uso de `any`. |
@@ -362,7 +375,7 @@ takt-studio/
 
 ## 🔬 Testing y Calidad
 
-### Pruebas Unitarias (123 tests, 11 archivos en `lib/`)
+### Pruebas Unitarias (125 tests, 11 archivos en `lib/`)
 - Cálculo exacto de **Takt Time** ante diferentes escenarios de demanda y jornada.
 - Identificación precisa del **Cuello de Botella** y tiempos efectivos con operarios y scrap.
 - Comprobación de límites en la **Eficiencia de Balanceo** ($0 \le E_b \le 1$).
