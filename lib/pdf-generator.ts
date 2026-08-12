@@ -1,4 +1,5 @@
 import { useTaktStore } from "@/lib/store"
+import type { Station } from "@/types"
 import {
   calculateAllKPIs,
   calculateEconomicKPIs,
