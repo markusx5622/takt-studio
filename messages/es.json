@@ -212,8 +212,8 @@
       "sub": "Todo lo que incluye Takt Studio desde el primer acceso",
       "items": [
         {
-          "title": "Caso de Estudio Monobath",
-          "description": "Línea de baños prefabricados calibrada con datos reales de producción industrializada."
+          "title": "Auditoría de Estrés Automotriz (Ford CAR)",
+          "description": "Evaluación OEE Requerido vs Demostrado, propagación de mermas (% Scrap) y Test de Estrés MPW (+20% demanda)."
         },
         {
           "title": "Comparación What-If A/B",
@@ -294,6 +294,10 @@
         {
           "q": "¿Es necesario tener conocimientos avanzados de Lean Manufacturing?",
           "a": "No es obligatorio, pero ayuda. La herramienta está diseñada para ser intuitiva, pero conceptos como 'Cuello de Botella' o 'Balanceo de Línea' son fundamentales para interpretar correctamente los resultados y tomar decisiones de mejora."
+        },
+        {
+          "q": "¿Qué aporta el Estándar Automotriz Ford CAR a las simulaciones?",
+          "a": "El estándar de la industria automotriz audita la capacidad bajo estrés real: evalúa la asignación de línea (% Shared Loading), calcula la merma acumulada hacia atrás (% Scrap), exige un ratio de OEE mínimo para cumplir demanda y permite realizar pruebas de estrés de volumen pico (MPW)."
         }
       ]
     },
@@ -315,15 +319,15 @@
         },
         {
           "phase": "Fase 3",
-          "status": "Visión 2027",
-          "title": "IoT Sync",
-          "desc": "Conectividad con sensores en planta para captura de tiempos de ciclo en tiempo real."
+          "status": "Completado",
+          "title": "Grado Automotriz (Ford CAR)",
+          "desc": "Auditoría de estrés OEE, propagación de mermas (% scrap), asignación y test MPW (+20% demanda)."
         },
         {
           "phase": "Fase 4",
           "status": "A futuro",
-          "title": "Takt Cloud AI",
-          "desc": "Optimización de líneas basada en IA y colaboración multi-usuario en la nube."
+          "title": "IoT Sync & AI",
+          "desc": "Conectividad con sensores en planta para captura en tiempo real y optimización asistida por IA."
         }
       ],
       "tagline": "Impulsando la industria 4.0",

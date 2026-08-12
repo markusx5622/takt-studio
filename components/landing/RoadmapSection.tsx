@@ -8,13 +8,14 @@ import {
   Rocket,
   FlaskConical,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react"
 
 const PHASE_META = [
   { icon: Cpu, color: "bg-emerald-500", shadow: "shadow-emerald-500/20", done: true, active: false },
   { icon: FlaskConical, color: "bg-emerald-500", shadow: "shadow-emerald-500/20", done: true, active: false },
+  { icon: ShieldCheck, color: "bg-blue-600", shadow: "shadow-blue-600/20", done: true, active: true },
   { icon: Rocket, color: "bg-slate-400", shadow: "shadow-slate-400/10", done: false, active: false },
-  { icon: Sparkles, color: "bg-slate-400", shadow: "shadow-slate-400/10", done: false, active: false },
 ]
 
 export default function RoadmapSection() {

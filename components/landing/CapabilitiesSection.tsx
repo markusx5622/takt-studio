@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl"
 import {
-  Layers,
+  ShieldCheck,
   GitCompare,
   BarChart3,
   FileDown,
@@ -8,7 +8,7 @@ import {
   DollarSign,
 } from "lucide-react"
 
-const CAPABILITY_ICONS = [Layers, GitCompare, BarChart3, FileDown, Sliders, DollarSign]
+const CAPABILITY_ICONS = [ShieldCheck, GitCompare, BarChart3, FileDown, Sliders, DollarSign]
 
 export default function CapabilitiesSection() {
   const t = useTranslations("landing.capabilities")

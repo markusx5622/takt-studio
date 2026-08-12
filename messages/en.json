@@ -212,8 +212,8 @@
       "sub": "Everything included in Takt Studio from the first visit",
       "items": [
         {
-          "title": "Monobath Case Study",
-          "description": "Preconfigured off-site prefabricated bathroom module production line."
+          "title": "Automotive Stress Audit (Ford CAR)",
+          "description": "Required vs Demonstrated OEE evaluation, scrap rate propagation (% Scrap) and MPW Stress Test (+20% demand)."
         },
         {
           "title": "What-If A/B Comparison",
@@ -294,6 +294,10 @@
         {
           "q": "Do I need advanced Lean Manufacturing knowledge?",
           "a": "Not required, but it helps. The tool is designed to be intuitive, but concepts like 'Bottleneck' or 'Line Balancing' are fundamental to correctly interpret results and make improvement decisions."
+        },
+        {
+          "q": "What value does the Automotive Ford CAR Standard bring to simulations?",
+          "a": "The automotive industry standard audits line capacity under real-world stress: evaluates shared line allocation (% Shared Loading), propagates cumulative scrap rate backward (% Scrap), requires a minimum OEE ratio to meet demand, and enables peak volume stress testing (MPW)."
         }
       ]
     },
@@ -310,24 +314,20 @@
         {
           "phase": "Phase 2",
           "status": "Completed",
-          "shiftsTitle": "Number of shifts",
-          "allocationTitle": "% Allocation (Shared Loading)",
-          "allocationDesc": "Percentage of line time dedicated to this product. Simulates Mix-Model shared lines.",
-          "economicsTitle": "Economic Assumptions",
           "title": "Advanced Analytics",
           "desc": "Monte Carlo simulation, sensitivity analysis and advanced technical export."
         },
         {
           "phase": "Phase 3",
-          "status": "Vision 2027",
-          "title": "IoT Sync",
-          "desc": "Connectivity with shop-floor sensors for real-time cycle time capture."
+          "status": "Completed",
+          "title": "Automotive Grade (Ford CAR)",
+          "desc": "Required OEE stress audit, scrap propagation (% scrap), line allocation and MPW test (+20% demand)."
         },
         {
           "phase": "Phase 4",
           "status": "Future",
-          "title": "Takt Cloud AI",
-          "desc": "AI-based line optimization and multi-user cloud collaboration."
+          "title": "IoT Sync & AI",
+          "desc": "Real-time shop-floor sensor connectivity and AI-assisted line optimization."
         }
       ],
       "tagline": "Powering Industry 4.0",
