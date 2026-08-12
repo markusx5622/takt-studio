@@ -229,7 +229,7 @@
         },
         {
           "title": "Simulación Monte Carlo",
-          "description": "Análisis estocástico con 2.000 iteraciones y percentiles de riesgo P10, P50 y P90."
+          "description": "Análisis estocástico con 2.000 iteraciones y percentiles de riesgo P5, P50 y P95."
         },
         {
           "title": "Análisis de Impacto Económico",

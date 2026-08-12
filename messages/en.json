@@ -229,7 +229,7 @@
         },
         {
           "title": "Stochastic Monte Carlo Engine",
-          "description": "Risk distribution analysis with 2,000 runs and P10/P50/P90 percentiles."
+          "description": "Risk distribution analysis with 2,000 runs and P5/P50/P95 percentiles."
         },
         {
           "title": "Economic Impact Analysis",
