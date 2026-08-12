@@ -15,7 +15,7 @@ interface TaktStore extends AppState {
     sourceId: string,
     newName: string,
     stationChanges?: { originalStationId: string; updates: Partial<Omit<Station, "id">> }[],
-    scenarioChanges?: Partial<Pick<Scenario, "shiftsPerDay">>
+    scenarioChanges?: Partial<Pick<Scenario, "shiftsPerDay" | "demandPerDay">>
   ) => void
   updateScenario: (
     id: string,

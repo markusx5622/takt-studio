@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   Info,
   Activity,
+  Zap,
 } from "lucide-react"
 import { runMonteCarlo } from "@/lib/monte-carlo"
 import { cn } from "@/lib/utils"
@@ -491,6 +492,20 @@ export default function CompararPage() {
     useTaktStore.getState().setCompareB(newId)
   }
 
+  function handleStressTest() {
+    const store = useTaktStore.getState()
+    if (!scenarioA) return
+    const newName = `${scenarioA.name} ${t("stressTestSuffix")}`
+    const newDemand = Math.ceil(scenarioA.demandPerDay * 1.2)
+    store.createScenarioVariant(
+      scenarioA.id,
+      newName,
+      undefined,
+      { demandPerDay: newDemand }
+    )
+  }
+
+
   return (
     <div className="relative min-h-[calc(100vh-4rem)] bg-slate-50/50">
       <ConsultingBackground />
@@ -533,10 +548,19 @@ export default function CompararPage() {
                 variant="outline"
                 onClick={handleDuplicateAtoB}
                 className="h-10 rounded-full border-slate-200 bg-white px-4 text-sm font-medium text-slate-500 shadow-sm transition-all hover:border-slate-300 hover:text-slate-700 hover:shadow-md"
-                title={t("copyAtoB")}
+                title={t("duplicateAtoB")}
               >
                 <Copy className="mr-2 h-4 w-4" />
                 A → B
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleStressTest}
+                className="h-10 rounded-full border-rose-200 bg-rose-50/50 px-4 text-sm font-medium text-rose-700 shadow-sm transition-all hover:border-rose-300 hover:bg-rose-100 hover:shadow-md group"
+                title={t("stressTestTooltip")}
+              >
+                <Zap className="mr-2 h-4 w-4 text-rose-500 transition-transform group-hover:scale-110 group-hover:text-rose-600" />
+                {t("stressTest")}
               </Button>
             </div>
 
