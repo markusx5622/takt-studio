@@ -7,7 +7,6 @@ import {
   Cpu,
   Rocket,
   FlaskConical,
-  Sparkles,
   ShieldCheck,
 } from "lucide-react"
 
