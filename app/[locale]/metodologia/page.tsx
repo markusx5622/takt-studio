@@ -18,11 +18,12 @@ import {
   Euro,
   CheckCircle2,
   Sliders,
-  ShieldAlert,
   Sparkles,
   GitBranch,
   Target,
   Coins,
+  ShieldCheck,
+  ShieldAlert,
 } from "lucide-react"
 
 function Formula({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -66,6 +67,7 @@ export default async function MetodologiaPage({
 
   const t = await getTranslations("metodologia")
   const kpiCards = t.raw("kpiCards") as { title: string; p: string; formula: string; note: string }[]
+  const autoCards = t.raw("autoCards") as { title: string; p: string; formula: string; note: string }[]
   const costItems = t.raw("costItems") as { label: string; formula: string }[]
   const limits = t.raw("limits") as { label: string; text: string }[]
   const noteItems = t.raw("noteItems") as string[]
@@ -120,6 +122,28 @@ export default async function MetodologiaPage({
           </div>
           <div className="mt-4">
             <TaktPlayground labels={playgroundLabels} />
+          </div>
+        </section>
+
+        {/* ── Auditoría Grado Automotriz (Ford CAR) ──────────────────────────── */}
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-bold tracking-tight">{t("autoTitle")}</h2>
+          </div>
+          <Card className="mb-4">
+            <CardContent className="space-y-4 pt-6 text-sm leading-relaxed text-foreground/75">
+              <p>{t("autoIntro")}</p>
+            </CardContent>
+          </Card>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {autoCards.map((kpi, i) => (
+              <KpiCard key={i} icon={ShieldCheck} title={kpi.title}>
+                <p>{kpi.p}</p>
+                <Formula>{kpi.formula}</Formula>
+                <p className="text-xs text-muted-foreground">{kpi.note}</p>
+              </KpiCard>
+            ))}
           </div>
         </section>
 

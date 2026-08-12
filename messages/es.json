@@ -514,9 +514,9 @@
       },
       {
         "title": "Tiempo de ciclo efectivo",
-        "p": "Tiempo real que consume una estación por unidad, considerando operarios paralelos y tasa de reproceso.",
-        "formula": "T_{efectivo} = \\frac{T_{ciclo}}{Operarios} \\times (1 + \\%_{fallo})",
-        "note": "Más operarios reducen el tiempo efectivo; más fallos lo aumentan por el retrabajo inherente."
+        "p": "Tiempo real que consume una estación por unidad, considerando operarios paralelos, unidades por ciclo (batching) y la merma propagada aguas abajo.",
+        "formula": "T_{efectivo} = \\frac{T_{ciclo}}{Operarios \\times Uds_{ciclo} \\times Yield_{acum}}",
+        "note": "Más operarios o unidades por ciclo reducen el tiempo; una tasa alta de fallos lo incrementa debido a la merma aguas abajo."
       },
       {
         "title": "Cuello de botella",
@@ -526,9 +526,9 @@
       },
       {
         "title": "Throughput",
-        "p": "Unidades máximas que la línea puede producir por día, limitada por el bottleneck.",
-        "formula": "Throughput = \\left\\lfloor \\frac{T_{disponible}}{T_{cuello}} \\right\\rfloor",
-        "note": "El throughput nunca supera la capacidad del cuello de botella, independientemente del rendimiento del resto de estaciones."
+        "p": "Unidades máximas que la línea puede producir por día, limitada por el bottleneck y el OEE demostrado.",
+        "formula": "Throughput = \\left\\lfloor \\frac{T_{disp} \\times \\%Asignacion \\times OEE}{T_{cuello}} \\right\\rfloor",
+        "note": "El throughput real nunca supera la capacidad del cuello de botella amortizada por la eficiencia de la planta."
       },
       {
         "title": "Lead Time",
@@ -541,6 +541,34 @@
         "p": "Medida de qué tan equilibrados están los tiempos efectivos entre estaciones.",
         "formula": "Eficiencia = \\frac{\\sum T_{ef,i}}{N_{estaciones} \\times T_{cuello}}",
         "note": "Un valor de 1.0 indica una línea perfectamente balanceada. Valores por debajo de 0.7 sugieren oportunidad de redistribución de cargas."
+      }
+    ],
+    "autoTitle": "Auditoría Grado Automotriz (Estándar Ford CAR)",
+    "autoIntro": "Takt Studio incorpora de forma transversal las mecánicas y estándares de automoción para escenarios de alta exigencia, permitiendo evaluar el estrés operativo de la línea en base a parámetros estandarizados de validación industrial.",
+    "autoCards": [
+      {
+        "title": "Estrés OEE (Requerido vs Demostrado)",
+        "p": "Compara la Eficiencia General de los Equipos (OEE) necesaria para satisfacer la demanda contra el OEE histórico que la planta puede demostrar.",
+        "formula": "OEE_{req} = \\frac{Demanda}{Capacidad_{Teorica}} \\le OEE_{demostrado}",
+        "note": "Si el OEE requerido supera el histórico de planta, se marca un déficit operativo en riesgo."
+      },
+      {
+        "title": "Asignación de Línea (Shared Loading)",
+        "p": "Cuando una línea no está dedicada 100% a un único producto, su tiempo disponible se ajusta proporcionalmente.",
+        "formula": "T_{disp} = Horas_{turno} \\times 60 \\times Turnos \\times \\%Asignacion",
+        "note": "Previene la sobreestimación de capacidad en plantas multiproducto."
+      },
+      {
+        "title": "Mermas Propagadas (Scrap)",
+        "p": "El Yield no se calcula de forma asilada por estación, sino que se propaga aguas abajo afectando al requerimiento bruto inicial.",
+        "formula": "Yield_{acum} = \\prod_{i=1}^{n} (1 - \\%Fallo_i)",
+        "note": "Un defecto al final de la línea obliga a las primeras estaciones a producir exceso para compensar."
+      },
+      {
+        "title": "Test de Estrés MPW (+20%)",
+        "p": "Proyección de picos de demanda estacionales o extraordinarios bajo el estándar Maximum Parts per Week.",
+        "formula": "MPW = Demanda_{media} \\times 1.20",
+        "note": "Evalúa si la línea posee holgura táctica (buffer capacity) para absorber shocks de demanda."
       }
     ],
     "econTitle": "Capa económica",
@@ -572,10 +600,10 @@
     "econWarning": "La capa económica es una estimación orientativa bajo supuestos configurables. No sustituye un análisis financiero detallado ni la validación contable real de la empresa.",
     "stochasticTitle": "Motor Estocástico Monte Carlo & Sensibilidad",
     "stochasticIntro": "Para complementar el cálculo analítico determinista en tiempo real, Takt Studio incorpora un motor de simulación de Monte Carlo con 2.000 iteraciones estocásticas y un laboratorio de sensibilidad de parámetros.",
-    "mcTitle": "Simulación Monte Carlo (Riesgo y Variabilidad)",
-    "mcText": "Cada estación de la línea simula variabilidad aleatoria en su tiempo de ciclo siguiendo una distribución normal truncada calculada mediante la transformada de Box-Muller y el generador PRNG Mulberry32.",
-    "mcFormula": "T_{ef,i} \\sim \\mathcal{N}\\left(\\mu = \\frac{T_{c,i}}{O_i}, \\sigma = 0.10\\mu\\right) \\times (1 + p_i)",
-    "mcPercentiles": "A partir de las 2.000 iteraciones se extraen los percentiles P10 (escenario conservador), P50 (mediana esperada) y P90 (escenario optimista), ofreciendo una matriz de riesgo probabilístico del Throughput real.",
+    "mcTitle": "Simulación Monte Carlo Determinística",
+    "mcText": "Cada estación de la línea simula variabilidad aleatoria en su tiempo de ciclo mediante la transformada de Box-Muller y un PRNG determinista (Mulberry32). Esto garantiza reproducibilidad estricta: misma seed, mismo resultado.",
+    "mcFormula": "T_{ef,i} \\sim \\mathcal{N}\\left(\\mu = \\frac{T_{c,i}}{O_i \\times Uds \\times Yield}, \\sigma = cv \\times \\mu\\right)",
+    "mcPercentiles": "A partir de las 2.000 iteraciones se extraen los percentiles P5 (escenario pesimista), P50 (mediana esperada) y P95 (escenario optimista), ofreciendo una matriz de riesgo probabilístico del Throughput real.",
     "sensitivityTitle": "Laboratorio de Sensibilidad",
     "sensitivityText": "Permite proyectar el comportamiento de la línea ante barridos continuos de demanda (±50%) y variaciones de mano de obra, identificando visualmente los puntos de inflexión donde la línea entra en déficit.",
     "limitsTitle": "Supuestos y limitaciones del modelo",

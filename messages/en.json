@@ -514,9 +514,9 @@
       },
       {
         "title": "Effective cycle time",
-        "p": "Actual time consumed by a station per unit, considering parallel operators and rework rate.",
-        "formula": "T_{efectivo} = \\frac{T_{ciclo}}{Operarios} \\times (1 + \\%_{fallo})",
-        "note": "More operators reduce effective time; more failures increase it due to inherent rework."
+        "p": "Actual time consumed by a station per unit, considering parallel operators, units per cycle (batching), and downstream propagated scrap.",
+        "formula": "T_{efectivo} = \\frac{T_{ciclo}}{Operarios \\times Uds_{ciclo} \\times Yield_{acum}}",
+        "note": "More operators or units per cycle reduce effective time; a high failure rate increases it due to downstream scrap."
       },
       {
         "title": "Bottleneck",
@@ -526,9 +526,9 @@
       },
       {
         "title": "Throughput",
-        "p": "Maximum units the line can produce per day, limited by the bottleneck.",
-        "formula": "Throughput = \\left\\lfloor \\frac{T_{disponible}}{T_{cuello}} \\right\\rfloor",
-        "note": "Throughput never exceeds the bottleneck's capacity, regardless of other stations' performance."
+        "p": "Maximum units the line can produce per day, limited by the bottleneck and demonstrated OEE.",
+        "formula": "Throughput = \\left\\lfloor \\frac{T_{disp} \\times \\%Asignacion \\times OEE}{T_{cuello}} \\right\\rfloor",
+        "note": "Actual throughput never exceeds the bottleneck's capacity amortized by the plant's efficiency."
       },
       {
         "title": "Lead Time",
@@ -541,6 +541,34 @@
         "p": "Measure of how balanced the effective times are across stations.",
         "formula": "Eficiencia = \\frac{\\sum T_{ef,i}}{N_{estaciones} \\times T_{cuello}}",
         "note": "A value of 1.0 indicates a perfectly balanced line. Values below 0.7 suggest an opportunity to redistribute workloads."
+      }
+    ],
+    "autoTitle": "Automotive Grade Audit (Ford CAR Standard)",
+    "autoIntro": "Takt Studio transversally incorporates automotive mechanics and standards for high-demand scenarios, allowing for the evaluation of operational line stress based on standardized industrial validation parameters.",
+    "autoCards": [
+      {
+        "title": "OEE Stress (Required vs Demonstrated)",
+        "p": "Compares the Overall Equipment Effectiveness (OEE) needed to meet demand against the historical OEE the plant can demonstrate.",
+        "formula": "OEE_{req} = \\frac{Demanda}{Capacidad_{Teorica}} \\le OEE_{demostrado}",
+        "note": "If the required OEE exceeds the plant's historical average, an operational deficit risk is flagged."
+      },
+      {
+        "title": "Line Allocation (Shared Loading)",
+        "p": "When a line is not 100% dedicated to a single product, its available time is adjusted proportionally.",
+        "formula": "T_{disp} = Horas_{turno} \\times 60 \\times Turnos \\times \\%Asignacion",
+        "note": "Prevents capacity overestimation in multi-product facilities."
+      },
+      {
+        "title": "Propagated Scrap (Yield)",
+        "p": "Yield is not calculated in isolation per station, but propagated downstream affecting the initial gross requirement.",
+        "formula": "Yield_{acum} = \\prod_{i=1}^{n} (1 - \\%Fallo_i)",
+        "note": "A defect at the end of the line forces the first stations to overproduce to compensate."
+      },
+      {
+        "title": "MPW Stress Test (+20%)",
+        "p": "Projection of seasonal or extraordinary demand peaks under the Maximum Parts per Week standard.",
+        "formula": "MPW = Demanda_{media} \\times 1.20",
+        "note": "Evaluates whether the line has tactical slack (buffer capacity) to absorb demand shocks."
       }
     ],
     "econTitle": "Economic layer",
@@ -572,10 +600,10 @@
     "econWarning": "The economic layer is an indicative estimate under configurable assumptions. It does not replace a detailed financial analysis or the company's real accounting validation.",
     "stochasticTitle": "Stochastic Monte Carlo Engine & Sensitivity",
     "stochasticIntro": "To complement the real-time deterministic calculation, Takt Studio incorporates a Monte Carlo simulation engine with 2,000 stochastic runs and a parameter sensitivity laboratory.",
-    "mcTitle": "Monte Carlo Simulation (Risk & Variability)",
-    "mcText": "Each line station simulates random cycle time variability following a truncated normal distribution computed via the Box-Muller transform and the Mulberry32 PRNG generator.",
-    "mcFormula": "T_{ef,i} \\sim \\mathcal{N}\\left(\\mu = \\frac{T_{c,i}}{O_i}, \\sigma = 0.10\\mu\\right) \\times (1 + p_i)",
-    "mcPercentiles": "From 2,000 runs, the P10 (conservative scenario), P50 (expected median), and P90 (optimistic scenario) percentiles are extracted, providing a probabilistic Throughput risk matrix.",
+    "mcTitle": "Deterministic Monte Carlo Simulation",
+    "mcText": "Each station simulates random cycle time variability via the Box-Muller transform and a deterministic PRNG (Mulberry32). This guarantees strict reproducibility: same seed, same result.",
+    "mcFormula": "T_{ef,i} \\sim \\mathcal{N}\\left(\\mu = \\frac{T_{c,i}}{O_i \\times Uds \\times Yield}, \\sigma = cv \\times \\mu\\right)",
+    "mcPercentiles": "From 2,000 runs, the P5 (pessimistic scenario), P50 (expected median), and P95 (optimistic scenario) percentiles are extracted, providing a probabilistic risk matrix of actual Throughput.",
     "sensitivityTitle": "Sensitivity Laboratory",
     "sensitivityText": "Projects line performance across continuous demand sweeps (±50%) and labor variations, visually highlighting the inflection points where the line enters deficit.",
     "limitsTitle": "Assumptions & Limitations",
