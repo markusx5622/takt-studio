@@ -15,11 +15,13 @@ export function getYieldMultipliers(stations: Station[]): number[] {
   return multipliers
 }
 
-/** Tiempo de ciclo efectivo considerando operarios y multiplicador de demanda (propagación de scrap) */
+/** Tiempo de ciclo efectivo considerando operarios (si es manual), unidades por ciclo y multiplicador de demanda (propagación de scrap) */
 export function getEffectiveCycleTime(station: Station, demandMultiplier: number = 1): number {
-  if (station.operators <= 0) return Infinity
+  const isMachine = station.processType === "machine"
+  if (!isMachine && station.operators <= 0) return Infinity
   const units = station.unitsPerCycle ?? 1
-  return ((station.cycleTimeMin / units) / station.operators) * demandMultiplier
+  const opDivisor = isMachine ? 1 : Math.max(1, station.operators)
+  return ((station.cycleTimeMin / units) / opDivisor) * demandMultiplier
 }
 
 export function getStationsWithEffective(
@@ -234,8 +236,8 @@ export function generateRecommendations(
 
   const bottleneck = scenario.stations.find((s) => s.id === baseKpis.bottleneckStationId)
 
-  // A) +1 operario al bottleneck
-  if (bottleneck && bottleneck.operators < 8) {
+  // A) +1 operario al bottleneck (solo si el proceso es manual)
+  if (bottleneck && bottleneck.processType !== "machine" && bottleneck.operators < 8) {
     const { kpis: projected } = simulateScenario(scenario, [
       { stationId: bottleneck.id, updates: { operators: bottleneck.operators + 1 } },
     ])

@@ -48,6 +48,12 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       <p className="mb-2 font-semibold">{s.name}</p>
       <div className="space-y-0.5 text-muted-foreground">
         <p>
+          {t("tooltipType")}{" "}
+          <span className="font-semibold text-foreground">
+            {s.processType === "machine" ? t("typeMachine") : t("typeManual")}
+          </span>
+        </p>
+        <p>
           {t("tooltipCycle")}{" "}
           <span className="font-medium text-foreground">
             {s.cycleTimeMin} {t("minUnit")}

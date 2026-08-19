@@ -54,13 +54,13 @@ export function getPresetNames(locale?: string): PresetNames {
 }
 
 const MONOBATH_STATIONS: Omit<Station, "id" | "name">[] = [
-  { cycleTimeMin: 45, operators: 2, failureRate: 0.02, unitsPerCycle: 1 },
-  { cycleTimeMin: 55, operators: 2, failureRate: 0.05, unitsPerCycle: 1 },
-  { cycleTimeMin: 35, operators: 1, failureRate: 0.03, unitsPerCycle: 1 },
-  { cycleTimeMin: 90, operators: 3, failureRate: 0.04, unitsPerCycle: 1 },
-  { cycleTimeMin: 50, operators: 2, failureRate: 0.03, unitsPerCycle: 1 },
-  { cycleTimeMin: 25, operators: 1, failureRate: 0.01, unitsPerCycle: 1 },
-  { cycleTimeMin: 30, operators: 1, failureRate: 0.02, unitsPerCycle: 1 },
+  { cycleTimeMin: 45, operators: 2, failureRate: 0.02, unitsPerCycle: 1, processType: "manual" },
+  { cycleTimeMin: 55, operators: 2, failureRate: 0.05, unitsPerCycle: 1, processType: "manual" },
+  { cycleTimeMin: 35, operators: 1, failureRate: 0.03, unitsPerCycle: 1, processType: "manual" },
+  { cycleTimeMin: 90, operators: 3, failureRate: 0.04, unitsPerCycle: 1, processType: "manual" },
+  { cycleTimeMin: 50, operators: 2, failureRate: 0.03, unitsPerCycle: 1, processType: "manual" },
+  { cycleTimeMin: 25, operators: 1, failureRate: 0.01, unitsPerCycle: 1, processType: "manual" },
+  { cycleTimeMin: 30, operators: 1, failureRate: 0.02, unitsPerCycle: 1, processType: "manual" },
 ]
 
 export type IndustrySectorKey =
@@ -80,7 +80,7 @@ export const INDUSTRY_PRESETS_DATA: Record<
     demandPerDay: number
     shiftHours: number
     shiftsPerDay: number
-    stations: { nameEs: string; nameEn: string; cycleTimeMin: number; operators: number; failureRate: number; unitsPerCycle?: number }[]
+    stations: { nameEs: string; nameEn: string; cycleTimeMin: number; operators: number; failureRate: number; unitsPerCycle?: number; processType?: "manual" | "machine" }[]
   }
 > = {
   monobath: {
@@ -90,13 +90,13 @@ export const INDUSTRY_PRESETS_DATA: Record<
     shiftHours: 8,
     shiftsPerDay: 1,
     stations: [
-      { nameEs: "Estructura y chasis de acero", nameEn: "Steel Frame & Chassis", cycleTimeMin: 45, operators: 2, failureRate: 0.02 },
-      { nameEs: "Tabiquería y paneles impermeables", nameEn: "Drywall & Waterproof Panels", cycleTimeMin: 55, operators: 2, failureRate: 0.05 },
-      { nameEs: "Fontanería y tuberías PEX", nameEn: "Plumbing & PEX Piping", cycleTimeMin: 35, operators: 1, failureRate: 0.03 },
-      { nameEs: "Alicatado y revestimiento cerámico", nameEn: "Tiling & Ceramic Cladding", cycleTimeMin: 90, operators: 3, failureRate: 0.04 },
-      { nameEs: "Montaje de sanitarios y grifería", nameEn: "Sanitary Fixture Assembly", cycleTimeMin: 50, operators: 2, failureRate: 0.03 },
-      { nameEs: "Instalación eléctrica y LED", nameEn: "Electrical & LED Wiring", cycleTimeMin: 25, operators: 1, failureRate: 0.01 },
-      { nameEs: "Inspección final y embalaje", nameEn: "Final Inspection & Packing", cycleTimeMin: 30, operators: 1, failureRate: 0.02 },
+      { nameEs: "Estructura y chasis de acero", nameEn: "Steel Frame & Chassis", cycleTimeMin: 45, operators: 2, failureRate: 0.02, processType: "manual" },
+      { nameEs: "Tabiquería y paneles impermeables", nameEn: "Drywall & Waterproof Panels", cycleTimeMin: 55, operators: 2, failureRate: 0.05, processType: "manual" },
+      { nameEs: "Fontanería y tuberías PEX", nameEn: "Plumbing & PEX Piping", cycleTimeMin: 35, operators: 1, failureRate: 0.03, processType: "manual" },
+      { nameEs: "Alicatado y revestimiento cerámico", nameEn: "Tiling & Ceramic Cladding", cycleTimeMin: 90, operators: 3, failureRate: 0.04, processType: "manual" },
+      { nameEs: "Montaje de sanitarios y grifería", nameEn: "Sanitary Fixture Assembly", cycleTimeMin: 50, operators: 2, failureRate: 0.03, processType: "manual" },
+      { nameEs: "Instalación eléctrica y LED", nameEn: "Electrical & LED Wiring", cycleTimeMin: 25, operators: 1, failureRate: 0.01, processType: "manual" },
+      { nameEs: "Inspección final y embalaje", nameEn: "Final Inspection & Packing", cycleTimeMin: 30, operators: 1, failureRate: 0.02, processType: "manual" },
     ],
   },
   automotive: {
@@ -106,12 +106,12 @@ export const INDUSTRY_PRESETS_DATA: Record<
     shiftHours: 8,
     shiftsPerDay: 2,
     stations: [
-      { nameEs: "Estructura de carrocería y soldadura", nameEn: "Body Structure & Welding", cycleTimeMin: 18, operators: 3, failureRate: 0.01 },
-      { nameEs: "Tratamiento de pintura y secado", nameEn: "Paint & Drying Process", cycleTimeMin: 22, operators: 2, failureRate: 0.02 },
-      { nameEs: "Inserción de motor y transmisión", nameEn: "Powertrain & Engine Marriage", cycleTimeMin: 32, operators: 4, failureRate: 0.03 },
-      { nameEs: "Montaje de interiores y salpicadero", nameEn: "Interior Trim & Dashboard", cycleTimeMin: 24, operators: 3, failureRate: 0.02 },
-      { nameEs: "Cableado eléctrico y batería", nameEn: "Harness & Battery Integration", cycleTimeMin: 16, operators: 2, failureRate: 0.01 },
-      { nameEs: "Test dinámico y alineación", nameEn: "Dynamic Roll Test & Alignment", cycleTimeMin: 12, operators: 2, failureRate: 0.01 },
+      { nameEs: "Estructura de carrocería y soldadura", nameEn: "Body Structure & Welding", cycleTimeMin: 18, operators: 3, failureRate: 0.01, processType: "manual" },
+      { nameEs: "Tratamiento de pintura y secado", nameEn: "Paint & Drying Process", cycleTimeMin: 22, operators: 2, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Inserción de motor y transmisión", nameEn: "Powertrain & Engine Marriage", cycleTimeMin: 32, operators: 4, failureRate: 0.03, processType: "manual" },
+      { nameEs: "Montaje de interiores y salpicadero", nameEn: "Interior Trim & Dashboard", cycleTimeMin: 24, operators: 3, failureRate: 0.02, processType: "manual" },
+      { nameEs: "Cableado eléctrico y batería", nameEn: "Harness & Battery Integration", cycleTimeMin: 16, operators: 2, failureRate: 0.01, processType: "manual" },
+      { nameEs: "Test dinámico y alineación", nameEn: "Dynamic Roll Test & Alignment", cycleTimeMin: 12, operators: 2, failureRate: 0.01, processType: "machine" },
     ],
   },
   electronics: {
@@ -121,11 +121,11 @@ export const INDUSTRY_PRESETS_DATA: Record<
     shiftHours: 8,
     shiftsPerDay: 2,
     stations: [
-      { nameEs: "Impresión de pasta de soldar", nameEn: "Solder Paste Printing", cycleTimeMin: 6, operators: 1, failureRate: 0.01 },
-      { nameEs: "Montaje componentes SMT Pick&Place", nameEn: "SMT Component Pick & Place", cycleTimeMin: 12, operators: 2, failureRate: 0.02 },
-      { nameEs: "Horno de reflujo térmico", nameEn: "Thermal Reflow Oven", cycleTimeMin: 10, operators: 1, failureRate: 0.01 },
-      { nameEs: "Inspección óptica AOI y X-Ray", nameEn: "Automated Optical Inspection AOI", cycleTimeMin: 8, operators: 1, failureRate: 0.01 },
-      { nameEs: "Ensamblaje final y test funcional", nameEn: "Final Assembly & Functional Test", cycleTimeMin: 14, operators: 2, failureRate: 0.02 },
+      { nameEs: "Impresión de pasta de soldar", nameEn: "Solder Paste Printing", cycleTimeMin: 6, operators: 1, failureRate: 0.01, processType: "machine" },
+      { nameEs: "Montaje componentes SMT Pick&Place", nameEn: "SMT Component Pick & Place", cycleTimeMin: 12, operators: 2, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Horno de reflujo térmico", nameEn: "Thermal Reflow Oven", cycleTimeMin: 10, operators: 1, failureRate: 0.01, processType: "machine" },
+      { nameEs: "Inspección óptica AOI y X-Ray", nameEn: "Automated Optical Inspection AOI", cycleTimeMin: 8, operators: 1, failureRate: 0.01, processType: "machine" },
+      { nameEs: "Ensamblaje final y test funcional", nameEn: "Final Assembly & Functional Test", cycleTimeMin: 14, operators: 2, failureRate: 0.02, processType: "manual" },
     ],
   },
   logistics: {
@@ -135,10 +135,10 @@ export const INDUSTRY_PRESETS_DATA: Record<
     shiftHours: 8,
     shiftsPerDay: 1,
     stations: [
-      { nameEs: "Recepción y desensamblaje", nameEn: "Receiving & Unboxing", cycleTimeMin: 8, operators: 2, failureRate: 0.01 },
-      { nameEs: "Picking en estanterías por lista", nameEn: "List-Based Shelf Picking", cycleTimeMin: 15, operators: 3, failureRate: 0.03 },
-      { nameEs: "Verificación por escáner y etiquetado", nameEn: "Barcode Verification & Labeling", cycleTimeMin: 6, operators: 1, failureRate: 0.01 },
-      { nameEs: "Empaquetado final y flejado", nameEn: "Final Packing & Pallet Strapping", cycleTimeMin: 10, operators: 2, failureRate: 0.02 },
+      { nameEs: "Recepción y desensamblaje", nameEn: "Receiving & Unboxing", cycleTimeMin: 8, operators: 2, failureRate: 0.01, processType: "manual" },
+      { nameEs: "Picking en estanterías por lista", nameEn: "List-Based Shelf Picking", cycleTimeMin: 15, operators: 3, failureRate: 0.03, processType: "manual" },
+      { nameEs: "Verificación por escáner y etiquetado", nameEn: "Barcode Verification & Labeling", cycleTimeMin: 6, operators: 1, failureRate: 0.01, processType: "manual" },
+      { nameEs: "Empaquetado final y flejado", nameEn: "Final Packing & Pallet Strapping", cycleTimeMin: 10, operators: 2, failureRate: 0.02, processType: "manual" },
     ],
   },
   ceramics: {
@@ -148,12 +148,12 @@ export const INDUSTRY_PRESETS_DATA: Record<
     shiftHours: 8,
     shiftsPerDay: 3,
     stations: [
-      { nameEs: "Atomizado y molienda de arcillas", nameEn: "Clay Spray Drying & Atomization", cycleTimeMin: 5, operators: 1, failureRate: 0.01 },
-      { nameEs: "Prensado hidráulico de gran formato", nameEn: "High-Tonnage Hydraulic Pressing", cycleTimeMin: 12, operators: 2, failureRate: 0.02 },
-      { nameEs: "Secado rápido de azulejo crudo", nameEn: "Rapid Roller Dryer", cycleTimeMin: 7, operators: 1, failureRate: 0.01 },
-      { nameEs: "Esmaltado y decoración digital Inkjet", nameEn: "Glazing & Digital Inkjet Printing", cycleTimeMin: 10, operators: 2, failureRate: 0.03 },
-      { nameEs: "Cocción continua en horno monorrodillo", nameEn: "Continuous Roller Kiln Firing", cycleTimeMin: 16, operators: 2, failureRate: 0.02 },
-      { nameEs: "Rectificado, clasificación por tono y embalaje", nameEn: "Edge Grinding, Optical Sorting & Packing", cycleTimeMin: 9, operators: 2, failureRate: 0.01 },
+      { nameEs: "Atomizado y molienda de arcillas", nameEn: "Clay Spray Drying & Atomization", cycleTimeMin: 5, operators: 1, failureRate: 0.01, processType: "machine" },
+      { nameEs: "Prensado hidráulico de gran formato", nameEn: "High-Tonnage Hydraulic Pressing", cycleTimeMin: 12, operators: 2, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Secado rápido de azulejo crudo", nameEn: "Rapid Roller Dryer", cycleTimeMin: 7, operators: 1, failureRate: 0.01, processType: "machine" },
+      { nameEs: "Esmaltado y decoración digital Inkjet", nameEn: "Glazing & Digital Inkjet Printing", cycleTimeMin: 10, operators: 2, failureRate: 0.03, processType: "machine" },
+      { nameEs: "Cocción continua en horno monorrodillo", nameEn: "Continuous Roller Kiln Firing", cycleTimeMin: 16, operators: 2, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Rectificado, clasificación por tono y embalaje", nameEn: "Edge Grinding, Optical Sorting & Packing", cycleTimeMin: 9, operators: 2, failureRate: 0.01, processType: "machine" },
     ],
   },
   food_pharma: {
@@ -163,11 +163,11 @@ export const INDUSTRY_PRESETS_DATA: Record<
     shiftHours: 8,
     shiftsPerDay: 2,
     stations: [
-      { nameEs: "Selección de materia prima y lavado", nameEn: "Raw Material Sorting & Washing", cycleTimeMin: 6, operators: 2, failureRate: 0.01 },
-      { nameEs: "Escaldado térmico y troceado automático", nameEn: "Thermal Blanching & Dicing", cycleTimeMin: 8, operators: 1, failureRate: 0.02 },
-      { nameEs: "Dosificación y envasado en línea", nameEn: "Dosing & Container Filling", cycleTimeMin: 10, operators: 2, failureRate: 0.02 },
-      { nameEs: "Sellado hermético y esterilización autoclave", nameEn: "Hermetic Sealing & Autoclave Sterilization", cycleTimeMin: 15, operators: 2, failureRate: 0.03 },
-      { nameEs: "Etiquetado, encajado y paletizado robotizado", nameEn: "Labeling, Case Packing & Palletizing", cycleTimeMin: 7, operators: 1, failureRate: 0.01 },
+      { nameEs: "Selección de materia prima y lavado", nameEn: "Raw Material Sorting & Washing", cycleTimeMin: 6, operators: 2, failureRate: 0.01, processType: "manual" },
+      { nameEs: "Escaldado térmico y troceado automático", nameEn: "Thermal Blanching & Dicing", cycleTimeMin: 8, operators: 1, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Dosificación y envasado en línea", nameEn: "Dosing & Container Filling", cycleTimeMin: 10, operators: 2, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Sellado hermético y esterilización autoclave", nameEn: "Hermetic Sealing & Autoclave Sterilization", cycleTimeMin: 15, operators: 2, failureRate: 0.03, processType: "machine" },
+      { nameEs: "Etiquetado, encajado y paletizado robotizado", nameEn: "Labeling, Case Packing & Palletizing", cycleTimeMin: 7, operators: 1, failureRate: 0.01, processType: "machine" },
     ],
   },
   machinery: {
@@ -177,12 +177,12 @@ export const INDUSTRY_PRESETS_DATA: Record<
     shiftHours: 8,
     shiftsPerDay: 1,
     stations: [
-      { nameEs: "Mecanizado CNC de carcasas y bloques", nameEn: "CNC Block Machining", cycleTimeMin: 24, operators: 2, failureRate: 0.02 },
-      { nameEs: "Inserción de rodamientos y retenes", nameEn: "Bearing & Seal Insertion", cycleTimeMin: 16, operators: 1, failureRate: 0.01 },
-      { nameEs: "Montaje de rotor y bobinado eléctrico", nameEn: "Rotor Assembly & Stator Wiring", cycleTimeMin: 30, operators: 3, failureRate: 0.03 },
-      { nameEs: "Prueba de estanqueidad y test hidráulico", nameEn: "Leak & Pressure Test Bench", cycleTimeMin: 20, operators: 2, failureRate: 0.04 },
-      { nameEs: "Pintura electrostática y secado", nameEn: "Electrostatic Painting & Curing", cycleTimeMin: 18, operators: 1, failureRate: 0.02 },
-      { nameEs: "Embalaje técnico e inspección final", nameEn: "Technical Packaging & Final Inspection", cycleTimeMin: 12, operators: 1, failureRate: 0.01 },
+      { nameEs: "Mecanizado CNC de carcasas y bloques", nameEn: "CNC Block Machining", cycleTimeMin: 24, operators: 2, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Inserción de rodamientos y retenes", nameEn: "Bearing & Seal Insertion", cycleTimeMin: 16, operators: 1, failureRate: 0.01, processType: "manual" },
+      { nameEs: "Montaje de rotor y bobinado eléctrico", nameEn: "Rotor Assembly & Stator Wiring", cycleTimeMin: 30, operators: 3, failureRate: 0.03, processType: "manual" },
+      { nameEs: "Prueba de estanqueidad y test hidráulico", nameEn: "Leak & Pressure Test Bench", cycleTimeMin: 20, operators: 2, failureRate: 0.04, processType: "machine" },
+      { nameEs: "Pintura electrostática y secado", nameEn: "Electrostatic Painting & Curing", cycleTimeMin: 18, operators: 1, failureRate: 0.02, processType: "machine" },
+      { nameEs: "Embalaje técnico e inspección final", nameEn: "Technical Packaging & Final Inspection", cycleTimeMin: 12, operators: 1, failureRate: 0.01, processType: "manual" },
     ],
   },
 }
@@ -198,6 +198,7 @@ export function createPresetFromSector(sectorKey: IndustrySectorKey, locale?: st
     operators: st.operators,
     failureRate: st.failureRate,
     unitsPerCycle: st.unitsPerCycle ?? 1,
+    processType: st.processType ?? "manual",
   }))
 }
 

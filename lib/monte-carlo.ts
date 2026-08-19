@@ -52,15 +52,17 @@ function simulateRun(scenario: Scenario, rng: () => number, cv: number, multipli
   let bottleneckMin = 0
   for (let i = 0; i < scenario.stations.length; i++) {
     const station = scenario.stations[i]
-    if (station.operators <= 0) return 0
+    const isMachine = station.processType === "machine"
+    if (!isMachine && station.operators <= 0) return 0
     
     // Muestreo lognormal sobre el tiempo de ciclo nominal (ya dividido por unidades por ciclo)
     const units = station.unitsPerCycle ?? 1
     const nominalMin = station.cycleTimeMin / units
     const baseSample = sampleLognormal(rng, nominalMin, cv)
     
-    // El tiempo efectivo incorpora el multiplicador de demanda de esta estación por la propagación de mermas
-    const effectiveMin = (baseSample / station.operators) * multipliers[i]
+    // El tiempo efectivo incorpora el divisor de operarios (si es manual) y el multiplicador de merma
+    const opDivisor = isMachine ? 1 : Math.max(1, station.operators)
+    const effectiveMin = (baseSample / opDivisor) * multipliers[i]
     if (effectiveMin > bottleneckMin) bottleneckMin = effectiveMin
   }
   if (bottleneckMin <= 0 || !isFinite(bottleneckMin)) return 0

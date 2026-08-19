@@ -9,6 +9,7 @@ import {
   calculateEconomicKPIs,
   calculateRecommendationEconomicImpact,
   normalizeEconomics,
+  generateRecommendations,
 } from "./calculations"
 import type { Scenario, Station } from "@/types"
 
@@ -84,9 +85,36 @@ describe("findBottleneck", () => {
 })
 
 describe("getEffectiveCycleTime", () => {
-  it("operarios reducen el tiempo efectivo", () => {
-    // (60 / 2) * (1 + 0) = 30
+  it("operarios reducen el tiempo efectivo en estaciones manuales", () => {
+    // (60 / 2) = 30
     const station = makeStation(60, 2)
+    expect(getEffectiveCycleTime(station)).toBe(30)
+  })
+
+  it("estación máquina: operarios NO reducen el tiempo de ciclo físico", () => {
+    // En una estación de máquina, 60 min con 4 operarios sigue siendo 60 min
+    const station: Station = {
+      id: "st-mach",
+      name: "CNC Milling",
+      cycleTimeMin: 60,
+      operators: 4,
+      failureRate: 0,
+      processType: "machine",
+    }
+    expect(getEffectiveCycleTime(station)).toBe(60)
+  })
+
+  it("estación máquina con batching (unitsPerCycle) divide el tiempo por unidades", () => {
+    // 60 min, 2 uds/ciclo, 3 operarios → 60 / 2 = 30 min
+    const station: Station = {
+      id: "st-mach-batch",
+      name: "Hydraulic Press",
+      cycleTimeMin: 60,
+      operators: 3,
+      unitsPerCycle: 2,
+      failureRate: 0,
+      processType: "machine",
+    }
     expect(getEffectiveCycleTime(station)).toBe(30)
   })
 
@@ -274,5 +302,38 @@ describe("normalizeEconomics", () => {
     const result = normalizeEconomics(partial)
     expect(result).not.toBe(partial)
     expect(partial).toEqual({ laborCostPerHour: 30 })
+  })
+})
+
+describe("generateRecommendations with processType", () => {
+  it("recomienda +1 operario para cuello de botella manual", () => {
+    const scenario = makeScenario([
+      makeStation(60, 1, 0, "Manual Assembly", "st-1"),
+      makeStation(20, 1, 0, "Packing", "st-2")
+    ], 10, 8, 1)
+    const kpis = calculateAllKPIs(scenario)
+    const recs = generateRecommendations(scenario, kpis)
+    const opRec = recs.find(r => r.id === "add-operator-bottleneck")
+    expect(opRec).toBeDefined()
+  })
+
+  it("NO recomienda +1 operario si el cuello de botella es una máquina", () => {
+    const machineStation: Station = {
+      id: "st-mach",
+      name: "Reflow Oven",
+      cycleTimeMin: 60,
+      operators: 1,
+      failureRate: 0,
+      processType: "machine"
+    }
+    const manualStation = makeStation(20, 1, 0, "Packing", "st-2")
+    const scenario = makeScenario([machineStation, manualStation], 10, 8, 1)
+    const kpis = calculateAllKPIs(scenario)
+    const recs = generateRecommendations(scenario, kpis)
+    const opRec = recs.find(r => r.id === "add-operator-bottleneck")
+    expect(opRec).toBeUndefined()
+    // En su lugar, debe haber optimización de método (cycle time)
+    const methodRec = recs.find(r => r.id === "optimize-method")
+    expect(methodRec).toBeDefined()
   })
 })

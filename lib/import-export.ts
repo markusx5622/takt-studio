@@ -66,7 +66,9 @@ function validateStation(raw: unknown): { valid: true; station: Station } | { va
     name: name.trim(),
     cycleTimeMin,
     operators,
+    unitsPerCycle: isNumber(raw.unitsPerCycle) && raw.unitsPerCycle >= 1 ? Math.floor(raw.unitsPerCycle) : 1,
     failureRate: isNumber(raw.failureRate) ? Math.max(0, Math.min(1, raw.failureRate)) : 0,
+    processType: raw.processType === "machine" ? "machine" : "manual",
   }
 
   return { valid: true, station }

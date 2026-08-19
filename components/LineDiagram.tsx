@@ -11,6 +11,7 @@ import {
   Package,
   PackageCheck,
   GitBranch,
+  Cpu,
 } from "lucide-react"
 import { useTaktStore, useHydrated } from "@/lib/store"
 import { getStationsWithEffective, calculateTaktTime } from "@/lib/calculations"
@@ -95,10 +96,20 @@ function StationCard({ station, index }: { station: StationWithEffective; index:
           <span className="font-medium">{station.effectiveCycleMin.toFixed(1)} min</span>
         </div>
 
-        <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-          <Users className="h-3 w-3 shrink-0" />
-          <span>×{station.operators}</span>
-        </div>
+        {station.processType === "machine" ? (
+          <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Cpu className="h-3 w-3 shrink-0 text-purple-600 dark:text-purple-400" />
+              <span className="text-[11px] font-medium text-purple-700 dark:text-purple-300">{t("typeMachine")}</span>
+            </div>
+            <span className="text-[10px]">({station.operators} {station.operators === 1 ? "op." : "ops."})</span>
+          </div>
+        ) : (
+          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+            <Users className="h-3 w-3 shrink-0" />
+            <span>×{station.operators} {station.operators === 1 ? "op." : "ops."}</span>
+          </div>
+        )}
 
         {station.failureRate > 0 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-amber-600">

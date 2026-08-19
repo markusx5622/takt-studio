@@ -8,11 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download, Upload, Wand2, HelpCircle } from "lucide-react"
+import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download, Upload, Wand2, HelpCircle, User, Cpu } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { findBottleneck } from "@/lib/calculations"
 import { cn } from "@/lib/utils"
-import type { Station } from "@/types"
+import type { Station, ProcessType } from "@/types"
 
 // ─── Skeleton ────────────────────────────────────────────────────────────────
 
@@ -28,6 +28,7 @@ function StationEditorSkeleton() {
           <div key={i} className="flex gap-2">
             <div className="h-8 w-6 animate-pulse rounded bg-muted" />
             <div className="h-8 flex-1 animate-pulse rounded bg-muted" />
+            <div className="h-8 w-20 animate-pulse rounded bg-muted" />
             <div className="h-8 w-24 animate-pulse rounded bg-muted" />
             <div className="h-8 w-20 animate-pulse rounded bg-muted" />
             <div className="h-8 w-20 animate-pulse rounded bg-muted" />
@@ -43,6 +44,7 @@ function StationEditorSkeleton() {
 
 interface RowActions {
   onNameChange: (id: string, value: string) => void
+  onProcessTypeChange: (id: string, value: ProcessType) => void
   onCycleChange: (id: string, value: string) => void
   onUnitsChange: (id: string, value: string) => void
   onOperatorsChange: (id: string, value: string) => void
@@ -74,6 +76,7 @@ function StationRow({
   isLast,
   isBottleneck,
   onNameChange,
+  onProcessTypeChange,
   onCycleChange,
   onUnitsChange,
   onOperatorsChange,
@@ -83,6 +86,8 @@ function StationRow({
   onDelete,
 }: RowProps) {
   const t = useTranslations("simulator.stations")
+  const isMachine = station.processType === "machine"
+
   return (
     <tr
       className={cn(
@@ -112,6 +117,38 @@ function StationRow({
             </span>
           )}
         </div>
+      </td>
+      <td className="py-1 pl-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => onProcessTypeChange(station.id, isMachine ? "manual" : "machine")}
+              className={cn(
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all cursor-pointer",
+                isMachine
+                  ? "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800"
+                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800"
+              )}
+              aria-label={t("typeLabel")}
+            >
+              {isMachine ? (
+                <>
+                  <Cpu className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+                  <span>{t("typeMachineBadge")}</span>
+                </>
+              ) : (
+                <>
+                  <User className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400 shrink-0" />
+                  <span>{t("typeManualBadge")}</span>
+                </>
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs text-xs">
+            {isMachine ? t("typeMachineTooltip") : t("typeManualTooltip")}
+          </TooltipContent>
+        </Tooltip>
       </td>
       <td className="py-1 pl-2">
         <Input
@@ -205,6 +242,7 @@ function StationCard({
   isLast,
   isBottleneck,
   onNameChange,
+  onProcessTypeChange,
   onCycleChange,
   onUnitsChange,
   onOperatorsChange,
@@ -214,6 +252,8 @@ function StationCard({
   onDelete,
 }: RowProps) {
   const t = useTranslations("simulator.stations")
+  const isMachine = station.processType === "machine"
+
   return (
     <div
       className={cn(
@@ -277,6 +317,45 @@ function StationCard({
           aria-label={t("colName")}
           onChange={(e) => onNameChange(station.id, e.target.value)}
         />
+      </div>
+
+      <div className="mb-3 flex items-center justify-between rounded-md border bg-muted/20 px-2.5 py-1.5">
+        <div className="flex items-center gap-1">
+          <span className="text-xs font-medium text-muted-foreground">{t("typeLabel")}:</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                <HelpCircle className="h-3 w-3" />
+                <span className="sr-only">{t("colTypeTooltip")}</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-xs text-xs">
+              {t("colTypeTooltip")}
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <button
+          type="button"
+          onClick={() => onProcessTypeChange(station.id, isMachine ? "manual" : "machine")}
+          className={cn(
+            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all cursor-pointer",
+            isMachine
+              ? "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800"
+              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800"
+          )}
+        >
+          {isMachine ? (
+            <>
+              <Cpu className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+              <span>{t("typeMachineBadge")}</span>
+            </>
+          ) : (
+            <>
+              <User className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400 shrink-0" />
+              <span>{t("typeManualBadge")}</span>
+            </>
+          )}
+        </button>
       </div>
 
       <div className="grid grid-cols-4 gap-2">
@@ -408,7 +487,7 @@ export default function StationEditor() {
   const stations = scenario?.stations ?? []
 
   function handleAddStation() {
-    addStation({ name: t("newStationName"), cycleTimeMin: 30, operators: 1, failureRate: 0, unitsPerCycle: 1 })
+    addStation({ name: t("newStationName"), cycleTimeMin: 30, operators: 1, failureRate: 0, unitsPerCycle: 1, processType: "manual" })
   }
 
   function handleDelete(stationId: string) {
@@ -419,6 +498,10 @@ export default function StationEditor() {
 
   function handleNameChange(id: string, value: string) {
     updateStation(id, { name: value })
+  }
+
+  function handleProcessTypeChange(id: string, value: ProcessType) {
+    updateStation(id, { processType: value })
   }
 
   function handleCycleChange(id: string, value: string) {
@@ -447,6 +530,7 @@ export default function StationEditor() {
 
   const rowActions = (station: Station): RowActions => ({
     onNameChange: handleNameChange,
+    onProcessTypeChange: handleProcessTypeChange,
     onCycleChange: handleCycleChange,
     onUnitsChange: handleUnitsChange,
     onOperatorsChange: handleOperatorsChange,
@@ -461,6 +545,7 @@ export default function StationEditor() {
 
     const headers = [
       t("colName"),
+      t("colType"),
       t("colCycle"),
       t("colUnits"),
       t("colOperators"),
@@ -470,9 +555,12 @@ export default function StationEditor() {
 
     const rows = stations.map((st) => {
       const units = st.unitsPerCycle ?? 1
-      const effectiveTime = (st.cycleTimeMin / units) / (st.operators * (1 - st.failureRate))
+      const isMachine = st.processType === "machine"
+      const opDivisor = isMachine ? 1 : Math.max(1, st.operators)
+      const effectiveTime = ((st.cycleTimeMin / units) / opDivisor) * (1 / (1 - st.failureRate || 1))
       return [
         `"${st.name.replace(/"/g, '""')}"`,
+        st.processType === "machine" ? "machine" : "manual",
         st.cycleTimeMin,
         units,
         st.operators,
@@ -534,16 +622,32 @@ export default function StationEditor() {
           if (cols.length < 5) continue // basic validation
           
           const name = cols[0].replace(/^"|"$/g, '').replace(/""/g, '"').trim()
-          const cycleTimeMin = parseFloat(cols[1])
-          const unitsPerCycle = parseInt(cols[2], 10)
-          const operators = parseInt(cols[3], 10)
-          const failureStr = cols[4].replace('%', '').trim()
+
+          let type: ProcessType = "manual"
+          let cycleIdx = 1
+          let unitsIdx = 2
+          let opsIdx = 3
+          let failIdx = 4
+
+          if (cols.length >= 7) {
+            const typeStr = cols[1].toLowerCase().trim()
+            type = (typeStr === "machine" || typeStr === "máquina" || typeStr === "maquina" || typeStr === "auto") ? "machine" : "manual"
+            cycleIdx = 2
+            unitsIdx = 3
+            opsIdx = 4
+            failIdx = 5
+          }
+
+          const cycleTimeMin = parseFloat(cols[cycleIdx])
+          const unitsPerCycle = parseInt(cols[unitsIdx], 10)
+          const operators = parseInt(cols[opsIdx], 10)
+          const failureStr = cols[failIdx].replace('%', '').trim()
           
           let failureRate = 0
-          if (cols[4].includes('%')) {
+          if (cols[failIdx].includes('%')) {
             failureRate = parseFloat(failureStr) / 100
           } else {
-            failureRate = parseFloat(cols[4])
+            failureRate = parseFloat(cols[failIdx])
           }
 
           if (!name || isNaN(cycleTimeMin) || isNaN(unitsPerCycle) || isNaN(operators) || isNaN(failureRate)) continue
@@ -555,6 +659,7 @@ export default function StationEditor() {
             unitsPerCycle,
             operators,
             failureRate,
+            processType: type,
           })
         }
 
@@ -575,12 +680,20 @@ export default function StationEditor() {
 
   function handleAutoBalance() {
     if (!scenario || stations.length === 0) return
-    if (!confirm(t("autoBalanceConfirm"))) return
+    const hasMachine = stations.some(st => st.processType === "machine")
+    const confirmMsg = hasMachine
+      ? `${t("autoBalanceConfirm")}\n\n${t("autoBalanceMachineNotice")}`
+      : t("autoBalanceConfirm")
+    if (!confirm(confirmMsg)) return
     
     const taktTime = (scenario.shiftHours * 60 * scenario.shiftsPerDay) / scenario.demandPerDay
     
     const newStations = stations.map(st => {
-      const requiredOperators = Math.max(1, Math.ceil((st.cycleTimeMin * (1 + st.failureRate)) / taktTime))
+      if (st.processType === "machine") {
+        return st
+      }
+      const units = st.unitsPerCycle ?? 1
+      const requiredOperators = Math.max(1, Math.ceil(((st.cycleTimeMin / units) * (1 + st.failureRate)) / taktTime))
       return { ...st, operators: requiredOperators }
     })
     
@@ -675,6 +788,22 @@ export default function StationEditor() {
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs text-xs">
                             {t("colNameTooltip")}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </th>
+                    <th scope="col" className="w-28 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <span>{t("colType")}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                              <HelpCircle className="h-3 w-3" />
+                              <span className="sr-only">{t("colTypeTooltip")}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs text-xs">
+                            {t("colTypeTooltip")}
                           </TooltipContent>
                         </Tooltip>
                       </div>

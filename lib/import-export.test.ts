@@ -38,8 +38,8 @@ function makeValidScenario(): Scenario {
     id: "original-scenario-id",
     name: "Línea Monobath",
     stations: [
-      { id: "original-station-1", name: "Estructura", cycleTimeMin: 45, operators: 2, failureRate: 0.02 },
-      { id: "original-station-2", name: "Fontanería", cycleTimeMin: 55, operators: 2, failureRate: 0.05 },
+      { id: "original-station-1", name: "Estructura", cycleTimeMin: 45, operators: 2, failureRate: 0.02, processType: "manual" },
+      { id: "original-station-2", name: "Fontanería", cycleTimeMin: 55, operators: 2, failureRate: 0.05, processType: "machine" },
     ],
     demandPerDay: 8,
     shiftHours: 8,
@@ -295,6 +295,8 @@ describe("regenerateScenarioIds", () => {
     expect(regenerated.stations[0].cycleTimeMin).toBe(scenario.stations[0].cycleTimeMin)
     expect(regenerated.stations[0].operators).toBe(scenario.stations[0].operators)
     expect(regenerated.stations[0].failureRate).toBe(scenario.stations[0].failureRate)
+    expect(regenerated.stations[0].processType).toBe("manual")
+    expect(regenerated.stations[1].processType).toBe("machine")
   })
 })
 

@@ -1,3 +1,5 @@
+export type ProcessType = "manual" | "machine"
+
 /**
  * Representa una estación individual en la línea de producción.
  * Cada estación tiene un tiempo de ciclo y un número de operarios asignados.
@@ -15,6 +17,8 @@ export type Station = {
   unitsPerCycle?: number
   /** Tasa de fallo/reproceso como decimal 0-1 (ej: 0.05 = 5%). Opcional, default 0 */
   failureRate: number
+  /** Tipo de proceso: 'manual' (operarios dividen tiempo) o 'machine' (tiempo fijado por máquina). Default 'manual' */
+  processType?: ProcessType
 }
 
 /**

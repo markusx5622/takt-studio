@@ -354,7 +354,7 @@ export const useTaktStore = create<TaktStore>()(
     }),
     {
       name: "takt-studio-storage",
-      version: 5,
+      version: 6,
       migrate: (persistedState: unknown, version: number) => {
         const state = persistedState as { scenarios?: Scenario[]; snapshots?: unknown[] }
         if (version < 1) {
@@ -397,6 +397,17 @@ export const useTaktStore = create<TaktStore>()(
             state.scenarios = state.scenarios.map((s) => ({
               ...s,
               historicalOEE: s.historicalOEE ?? 85
+            }))
+          }
+        }
+        if (version < 6) {
+          if (state.scenarios) {
+            state.scenarios = state.scenarios.map((s) => ({
+              ...s,
+              stations: s.stations?.map(st => ({
+                ...st,
+                processType: st.processType ?? "manual"
+              })) ?? []
             }))
           }
         }

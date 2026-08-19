@@ -56,9 +56,11 @@ export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
       (bottleneck.effectiveCycleMin - secondSlowest.effectiveCycleMin) /
       secondSlowest.effectiveCycleMin
     if (diff > 0.2) {
-      const reducedTime =
-        (bottleneck.cycleTimeMin / (bottleneck.operators + 1)) *
-        (1 + bottleneck.failureRate)
+      const isMachine = bottleneck.processType === "machine"
+      const reducedTime = isMachine
+        ? (bottleneck.cycleTimeMin * 0.8 / (bottleneck.unitsPerCycle ?? 1)) * (1 + bottleneck.failureRate)
+        : (bottleneck.cycleTimeMin / ((bottleneck.unitsPerCycle ?? 1) * (bottleneck.operators + 1))) *
+          (1 + bottleneck.failureRate)
       insights.push({
         type: "warning",
         key: "dominantBottleneck",
@@ -96,7 +98,9 @@ export function generateInsights(scenario: Scenario, kpis: KPIs): Insight[] {
   const highFailure = scenario.stations.filter((s) => s.failureRate > 0.05)
   if (highFailure.length > 0) {
     const s = highFailure[0]
-    const baseTime = s.cycleTimeMin / s.operators
+    const isMachine = s.processType === "machine"
+    const opDivisor = isMachine ? 1 : Math.max(1, s.operators)
+    const baseTime = (s.cycleTimeMin / (s.unitsPerCycle ?? 1)) / opDivisor
     const savings = baseTime * (s.failureRate - 0.02)
     insights.push({
       type: "warning",

@@ -80,6 +80,17 @@ describe("runMonteCarlo", () => {
     expect(runMonteCarlo(scenario, { seed: 42 }).probabilityMeetDemand).toBe(0)
   })
 
+  it("escenario con estaciones de máquina sin variabilidad coincide con throughput determinista", () => {
+    const scenario = createMonobathPreset()
+    scenario.stations[0].processType = "machine"
+    scenario.stations[0].operators = 3 // Even with 3 ops, machine cycle time is fixed
+    scenario.stations = scenario.stations.map((s) => ({ ...s, failureRate: 0 }))
+    const result = runMonteCarlo(scenario, { cv: 0, runs: 50, seed: 10 })
+    const deterministic = calculateThroughput(scenario)
+    expect(result.throughput.min).toBe(deterministic)
+    expect(result.throughput.max).toBe(deterministic)
+  })
+
   it("escenario sin estaciones devuelve resultados a cero sin NaN", () => {
     const result = runMonteCarlo(createEmptyScenario("Vacío"), { seed: 42 })
     expect(result.runs).toBe(0)

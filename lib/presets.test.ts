@@ -38,6 +38,7 @@ describe("Industrial Sector Presets Test Suite", () => {
       expect(st.cycleTimeMin).toBeGreaterThan(0)
       expect(st.operators).toBeGreaterThanOrEqual(1)
       expect(st.failureRate).toBeGreaterThanOrEqual(0)
+      expect(["manual", "machine"]).toContain(st.processType ?? "manual")
     })
   })
 
@@ -53,6 +54,7 @@ describe("Industrial Sector Presets Test Suite", () => {
       expect(st.cycleTimeMin).toBeGreaterThan(0)
       expect(st.operators).toBeGreaterThanOrEqual(1)
       expect(st.failureRate).toBeGreaterThanOrEqual(0)
+      expect(["manual", "machine"]).toContain(st.processType ?? "manual")
     })
   })
 

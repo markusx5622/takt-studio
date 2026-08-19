@@ -794,7 +794,10 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
       doc.text(rawLines[0], bx + boxW / 2, by + 4.5, { align: "center" })
       setGray()
       doc.setFontSize(5.5)
-      doc.text(`${st.operators} ${st.operators === 1 ? "op." : "ops."}`, bx + boxW / 2, by + 9.5, { align: "center" })
+      const opLabel = st.processType === "machine"
+        ? `${st.operators} op. (${locale === "es" ? "Máq" : "Auto"})`
+        : `${st.operators} ${st.operators === 1 ? "op." : "ops."}`
+      doc.text(opLabel, bx + boxW / 2, by + 9.5, { align: "center" })
       doc.setFont("helvetica", "bold")
       doc.setFontSize(6.5)
       if (st.isBottleneck) doc.setTextColor(220, 38, 38); else setDark()
@@ -804,7 +807,10 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
       doc.text(rawLines[1], bx + boxW / 2, by + 7.2, { align: "center" })
       setGray()
       doc.setFontSize(5.5)
-      doc.text(`${st.operators} ${st.operators === 1 ? "op." : "ops."}`, bx + boxW / 2, by + 11.2, { align: "center" })
+      const opLabel = st.processType === "machine"
+        ? `${st.operators} op. (${locale === "es" ? "Máq" : "Auto"})`
+        : `${st.operators} ${st.operators === 1 ? "op." : "ops."}`
+      doc.text(opLabel, bx + boxW / 2, by + 11.2, { align: "center" })
       doc.setFont("helvetica", "bold")
       doc.setFontSize(6.5)
       if (st.isBottleneck) doc.setTextColor(220, 38, 38); else setDark()
@@ -1060,7 +1066,8 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     // Multiline wrapped station name with correct font size set first
     doc.setFont("helvetica", st.isBottleneck ? "bold" : "normal")
     doc.setFontSize(7.5)
-    const nameLines = doc.splitTextToSize(st.name, tCols[1].w - 3) as string[]
+    const displayName = st.processType === "machine" ? `${st.name} [${locale === "es" ? "Máq" : "Auto"}]` : st.name
+    const nameLines = doc.splitTextToSize(displayName, tCols[1].w - 3) as string[]
     const rowH = Math.max(6, nameLines.length * 3.8 + 2.5)
 
     if (checkPageBreak(rowH)) {
