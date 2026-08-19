@@ -1086,10 +1086,10 @@ export async function generatePdf(scenarioId: string, options: PdfOptions) {
     const textY = y + 4.2
     doc.text(String(i + 1), tCols[0].x + tCols[0].w / 2, textY, { align: "center" })
     doc.text(nameLines, tCols[1].x + 1.5, textY)
-    doc.text(`${st.cycleTimeMin} ${t("minUnit")}`, tCols[2].x + tCols[2].w - 1, textY, { align: "right" })
+    doc.text(`${Number(st.cycleTimeMin.toFixed(2))} ${t("minUnit")}`, tCols[2].x + tCols[2].w - 1, textY, { align: "right" })
     doc.text(String(st.unitsPerCycle ?? 1), tCols[3].x + tCols[3].w / 2, textY, { align: "center" })
     doc.text(String(st.operators), tCols[4].x + tCols[4].w / 2, textY, { align: "center" })
-    doc.text(`${(st.failureRate * 100).toFixed(0)}%`, tCols[5].x + tCols[5].w / 2, textY, { align: "center" })
+    doc.text(`${Number((st.failureRate * 100).toFixed(1))}%`, tCols[5].x + tCols[5].w / 2, textY, { align: "center" })
     doc.text(`${st.effectiveCycleMin.toFixed(1)} ${t("minUnit")}`, tCols[6].x + tCols[6].w - 1, textY, { align: "right" })
 
     if (exceedsTakt) setRed()

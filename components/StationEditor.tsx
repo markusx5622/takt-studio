@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download, Upload, Wand2 } from "lucide-react"
+import { ChevronUp, ChevronDown, Trash2, Plus, AlertTriangle, Download, Upload, Wand2, HelpCircle } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { findBottleneck } from "@/lib/calculations"
 import { cn } from "@/lib/utils"
 import type { Station } from "@/types"
@@ -116,8 +117,8 @@ function StationRow({
         <Input
           className={cn(cellInputCls, "w-24")}
           type="number"
-          min={1}
-          step={1}
+          min={0.01}
+          step="any"
           value={station.cycleTimeMin}
           aria-label={t("colCycle")}
           onChange={(e) => onCycleChange(station.id, e.target.value)}
@@ -152,8 +153,8 @@ function StationRow({
           type="number"
           min={0}
           max={100}
-          step={1}
-          value={Math.round(station.failureRate * 100)}
+          step={0.1}
+          value={Number((station.failureRate * 100).toFixed(2))}
           aria-label={t("colFailure")}
           onChange={(e) => onFailureChange(station.id, e.target.value)}
         />
@@ -280,19 +281,45 @@ function StationCard({
 
       <div className="grid grid-cols-4 gap-2">
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">{t("cycleMin")}</p>
+          <div className="mb-1 flex items-center gap-1">
+            <p className="text-xs text-muted-foreground">{t("cycleMin")}</p>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                  <HelpCircle className="h-3 w-3" />
+                  <span className="sr-only">{t("cycleMinTooltip")}</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs text-xs">
+                {t("cycleMinTooltip")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             className="h-8 text-sm"
             type="number"
-            min={1}
-            step={1}
+            min={0.01}
+            step="any"
             value={station.cycleTimeMin}
             aria-label={t("cycleMin")}
             onChange={(e) => onCycleChange(station.id, e.target.value)}
           />
         </div>
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">{t("units")}</p>
+          <div className="mb-1 flex items-center gap-1">
+            <p className="text-xs text-muted-foreground">{t("units")}</p>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                  <HelpCircle className="h-3 w-3" />
+                  <span className="sr-only">{t("unitsTooltip")}</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs text-xs">
+                {t("unitsTooltip")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             className="h-8 text-sm"
             type="number"
@@ -304,7 +331,20 @@ function StationCard({
           />
         </div>
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">{t("operators")}</p>
+          <div className="mb-1 flex items-center gap-1">
+            <p className="text-xs text-muted-foreground">{t("operators")}</p>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                  <HelpCircle className="h-3 w-3" />
+                  <span className="sr-only">{t("operatorsTooltip")}</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs text-xs">
+                {t("operatorsTooltip")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             className="h-8 text-sm"
             type="number"
@@ -317,14 +357,27 @@ function StationCard({
           />
         </div>
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">{t("failurePct")}</p>
+          <div className="mb-1 flex items-center gap-1">
+            <p className="text-xs text-muted-foreground">{t("failurePct")}</p>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                  <HelpCircle className="h-3 w-3" />
+                  <span className="sr-only">{t("failurePctTooltip")}</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs text-xs">
+                {t("failurePctTooltip")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             className="h-8 text-sm"
             type="number"
             min={0}
             max={100}
-            step={1}
-            value={Math.round(station.failureRate * 100)}
+            step={0.1}
+            value={Number((station.failureRate * 100).toFixed(2))}
             aria-label={t("failurePct")}
             onChange={(e) => onFailureChange(station.id, e.target.value)}
           />
@@ -369,8 +422,8 @@ export default function StationEditor() {
   }
 
   function handleCycleChange(id: string, value: string) {
-    const n = parseInt(value, 10)
-    if (isNaN(n) || n < 1) return
+    const n = parseFloat(value)
+    if (isNaN(n) || n <= 0) return
     updateStation(id, { cycleTimeMin: n })
   }
 
@@ -611,19 +664,84 @@ export default function StationEditor() {
                       #
                     </th>
                     <th scope="col" className="py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      {t("colName")}
+                      <div className="flex items-center gap-1">
+                        <span>{t("colName")}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                              <HelpCircle className="h-3 w-3" />
+                              <span className="sr-only">{t("colNameTooltip")}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs text-xs">
+                            {t("colNameTooltip")}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </th>
                     <th scope="col" className="w-32 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      {t("colCycle")}
+                      <div className="flex items-center gap-1">
+                        <span>{t("colCycle")}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                              <HelpCircle className="h-3 w-3" />
+                              <span className="sr-only">{t("colCycleTooltip")}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs text-xs">
+                            {t("colCycleTooltip")}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </th>
                     <th scope="col" className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      {t("colUnits")}
+                      <div className="flex items-center gap-1">
+                        <span>{t("colUnits")}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                              <HelpCircle className="h-3 w-3" />
+                              <span className="sr-only">{t("colUnitsTooltip")}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs text-xs">
+                            {t("colUnitsTooltip")}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </th>
                     <th scope="col" className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      {t("colOperators")}
+                      <div className="flex items-center gap-1">
+                        <span>{t("colOperators")}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                              <HelpCircle className="h-3 w-3" />
+                              <span className="sr-only">{t("colOperatorsTooltip")}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs text-xs">
+                            {t("colOperatorsTooltip")}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </th>
                     <th scope="col" className="w-24 py-2 pl-2 text-left text-xs font-medium text-muted-foreground">
-                      {t("colFailure")}
+                      <div className="flex items-center gap-1">
+                        <span>{t("colFailure")}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help">
+                              <HelpCircle className="h-3 w-3" />
+                              <span className="sr-only">{t("colFailureTooltip")}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs text-xs">
+                            {t("colFailureTooltip")}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </th>
                     <th scope="col" className="w-28 py-2 pl-2 pr-4 text-left text-xs font-medium text-muted-foreground">
                       {t("colActions")}

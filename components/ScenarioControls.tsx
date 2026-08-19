@@ -9,10 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Copy, Plus, Trash2, Share2, Check, Sparkles, Clock } from "lucide-react"
+import { Copy, Plus, Trash2, Share2, Check, Sparkles, Clock, HelpCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ExportPdfButton from "@/components/ExportPdfButton"
 import NewScenarioModal from "@/components/NewScenarioModal"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import {
   Select,
   SelectContent,
@@ -174,8 +175,8 @@ export default function ScenarioControls() {
   }
 
   function handleAllocationChange(value: string) {
-    const n = parseInt(value, 10)
-    if (!isNaN(n) && n >= 1 && n <= 100) updateScenario(scenario!.id, { allocationPercent: n })
+    const n = parseFloat(value)
+    if (!isNaN(n) && n >= 0.1 && n <= 100) updateScenario(scenario!.id, { allocationPercent: n })
   }
 
   function handleChangeoversPerDayChange(value: string) {
@@ -189,8 +190,8 @@ export default function ScenarioControls() {
   }
 
   function handleHistoricalOEEChange(value: string) {
-    const n = parseInt(value, 10)
-    if (!isNaN(n) && n >= 1 && n <= 100) updateScenario(scenario!.id, { historicalOEE: n })
+    const n = parseFloat(value)
+    if (!isNaN(n) && n >= 0.1 && n <= 100) updateScenario(scenario!.id, { historicalOEE: n })
   }
 
   function handleDelete() {
@@ -259,7 +260,20 @@ export default function ScenarioControls() {
 
           {/* Demanda */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-demand" className="text-sm font-medium">{t("demandLabel")}</label>
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="sc-demand" className="text-sm font-medium">{t("demandLabel")}</label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help transition-colors">
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only">{t("demandTooltip")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">
+                  {t("demandTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <Input
               id="sc-demand"
               type="number"
@@ -272,13 +286,26 @@ export default function ScenarioControls() {
 
           {/* Horas por turno */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-hours" className="text-sm font-medium">{t("hoursLabel")}</label>
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="sc-hours" className="text-sm font-medium">{t("hoursLabel")}</label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help transition-colors">
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only">{t("hoursTooltip")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">
+                  {t("hoursTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <Input
               id="sc-hours"
               type="number"
-              min={1}
-              max={12}
-              step={0.5}
+              min={0.5}
+              max={24}
+              step={0.1}
               value={scenario.shiftHours}
               onChange={(e) => handleShiftHoursChange(e.target.value)}
             />
@@ -286,14 +313,27 @@ export default function ScenarioControls() {
 
           {/* Turnos por día — segmented control */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium" id="sc-shifts-label">{t("shiftsLabel")}</label>
+            <div className="flex items-center gap-1.5">
+              <label className="text-sm font-medium" id="sc-shifts-label">{t("shiftsLabel")}</label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help transition-colors">
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only">{t("shiftsTooltip")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">
+                  {t("shiftsTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <div className="flex gap-2" role="group" aria-labelledby="sc-shifts-label">
               {([1, 2, 3] as const).map((n) => (
                 <Button
                   key={n}
                   variant={scenario.shiftsPerDay === n ? "default" : "outline"}
                   size="sm"
-                  className="flex-1"
+                  className="flex-1 cursor-pointer"
                   onClick={() => updateScenario(scenario.id, { shiftsPerDay: n })}
                   aria-pressed={scenario.shiftsPerDay === n}
                 >
@@ -305,14 +345,27 @@ export default function ScenarioControls() {
 
           {/* Allocation % (Shared Loading) */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-allocation" className="text-sm font-medium">{t("allocationLabel") ?? "Asignación (%)"}</label>
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="sc-allocation" className="text-sm font-medium">{t("allocationLabel") ?? "Asignación (%)"}</label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help transition-colors">
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only">{t("allocationTooltip")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">
+                  {t("allocationTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <div className="flex items-center gap-2">
               <Input
                 id="sc-allocation"
                 type="number"
-                min={1}
+                min={0.1}
                 max={100}
-                step={1}
+                step={0.1}
                 value={scenario.allocationPercent ?? 100}
                 onChange={(e) => handleAllocationChange(e.target.value)}
               />
@@ -321,7 +374,20 @@ export default function ScenarioControls() {
 
           {/* Changeovers per Day */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-changeovers" className="text-sm font-medium">{t("changeoversPerDayLabel") ?? "Cambios/Día (SMED)"}</label>
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="sc-changeovers" className="text-sm font-medium">{t("changeoversPerDayLabel") ?? "Cambios/Día (SMED)"}</label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help transition-colors">
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only">{t("changeoversPerDayTooltip")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">
+                  {t("changeoversPerDayTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <Input
               id="sc-changeovers"
               type="number"
@@ -334,12 +400,25 @@ export default function ScenarioControls() {
 
           {/* Changeover Time */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-changeover-time" className="text-sm font-medium">{t("changeoverTimeMinLabel") ?? "Min/Cambio (SMED)"}</label>
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="sc-changeover-time" className="text-sm font-medium">{t("changeoverTimeMinLabel") ?? "Min/Cambio (SMED)"}</label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help transition-colors">
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only">{t("changeoverTimeMinTooltip")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">
+                  {t("changeoverTimeMinTooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <Input
               id="sc-changeover-time"
               type="number"
               min={0}
-              step={5}
+              step={0.1}
               value={scenario.changeoverTimeMin ?? 0}
               onChange={(e) => handleChangeoverTimeMinChange(e.target.value)}
             />
@@ -347,13 +426,26 @@ export default function ScenarioControls() {
 
           {/* OEE Histórico */}
           <div className="space-y-1.5">
-            <label htmlFor="sc-historical-oee" className="text-sm font-medium">{t("historicalOEELabel") ?? "OEE Histórico (%)"}</label>
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="sc-historical-oee" className="text-sm font-medium">{t("historicalOEELabel") ?? "OEE Histórico (%)"}</label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground/60 hover:text-foreground cursor-help transition-colors">
+                    <HelpCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only">{t("historicalOEETooltip")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">
+                  {t("historicalOEETooltip")}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <Input
               id="sc-historical-oee"
               type="number"
-              min={1}
+              min={0.1}
               max={100}
-              step={1}
+              step={0.1}
               value={scenario.historicalOEE ?? 85}
               onChange={(e) => handleHistoricalOEEChange(e.target.value)}
             />
